@@ -28,3 +28,9 @@ Since I want to use it within Kratos I have some basic requirements:
     - how to configure? => e.g. how to tell file-name / -format => probably constructor => seems like we need classes ...
     - => I think it is easier to go with a class
     - **Important**: come up with a datastructure that can be used to feed the writer => probably tmplated (and maybe pass fct-ptrs that tell how to extract the data, this way hopefully no intermediate datastructure is necessary)
+
+## PhilippK
+
+- **More Questions**
+    - What unit testing framework? Catch2?
+    - CMake I guess?
