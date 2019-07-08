@@ -37,3 +37,4 @@ Since I want to use it within Kratos I have some basic requirements:
 
 - **Comments**
     - A single file header is never (as far as I know) used for development of the library but created from the actual project in a preprocessor manner which is triggered by a merge to master.
+    - I don't see a reason to have a class over a function yet ... only that type aliases won't be a thing ... which might be interesing if we use policies
