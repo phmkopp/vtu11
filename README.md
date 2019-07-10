@@ -30,13 +30,11 @@ Since I want to use it within Kratos I have some basic requirements:
     - **Important**: come up with a datastructure that can be used to feed the writer => probably tmplated (and maybe pass fct-ptrs that tell how to extract the data, this way hopefully no intermediate datastructure is necessary)
 
 ## Licence
-- I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible: [](https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file)
-- asdf
- 
+- I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible, there are [discussions](https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file) about it.
+
 ## Unit testing
 - Catch 2 as git submodule
-- asdf
 
 ## Dll exports
-
+- Can we use CMake for this or do we have to introduce a macro that goes in every function?
 
