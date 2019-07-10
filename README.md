@@ -39,3 +39,8 @@ Since I want to use it within Kratos I have some basic requirements:
 - **Comments**
     - A single file header is never (as far as I know) used for development of the library but created from the actual project in a preprocessor manner which is triggered by a merge to master.
     - I don't see a reason to have a class over a function yet ... only that type aliases won't be a thing ... which might be interesing if we use policies
+    - 
+
+
+## Licence
+- I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible: https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file 
