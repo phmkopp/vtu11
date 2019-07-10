@@ -26,5 +26,5 @@ endif( CMAKE_COMPILER_IS_GNUCXX )
 # -------------------- Set up testrunner --------------------------
 
 # Add an executable and link to the library
-add_executable( splinekernel_testrunner ${TEST_FILES} )
+add_executable( vtu11_testrunner ${TEST_FILES} )
 
