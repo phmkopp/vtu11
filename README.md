@@ -29,18 +29,14 @@ Since I want to use it within Kratos I have some basic requirements:
     - => I think it is easier to go with a class
     - **Important**: come up with a datastructure that can be used to feed the writer => probably tmplated (and maybe pass fct-ptrs that tell how to extract the data, this way hopefully no intermediate datastructure is necessary)
 
-## PhilippK
-
-- **More Questions**
-    - What unit testing framework? Catch2?
-    - CMake I guess?
-    - What about windows DLL exports?
-
-- **Comments**
-    - A single file header is never (as far as I know) used for development of the library but created from the actual project in a preprocessor manner which is triggered by a merge to master.
-    - I don't see a reason to have a class over a function yet ... only that type aliases won't be a thing ... which might be interesing if we use policies
-    - 
-
-
 ## Licence
-- I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible: https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file 
+- I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible: [](https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file)
+- asdf
+ 
+## Unit testing
+- Catch 2 as git submodule
+- asdf
+
+## Dll exports
+
+
