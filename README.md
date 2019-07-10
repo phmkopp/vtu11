@@ -1,6 +1,15 @@
 vtu11
 Small lib to read/write vtu files
 
+## Licence
+- I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible, there are [discussions](https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file) about it.
+
+## Unit testing
+- Catch 2 as git submodule
+
+## Dll exports
+- Can we use CMake for this or do we have to introduce a macro that goes in every function?
+
 ## PhilippB
 - **Requirements**
 Since I want to use it within Kratos I have some basic requirements:
@@ -29,11 +38,4 @@ Since I want to use it within Kratos I have some basic requirements:
     - => I think it is easier to go with a class
     - **Important**: come up with a datastructure that can be used to feed the writer => probably tmplated (and maybe pass fct-ptrs that tell how to extract the data, this way hopefully no intermediate datastructure is necessary)
 
-## PhilippK
 
-- **More Questions**
-    - What unit testing framework? Catch2?
-    - CMake I guess?
-
-- **Comments**
-    - A single file header is never (as far as I know) used for development of the library but created from the actual project in a preprocessor manner which is triggered by a merge to master.
