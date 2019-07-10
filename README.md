@@ -34,6 +34,7 @@ Since I want to use it within Kratos I have some basic requirements:
 - **More Questions**
     - What unit testing framework? Catch2?
     - CMake I guess?
+    - What about windows DLL exports?
 
 - **Comments**
     - A single file header is never (as far as I know) used for development of the library but created from the actual project in a preprocessor manner which is triggered by a merge to master.
