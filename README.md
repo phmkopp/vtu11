@@ -8,7 +8,7 @@ Small lib to read/write vtu files
 - Catch 2 as git submodule
 
 ## Dll exports
-- Can we use CMake for this or do we have to introduce a macro that goes in every function?
+- Not needed if header only ... only for testrunner
 
 ## PhilippB
 - **Requirements**
