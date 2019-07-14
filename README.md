@@ -3,6 +3,7 @@ Small lib to read/write vtu files
 
 ## Licence
 - I would prefer to not have a licence comment on top of each file ... I think that's ugly. But I'm not sure if that's possible, there are [discussions](https://softwareengineering.stackexchange.com/questions/125836/do-you-have-to-include-a-license-notice-with-every-source-file) about it.
+  => this is how we solve it in [Kratos](https://github.com/KratosMultiphysics/Kratos/blob/master/applications/CoSimulationApplication/co_simulation_application.cpp#L6-L7)
 
 ## Unit testing
 - Catch 2 as git submodule
