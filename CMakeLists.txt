@@ -4,6 +4,8 @@ project( vtu11 CXX )
 
 # Directories to include header files from
 include_directories( inc )
+include_directories( impl )
+include_directories( external/catch2 )
 
 file( GLOB TEST_FILES test/*.cpp)
 

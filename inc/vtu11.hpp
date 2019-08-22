@@ -1,9 +1,26 @@
-#ifndef VTU11_HPP
-#define VTU11_HPP
+#ifndef VTU11_VTU11_HPP
+#define VTU11_VTU11_HPP
 
-int nice( )
+#include "alias.hpp"
+
+namespace vtu11
 {
-  return 7;
-}
 
-#endif // VTU11_HPP
+struct UnstructuredMesh
+{
+  std::vector<double>& points;
+  std::vector<size_t>& connectivity;
+  std::vector<size_t>& offsets;
+  std::vector<unsigned short>& types;
+};
+
+void write( std::ostream& output, 
+            const UnstructuredMesh& mesh,
+            const std::vector<DataSet>& pointData,
+            const std::vector<DataSet>& cellData );
+
+} // namespace vtu11
+
+#include "vtu11_impl.hpp"
+
+#endif // VTU11_VTU11_HPP
