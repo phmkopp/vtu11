@@ -74,14 +74,7 @@ inline void write( std::ostream& output,
                    const std::vector<DataSet>& pointData,
                    const std::vector<DataSet>& cellData  )
 {
-  
-  StringStringMap headerAttributes
-  {
-    { "byte_order",  "LittleEndian"     },
-    { "type"      ,  "UnstructuredGrid" },
-    { "version"   ,  "0.1"              }
-  };
-  
+
   output << "<?xml version=\"1.0\"?>\n";
   
   { 
