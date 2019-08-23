@@ -30,3 +30,4 @@ endif( CMAKE_COMPILER_IS_GNUCXX )
 # Add an executable and link to the library
 add_executable( vtu11_testrunner ${TEST_FILES} )
 
+file(COPY test/testfiles DESTINATION . )

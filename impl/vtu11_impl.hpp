@@ -56,7 +56,7 @@ inline void writeDataSet( std::ostream& output,
     attributes["Name"] = name;
   }
 
-  ScopedXmlTag dataArrayTag( output, "DataSet", attributes );
+  ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
            
   for( auto value : data )
   {
@@ -119,16 +119,16 @@ inline void write( std::ostream& output,
         {
           ScopedXmlTag pointsTag( output, "Points", { } );
 
-          detail::writeDataSet( output, mesh.points );
+          detail::writeDataSet( output, mesh.points, 3 );
           
         } // Points
         
         {
           ScopedXmlTag pointsTag( output, "Cells", { } );
 
-          detail::writeDataSet( output, mesh.connectivity );
-          detail::writeDataSet( output, mesh.offsets );
-          detail::writeDataSet( output, mesh.types );
+          detail::writeDataSet( output, mesh.connectivity, 1, "connectivity" );
+          detail::writeDataSet( output, mesh.offsets, 1, "offsets" );
+          detail::writeDataSet( output, mesh.types, 1, "types" );
           
         } // Cells
         

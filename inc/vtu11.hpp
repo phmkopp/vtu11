@@ -11,14 +11,14 @@ struct UnstructuredMesh
   std::vector<double>& points;
   std::vector<size_t>& connectivity;
   std::vector<size_t>& offsets;
-  std::vector<unsigned short>& types;
+  std::vector<CellType>& types;
 };
 
 void write( std::ostream& output, 
             const UnstructuredMesh& mesh,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData );
-
+            
 } // namespace vtu11
 
 #include "vtu11_impl.hpp"

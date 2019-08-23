@@ -13,6 +13,8 @@ using StringStringMap = std::map<std::string, std::string>;
 
 using DataSet = std::tuple<std::string, size_t, std::vector<double>>; 
 
+using CellType = unsigned short;
+
 } // namespace vtu11
 
 #endif // VTU11_ALIAS_HPP
