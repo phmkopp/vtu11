@@ -28,7 +28,7 @@ TEST_CASE("writeAscii_test")
   };
    
   std::vector<size_t> offsets { 4, 8, 12, 16, 20, 24 };
-  std::vector<unsigned short> types { 9, 9, 9, 9, 9, 9 };
+  std::vector<VtkCellType> types { 9, 9, 9, 9, 9, 9 };
    
   UnstructuredMesh mesh{ points, connectivity, offsets, types };
    
@@ -52,21 +52,40 @@ TEST_CASE("writeAscii_test")
   };
   
   std::ostringstream output;
-  
-  REQUIRE_NOTHROW( write( output, mesh, pointData, cellData ) );
 
-  //std::cout << output.str( ) << std::endl;
-
-  // Read from reference file  
-  std::ifstream file("testfiles/ascii_2x3.vtu");
-  std::string contents, str;
-  while( std::getline( file, str ) )
+  auto readFile = []( const std::string& filename )
   {
-    contents += str + "\n";
-  }  
-  file.close( );
+    std::ifstream file( filename );
+    
+    std::string contents, str;
+    
+    while( std::getline( file, str ) )
+    {
+      contents += str + "\n";
+    }  
+    
+    file.close( );
+    
+    return contents;
+  };
+
+  SECTION( "ascii" )
+  {
+    REQUIRE_NOTHROW( write<AsciiWriter>( output, mesh, pointData, cellData ) );
+    
+    auto expected = readFile( "testfiles/ascii_2x3.vtu" );
   
-  CHECK( output.str( ) == contents );
+    CHECK( output.str( ) == expected );
+  }
+  
+  SECTION( "base64" )
+  {
+    REQUIRE_NOTHROW( write<Base64BinaryWriter>( output, mesh, pointData, cellData ) );
+    
+    auto expected = readFile( "testfiles/base64_2x3.vtu" );
+  
+    CHECK( output.str( ) == expected );
+  }
 }
 
 } // namespace vtu11

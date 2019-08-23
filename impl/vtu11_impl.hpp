@@ -2,7 +2,7 @@
 #define VTU11_VTU11_IMPL_HPP
 
 #include "xml.hpp"
-#include "filesystem.hpp"
+#include "utilities.hpp"
 
 #include <limits>
 
@@ -17,39 +17,11 @@ namespace vtu11
 namespace detail
 {
 
-class AsciiWriter
-{
-  void writeData(  );
-
-};
-
-
-template<typename DataType>
-std::string dataTypeString( )
-{
-  std::string base;
-  
-  if( std::numeric_limits<DataType>::is_integer and std::numeric_limits<DataType>::is_signed )
-  {
-      base = "Int";
-  }
-  else if( std::numeric_limits<DataType>::is_integer and not std::numeric_limits<DataType>::is_signed )
-  {
-      base = "UInt";
-  }
-  else
-  {
-    base = "Float";
-  }
-  
-  return base + std::to_string( sizeof( DataType ) * 8 );
-}
-
-template<typename DataType>
-inline void writeDataSet( std::ostream& output,
-                          const std::vector<DataType>& data,
-                          size_t numberOfComponents = 1,
-                          const std::string& name = "" )
+template<typename Writer, typename DataType>
+inline void addDataSet( std::ostream& output,
+                        const std::vector<DataType>& data,
+                        size_t numberOfComponents = 1,
+                        const std::string& name = "" )
 {
   StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
   
@@ -62,20 +34,19 @@ inline void writeDataSet( std::ostream& output,
   {
     attributes["Name"] = name;
   }
+  
+  Writer::appendDataAttributes( attributes );
 
   ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
            
-  for( auto value : data )
-  {
-      output << value << " ";
-  }
+  Writer::writeData( output, data );
   
   output << "\n";
 }
 
 } // namespace detail
 
-
+template<typename Writer>
 inline void write( std::ostream& output, 
                    const UnstructuredMesh& mesh,
                    const std::vector<DataSet>& pointData,
@@ -84,10 +55,14 @@ inline void write( std::ostream& output,
 
   output << "<?xml version=\"1.0\"?>\n";
   
+  StringStringMap headerAttributes { { "byte_order",  "LittleEndian"     },
+                                     { "type"      ,  "UnstructuredGrid" },
+                                     { "version"   ,  "0.1"              } };
+                                     
+  Writer::appendHeaderAttributes( headerAttributes );
+  
   { 
-    ScopedXmlTag vtkFileTag( output, "VTKFile", { { "byte_order",  "LittleEndian"     },
-                                                  { "type"      ,  "UnstructuredGrid" },
-                                                  { "version"   ,  "0.1"              } } );
+    ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
     { 
       ScopedXmlTag unstructuredGridFileTag( output, "UnstructuredGrid", { } );
       { 
@@ -101,7 +76,7 @@ inline void write( std::ostream& output,
           
           for( const auto& dataSet : pointData )
           {
-            detail::writeDataSet( output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
+            detail::addDataSet<Writer>( output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
           }
           
         } // PointData
@@ -111,7 +86,7 @@ inline void write( std::ostream& output,
           
           for( const auto& dataSet : cellData )
           {
-            detail::writeDataSet( output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
+            detail::addDataSet<Writer>( output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
           }
           
         } // CellData
@@ -119,16 +94,16 @@ inline void write( std::ostream& output,
         {
           ScopedXmlTag pointsTag( output, "Points", { } );
 
-          detail::writeDataSet( output, mesh.points, 3 );
+          detail::addDataSet<Writer>( output, mesh.points, 3 );
           
         } // Points
         
         {
           ScopedXmlTag pointsTag( output, "Cells", { } );
 
-          detail::writeDataSet( output, mesh.connectivity, 1, "connectivity" );
-          detail::writeDataSet( output, mesh.offsets, 1, "offsets" );
-          detail::writeDataSet( output, mesh.types, 1, "types" );
+          detail::addDataSet<Writer>( output, mesh.connectivity, 1, "connectivity" );
+          detail::addDataSet<Writer>( output, mesh.offsets, 1, "offsets" );
+          detail::addDataSet<Writer>( output, mesh.types, 1, "types" );
           
         } // Cells
         

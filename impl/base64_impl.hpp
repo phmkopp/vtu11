@@ -49,11 +49,13 @@ inline std::string base64Encode( Iterator begin, Iterator end )
     result += tmp;
   };
   
+  // in steps of 3
   for( size_t i = 0; i < rawBytes / 3; ++i )
   {
     encodeTriplet( { next( ), next( ), next( ) }, 0 );
   }
   
+  // cleanup
   if( it != end )
   {
     std::array<char, 3> bytes { '\0', '\0', '\0' };
@@ -71,6 +73,7 @@ inline std::string base64Encode( Iterator begin, Iterator end )
   return result;
 }
 
+// http://www.cplusplus.com/forum/beginner/51572/
 
 } // namespace vtu11
 

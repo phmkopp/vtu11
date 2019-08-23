@@ -13,7 +13,7 @@ using StringStringMap = std::map<std::string, std::string>;
 
 using DataSet = std::tuple<std::string, size_t, std::vector<double>>; 
 
-using CellType = unsigned short;
+using VtkCellType = unsigned short;
 
 } // namespace vtu11
 
