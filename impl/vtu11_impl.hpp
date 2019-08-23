@@ -17,6 +17,13 @@ namespace vtu11
 namespace detail
 {
 
+class AsciiWriter
+{
+  void writeData(  );
+
+};
+
+
 template<typename DataType>
 std::string dataTypeString( )
 {
