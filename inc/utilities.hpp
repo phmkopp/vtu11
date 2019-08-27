@@ -7,6 +7,8 @@ namespace vtu11
 template<typename DataType>
 inline std::string dataTypeString( );
 
+inline std::string endianness( );
+
 } // namespace vtu11
 
 #include "utilities_impl.hpp"

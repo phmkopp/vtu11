@@ -15,6 +15,8 @@ using DataSet = std::tuple<std::string, size_t, std::vector<double>>;
 
 using VtkCellType = unsigned short;
 
+using HeaderType = size_t;
+
 } // namespace vtu11
 
 #endif // VTU11_ALIAS_HPP

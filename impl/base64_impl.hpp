@@ -75,6 +75,12 @@ inline std::string base64Encode( Iterator begin, Iterator end )
 
 // http://www.cplusplus.com/forum/beginner/51572/
 
-} // namespace vtu11
+inline size_t encodedNumberOfBytes( size_t rawNumberOfBytes )
+{
+  return ( rawNumberOfBytes / 3 + 1 ) * 4;
+}
+
+
+}// namespace vtu11
 
 #endif // VTU11_BASE64_IMPL_HPP

@@ -18,7 +18,8 @@ namespace detail
 {
 
 template<typename Writer, typename DataType>
-inline void addDataSet( std::ostream& output,
+inline void addDataSet( Writer& writer,
+                        std::ostream& output,
                         const std::vector<DataType>& data,
                         size_t numberOfComponents = 1,
                         const std::string& name = "" )
@@ -35,13 +36,20 @@ inline void addDataSet( std::ostream& output,
     attributes["Name"] = name;
   }
   
-  Writer::appendDataAttributes( attributes );
+  writer.addDataAttributes( attributes );
 
-  ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
-           
-  Writer::writeData( output, data );
-  
-  output << "\n";
+  if( attributes["format"] != "appended" )
+  {
+    ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
+
+    writer.writeData( output, data );
+  }
+  else
+  {
+    writeEmptyTag( output, "DataArray", attributes );
+
+    writer.writeData( output, data );
+  }
 }
 
 } // namespace detail
@@ -52,14 +60,15 @@ inline void write( std::ostream& output,
                    const std::vector<DataSet>& pointData,
                    const std::vector<DataSet>& cellData  )
 {
+  Writer writer;
 
   output << "<?xml version=\"1.0\"?>\n";
   
-  StringStringMap headerAttributes { { "byte_order",  "LittleEndian"     },
+  StringStringMap headerAttributes { { "byte_order",  endianness( )      },
                                      { "type"      ,  "UnstructuredGrid" },
                                      { "version"   ,  "0.1"              } };
                                      
-  Writer::appendHeaderAttributes( headerAttributes );
+  writer.addHeaderAttributes( headerAttributes );
   
   { 
     ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
@@ -76,7 +85,7 @@ inline void write( std::ostream& output,
           
           for( const auto& dataSet : pointData )
           {
-            detail::addDataSet<Writer>( output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
+            detail::addDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
           }
           
         } // PointData
@@ -86,7 +95,7 @@ inline void write( std::ostream& output,
           
           for( const auto& dataSet : cellData )
           {
-            detail::addDataSet<Writer>( output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
+            detail::addDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
           }
           
         } // CellData
@@ -94,21 +103,33 @@ inline void write( std::ostream& output,
         {
           ScopedXmlTag pointsTag( output, "Points", { } );
 
-          detail::addDataSet<Writer>( output, mesh.points, 3 );
+          detail::addDataSet( writer, output, mesh.points, 3 );
           
         } // Points
         
         {
           ScopedXmlTag pointsTag( output, "Cells", { } );
 
-          detail::addDataSet<Writer>( output, mesh.connectivity, 1, "connectivity" );
-          detail::addDataSet<Writer>( output, mesh.offsets, 1, "offsets" );
-          detail::addDataSet<Writer>( output, mesh.types, 1, "types" );
+          detail::addDataSet( writer, output, mesh.connectivity, 1, "connectivity" );
+          detail::addDataSet( writer, output, mesh.offsets, 1, "offsets" );
+          detail::addDataSet( writer, output, mesh.types, 1, "types" );
           
         } // Cells
         
       } // Piece
     } // UnstructuredGrid
+
+    auto appendedAttributes = writer.appendedAttributes( );
+
+    if( not appendedAttributes.empty( ) )
+    {
+      ScopedXmlTag appendedDataTag( output, "AppendedData", appendedAttributes );
+
+      output << "_";
+
+      writer.writeAppended( output );
+
+    } // AppendedData
   } // VTKFile
 }
 

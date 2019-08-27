@@ -27,4 +27,18 @@ inline std::string dataTypeString( )
 
 } // namespace vtu11
 
+inline std::string vtu11::endianness( )
+{
+   int i = 0x0001;
+
+   if( *reinterpret_cast<char*>( &i ) != 0 )
+   {
+     return "LittleEndian";
+   }
+   else
+   {
+     return "BigEndian";
+   }
+}
+
 #endif // VTU11_UTILITIES_IMPL_HPP

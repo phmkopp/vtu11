@@ -17,7 +17,11 @@ public:
   
 private:
   std::function<void()> closeTag;
-};   
+};
+
+void writeEmptyTag( std::ostream& output,
+                    const std::string& name,
+                    const StringStringMap& attributes );
 
 } // namespace vtu11
 

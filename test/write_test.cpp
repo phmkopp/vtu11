@@ -3,13 +3,14 @@
 
 #include <sstream>
 #include <fstream>
-//#include <iostream>
+#include <iostream> // remove
 
 namespace vtu11
 {
 
 TEST_CASE("writeAscii_test")
 {
+
   std::vector<double> points
   {
       0.0, 0.0, 0.5,    0.0, 0.3, 0.5,    0.0, 0.7, 0.5,    0.0, 1.0, 0.5, // 0,  1,  2,  3
@@ -78,6 +79,9 @@ TEST_CASE("writeAscii_test")
     CHECK( output.str( ) == expected );
   }
   
+  // The files assume that, we need to add a big endian version
+  REQUIRE( endianness( ) == "LittleEndian" );
+
   SECTION( "base64" )
   {
     REQUIRE_NOTHROW( write<Base64BinaryWriter>( output, mesh, pointData, cellData ) );
@@ -86,7 +90,32 @@ TEST_CASE("writeAscii_test")
   
     CHECK( output.str( ) == expected );
   }
+
+  SECTION( "base64appended" )
+  {
+    REQUIRE_NOTHROW( write<Base64BinaryAppendedWriter>( output, mesh, pointData, cellData ) );
+
+    auto expected = readFile( "testfiles/base64appended_2x3.vtu" );
+
+    CHECK( output.str( ) == expected );
+  }
+
+  SECTION( "raw" )
+  {
+    REQUIRE_NOTHROW( write<RawBinaryAppendedWriter>( output, mesh, pointData, cellData ) );
+
+    auto expected = readFile( "testfiles/raw_2x3.vtu" );
+
+    CHECK( output.str( ) == expected );
+  }
 }
+
+// write raw binary:
+//
+// std::ofstream file;
+// file.open( "raw_test.vtu" );
+// write<RawBinaryAppendedWriter>( file, mesh, pointData, cellData );
+// file.close( );
 
 } // namespace vtu11
 
