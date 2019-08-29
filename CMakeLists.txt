@@ -6,6 +6,8 @@ project( vtu11 CXX )
 include_directories( inc )
 include_directories( impl )
 include_directories( external/catch2 )
+include_directories( external/zlib/inc )
+include_directories( ${CMAKE_BINARY_DIR} )
 
 file( GLOB TEST_FILES test/*.cpp)
 
@@ -30,4 +32,27 @@ endif( CMAKE_COMPILER_IS_GNUCXX )
 # Add an executable and link to the library
 add_executable( vtu11_testrunner ${TEST_FILES} )
 
+# -------------------- zlib dependency ---------------------------
+
+OPTION ( VTU11_ENABLE_ZLIB "Adds compressed writers using zlib compression." )
+
+IF( VTU11_ENABLE_ZLIB )
+
+message( "Enabling zlib extension" )
+
+find_package( ZLIB REQUIRED )
+
+if ( ZLIB_FOUND )
+    message( "Found zlib" )
+    include_directories( ${ZLIB_INCLUDE_DIRS} )
+    target_link_libraries( vtu11_testrunner ${ZLIB_LIBRARIES} )
+endif( ZLIB_FOUND )
+
+ENDIF( VTU11_ENABLE_ZLIB )
+
+# ---------------------- Copy / install ----------------------------
+
 file(COPY test/testfiles DESTINATION . )
+
+CONFIGURE_FILE ( vtu11_config.hpp.in vtu11_config.hpp )
+

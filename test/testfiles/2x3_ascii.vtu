@@ -33,8 +33,8 @@
 <DataArray Name="offsets" format="ascii" type="UInt64">
 4 8 12 16 20 24 
 </DataArray>
-<DataArray Name="types" format="ascii" type="UInt16">
-9 9 9 9 9 9 
+<DataArray Name="types" format="ascii" type="UInt8">
+	 	 	 	 	 	 
 </DataArray>
 </Cells>
 </Piece>

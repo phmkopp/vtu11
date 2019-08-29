@@ -2,6 +2,7 @@
 #define VTU11_WRITER_HPP
 
 #include "alias.hpp"
+#include "zlibWriter.hpp"
 
 namespace vtu11
 {

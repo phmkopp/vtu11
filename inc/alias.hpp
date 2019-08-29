@@ -13,9 +13,11 @@ using StringStringMap = std::map<std::string, std::string>;
 
 using DataSet = std::tuple<std::string, size_t, std::vector<double>>; 
 
-using VtkCellType = unsigned short;
+using VtkCellType = std::uint8_t;
 
 using HeaderType = size_t;
+
+using Byte = unsigned char;
 
 } // namespace vtu11
 
