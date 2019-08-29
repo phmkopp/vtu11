@@ -34,7 +34,7 @@
 4 8 12 16 20 24 
 </DataArray>
 <DataArray Name="types" format="ascii" type="UInt8">
-	 	 	 	 	 	 
+9 9 9 9 9 9 
 </DataArray>
 </Cells>
 </Piece>
