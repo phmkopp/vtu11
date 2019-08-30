@@ -4,6 +4,8 @@
 #include "utilities.hpp"
 #include "base64.hpp"
 
+#include <fstream>
+
 namespace vtu11
 {
 

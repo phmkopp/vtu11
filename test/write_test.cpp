@@ -31,7 +31,7 @@ TEST_CASE("writeAscii_test")
   std::vector<size_t> offsets { 4, 8, 12, 16, 20, 24 };
   std::vector<VtkCellType> types { 9, 9, 9, 9, 9, 9 };
    
-  UnstructuredMesh mesh{ points, connectivity, offsets, types };
+  Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
    
   std::vector<double> pointData1 { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
   std::vector<double> pointData2 { 0.1, -0.2, 0.3, -0.4, 0.5, 0.6, -0.7, 0.8, 0.9, 1.0, 1.1, -1.2 };
@@ -51,8 +51,6 @@ TEST_CASE("writeAscii_test")
     { std::string( "cellData2" ), 1, cellData2 },
     { std::string( "cellData3" ), 1, cellData3 }
   };
-  
-  std::ostringstream output;
 
   auto readFile = []( const std::string& filename )
   {
@@ -70,13 +68,16 @@ TEST_CASE("writeAscii_test")
     return contents;
   };
 
+  std::string filename = "2x3_test.vtu";
+
   SECTION( "ascii" )
   {
-    REQUIRE_NOTHROW( write<AsciiWriter>( output, mesh, pointData, cellData ) );
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
 
+    auto written = readFile( filename );
     auto expected = readFile( "testfiles/2x3_ascii.vtu" );
 
-    CHECK( output.str( ) == expected );
+    CHECK( written == expected );
   }
 
   // The files assume that, we need to add a big endian version
@@ -84,50 +85,55 @@ TEST_CASE("writeAscii_test")
 
   SECTION( "base64" )
   {
-    REQUIRE_NOTHROW( write<Base64BinaryWriter>( output, mesh, pointData, cellData ) );
+    Base64BinaryWriter writer;
 
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+
+    auto written = readFile( filename );
     auto expected = readFile( "testfiles/2x3_base64.vtu" );
 
-    CHECK( output.str( ) == expected );
+    CHECK( written == expected );
   }
 
   SECTION( "base64appended" )
   {
-    REQUIRE_NOTHROW( write<Base64BinaryAppendedWriter>( output, mesh, pointData, cellData ) );
+    Base64BinaryAppendedWriter writer;
 
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+
+    auto written = readFile( filename );
     auto expected = readFile( "testfiles/2x3_base64appended.vtu" );
 
-    CHECK( output.str( ) == expected );
+    CHECK( written == expected );
   }
 
   SECTION( "raw" )
   {
-    REQUIRE_NOTHROW( write<RawBinaryAppendedWriter>( output, mesh, pointData, cellData ) );
+    RawBinaryAppendedWriter writer;
 
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+
+    auto written = readFile( filename );
     auto expected = readFile( "testfiles/2x3_raw.vtu" );
 
-    CHECK( output.str( ) == expected );
+    CHECK( written == expected );
   }
 
 #ifdef VTU11_ENABLE_ZLIB
   SECTION( "raw_compressed" )
   {
-    REQUIRE_NOTHROW( write<CompressedRawBinaryAppendedWriter>( output, mesh, pointData, cellData ) );
+    CompressedRawBinaryAppendedWriter writer;
 
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+
+    auto written = readFile( filename );
     auto expected = readFile( "testfiles/2x3_compressed.vtu" );
 
-    CHECK( output.str( ) == expected );
+    CHECK( written == expected );
   }
 #endif
 
 }
-
-// E.g. to write compressed raw binary appended:
-//
-// std::ofstream file;
-// file.open( "raw_test.vtu" );
-// write<CompressedRawBinaryAppendedWriter>( file, mesh, pointData, cellData );
-// file.close( );
 
 } // namespace vtu11
 

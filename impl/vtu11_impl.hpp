@@ -54,13 +54,19 @@ inline void addDataSet( Writer& writer,
 
 } // namespace detail
 
-template<typename Writer>
-inline void write( std::ostream& output, 
-                   const UnstructuredMesh& mesh,
-                   const std::vector<DataSet>& pointData,
-                   const std::vector<DataSet>& cellData  )
+
+template<typename MeshGenerator, typename Writer>
+void write( const std::string& filename,
+            MeshGenerator& mesh,
+            const std::vector<DataSet>& pointData,
+            const std::vector<DataSet>& cellData,
+            Writer writer )
 {
-  Writer writer;
+  std::ofstream output;
+
+  output.open( filename );
+
+  VTU11_CHECK( output.is_open( ), "Failed to open file \"" + filename + "\"" );
 
   output << "<?xml version=\"1.0\"?>\n";
   
@@ -75,10 +81,8 @@ inline void write( std::ostream& output,
     { 
       ScopedXmlTag unstructuredGridFileTag( output, "UnstructuredGrid", { } );
       { 
-        size_t numberOfPoints = mesh.points.size( ) / 3;
-      
-        ScopedXmlTag pieceTag( output, "Piece", { { "NumberOfPoints", std::to_string( numberOfPoints ) },
-                                                  { "NumberOfCells" , std::to_string( mesh.offsets.size( ) )    } } );
+        ScopedXmlTag pieceTag( output, "Piece", { { "NumberOfPoints", std::to_string( mesh.numberOfPoints( ) ) },
+                                                  { "NumberOfCells" , std::to_string( mesh.numberOfCells( ) )    } } );
         
         {
           ScopedXmlTag pointDataTag( output, "PointData", { } );
@@ -103,16 +107,16 @@ inline void write( std::ostream& output,
         {
           ScopedXmlTag pointsTag( output, "Points", { } );
 
-          detail::addDataSet( writer, output, mesh.points, 3 );
+          detail::addDataSet( writer, output, mesh.points( ), 3 );
           
         } // Points
         
         {
           ScopedXmlTag pointsTag( output, "Cells", { } );
 
-          detail::addDataSet( writer, output, mesh.connectivity, 1, "connectivity" );
-          detail::addDataSet( writer, output, mesh.offsets, 1, "offsets" );
-          detail::addDataSet( writer, output, mesh.types, 1, "types" );
+          detail::addDataSet( writer, output, mesh.connectivity( ), 1, "connectivity" );
+          detail::addDataSet( writer, output, mesh.offsets( ), 1, "offsets" );
+          detail::addDataSet( writer, output, mesh.types( ), 1, "types" );
           
         } // Cells
         
@@ -131,6 +135,8 @@ inline void write( std::ostream& output,
 
     } // AppendedData
   } // VTKFile
+
+  output.close( );
 }
 
 } // namespace vtu11
