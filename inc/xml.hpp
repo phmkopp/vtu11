@@ -1,6 +1,7 @@
 #ifndef VTU11_XML_HPP
 #define VTU11_XML_HPP
 
+#include <functional>
 #include "alias.hpp"
 
 namespace vtu11
@@ -12,9 +13,9 @@ public:
   ScopedXmlTag( std::ostream& output,
                 const std::string& name,
                 const StringStringMap& attributes );
-                
+
   ~ScopedXmlTag( );
-  
+
 private:
   std::function<void()> closeTag;
 };

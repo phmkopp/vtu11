@@ -1,6 +1,8 @@
 #ifndef VTU11_UTILITIES_IMPL_HPP
 #define VTU11_UTILITIES_IMPL_HPP
 
+#include <limits>
+
 namespace vtu11
 {
 
@@ -8,7 +10,7 @@ template<typename DataType>
 inline std::string dataTypeString( )
 {
   std::string base;
-  
+
   if( std::numeric_limits<DataType>::is_integer and std::numeric_limits<DataType>::is_signed )
   {
       base = "Int";
@@ -21,7 +23,7 @@ inline std::string dataTypeString( )
   {
     base = "Float";
   }
-  
+
   return base + std::to_string( sizeof( DataType ) * 8 );
 }
 
