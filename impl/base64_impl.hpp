@@ -13,7 +13,7 @@ inline std::string base64Encode( Iterator begin, Iterator end )
 {
   constexpr auto size = sizeof( decltype( *begin ) );
   
-  size_t length = std::distance( begin, end );
+  size_t length = static_cast<size_t>( std::distance( begin, end ) );
   size_t rawBytes = length * size;
   size_t encodedBytes = ( rawBytes / 3 + 1 ) * 4;
   
@@ -62,7 +62,7 @@ inline std::string base64Encode( Iterator begin, Iterator end )
   {
     std::array<char, 3> bytes { '\0', '\0', '\0' };
     
-    size_t remainder = std::distance( it, end ) * size - byteIndex;
+    size_t remainder = static_cast<size_t>( std::distance( it, end ) ) * size - static_cast<size_t>( byteIndex );
   
     for( size_t i = 0; i < remainder; ++i )
     {
