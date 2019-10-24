@@ -9,11 +9,21 @@ include_directories( external/catch2 )
 include_directories( external/zlib/inc )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
-# Write all include directories into ALL_INCLUDES variable
-get_property( ALL_INCLUDES DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
+# -------------------- propagate include list --------------------------
 
-# Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
-set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
+get_directory_property( hasParent PARENT_DIRECTORY )
+
+if(hasParent)
+    
+    # Write all include directories into ALL_INCLUDES variable
+    get_property( ALL_INCLUDES DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
+    
+    # Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
+    set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
+
+endif()
+
+# ---------------------------------------------------------------------
 
 file( GLOB TEST_FILES test/*.cpp)
 
@@ -24,12 +34,20 @@ set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 
 # If compiler is g++: Enable further  warnings and treat all warnings as errors
 if( CMAKE_COMPILER_IS_GNUCXX )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Werror -Wextra -Wshadow -Wsuggest-override -Wsuggest-final-types -fPIC" )
+
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
+        -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
+        -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict -Wpadded           \
+        -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Winline -Wformat-security -Wcast-qual -Wsuggest-override    \
+        -Wsuggest-final-types -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs       \
+        -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo     \
+        -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror" )
+
 endif( CMAKE_COMPILER_IS_GNUCXX )
 
 # -------------------- Set up testrunner --------------------------
 
-OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." )
+OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." ON )
 
 if( VTU11_ENABLE_TESTS )
 

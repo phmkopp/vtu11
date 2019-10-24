@@ -71,8 +71,6 @@ inline std::string base64Encode( Iterator begin, Iterator end )
     
     encodeTriplet( bytes, 3 - remainder );
   }
-  
-  std::cout << "result = " << result << std::endl;
 
   return result;
 }
