@@ -39,13 +39,15 @@ inline std::string base64Encode( Iterator begin, Iterator end )
   
   auto encodeTriplet = [&]( std::array<char, 3> bytes, size_t padding )
   {
-    char tmp[4] = { base64Map[ ( bytes[0] & 0xfc ) >> 2 ],
+
+    char tmp[5] = { base64Map[ ( bytes[0] & 0xfc ) >> 2 ],
                     base64Map[ ( ( bytes[0] & 0x03 ) << 4) + ( ( bytes[1] & 0xf0 ) >> 4 ) ],
                     base64Map[ ( ( bytes[1] & 0x0f ) << 2) + ( ( bytes[2] & 0xc0 ) >> 6 ) ],
-                    base64Map[ bytes[2] & 0x3f ] };
+                    base64Map[ bytes[2] & 0x3f ],
+                    '\0' };
     
     std::fill( tmp + 4 - padding, tmp + 4, '=' );
-    
+
     result += tmp;
   };
   
@@ -70,6 +72,8 @@ inline std::string base64Encode( Iterator begin, Iterator end )
     encodeTriplet( bytes, 3 - remainder );
   }
   
+  std::cout << "result = " << result << std::endl;
+
   return result;
 }
 
