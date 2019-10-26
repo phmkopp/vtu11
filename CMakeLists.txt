@@ -29,9 +29,6 @@ file( GLOB TEST_FILES test/*.cpp)
 
 set( CMAKE_CXX_STANDARD 11 )
 
-# This enables exporting all symbols to the dll on windows
-set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-
 # If compiler is g++: Enable further  warnings and treat all warnings as errors
 if( CMAKE_COMPILER_IS_GNUCXX )
 
