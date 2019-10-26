@@ -11,11 +11,11 @@ inline std::string dataTypeString( )
 {
   std::string base;
 
-  if( std::numeric_limits<DataType>::is_integer and std::numeric_limits<DataType>::is_signed )
+  if( std::numeric_limits<DataType>::is_integer && std::numeric_limits<DataType>::is_signed )
   {
       base = "Int";
   }
-  else if( std::numeric_limits<DataType>::is_integer and not std::numeric_limits<DataType>::is_signed )
+  else if( std::numeric_limits<DataType>::is_integer && !std::numeric_limits<DataType>::is_signed )
   {
       base = "UInt";
   }
