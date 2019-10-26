@@ -11,7 +11,7 @@ constexpr char base64Map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
 template<typename Iterator>
 inline std::string base64Encode( Iterator begin, Iterator end )
 {
-  constexpr auto size = sizeof( decltype( *begin ) );
+  constexpr size_t size = sizeof( decltype( *begin ) );
   
   size_t length = static_cast<size_t>( std::distance( begin, end ) );
   size_t rawBytes = length * size;
@@ -22,7 +22,7 @@ inline std::string base64Encode( Iterator begin, Iterator end )
   result.reserve( encodedBytes );
   
   auto it = begin;
-  char byteIndex = 0;
+  size_t byteIndex = 0;
 
   auto next = [&]( )
   { 
