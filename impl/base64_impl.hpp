@@ -2,6 +2,7 @@
 #define VTU11_BASE64_IMPL_HPP
 
 #include <iostream>
+#include <array>
 
 namespace vtu11
 {
@@ -11,7 +12,7 @@ constexpr char base64Map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
 template<typename Iterator>
 inline std::string base64Encode( Iterator begin, Iterator end )
 {
-  constexpr auto size = sizeof( decltype( *begin ) );
+  constexpr size_t size = sizeof( decltype( *begin ) );
   
   size_t length = static_cast<size_t>( std::distance( begin, end ) );
   size_t rawBytes = length * size;
@@ -22,7 +23,7 @@ inline std::string base64Encode( Iterator begin, Iterator end )
   result.reserve( encodedBytes );
   
   auto it = begin;
-  char byteIndex = 0;
+  size_t byteIndex = 0;
 
   auto next = [&]( )
   { 
@@ -39,7 +40,6 @@ inline std::string base64Encode( Iterator begin, Iterator end )
   
   auto encodeTriplet = [&]( std::array<char, 3> bytes, size_t padding )
   {
-
     char tmp[5] = { base64Map[ ( bytes[0] & 0xfc ) >> 2 ],
                     base64Map[ ( ( bytes[0] & 0x03 ) << 4) + ( ( bytes[1] & 0xf0 ) >> 4 ) ],
                     base64Map[ ( ( bytes[1] & 0x0f ) << 2) + ( ( bytes[2] & 0xc0 ) >> 6 ) ],

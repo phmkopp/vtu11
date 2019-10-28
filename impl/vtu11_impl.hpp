@@ -125,7 +125,7 @@ void write( const std::string& filename,
 
     auto appendedAttributes = writer.appendedAttributes( );
 
-    if( not appendedAttributes.empty( ) )
+    if( !appendedAttributes.empty( ) )
     {
       ScopedXmlTag appendedDataTag( output, "AppendedData", appendedAttributes );
 
