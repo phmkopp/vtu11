@@ -2,7 +2,7 @@
 #define VTU11_XML_HPP
 
 #include <functional>
-#include "alias.hpp"
+#include "inc/alias.hpp"
 
 namespace vtu11
 {
@@ -26,6 +26,6 @@ void writeEmptyTag( std::ostream& output,
 
 } // namespace vtu11
 
-#include "xml_impl.hpp"
+#include "impl/xml_impl.hpp"
 
 #endif // VTU11_XML_HPP

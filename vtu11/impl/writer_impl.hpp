@@ -1,8 +1,8 @@
 #ifndef VTU11_WRITER_IMPL_HPP
 #define VTU11_WRITER_IMPL_HPP
 
-#include "utilities.hpp"
-#include "base64.hpp"
+#include "inc/utilities.hpp"
+#include "inc/base64.hpp"
 
 #include <fstream>
 
@@ -10,7 +10,7 @@ namespace vtu11
 {
 
 template<typename T>
-inline void AsciiWriter::writeData( std::ostream& output, 
+inline void AsciiWriter::writeData( std::ostream& output,
                                     const std::vector<T>& data )
 {
   for( auto value : data )
@@ -36,7 +36,7 @@ inline void AsciiWriter::writeData( std::ostream& output,
 
 inline void AsciiWriter::writeAppended( std::ostream& )
 {
-  
+
 }
 
 inline void AsciiWriter::addHeaderAttributes( StringStringMap& )
@@ -56,7 +56,7 @@ inline StringStringMap AsciiWriter::appendedAttributes( )
 // ----------------------------------------------------------------
 
 template<typename T>
-inline void Base64BinaryWriter::writeData( std::ostream& output, 
+inline void Base64BinaryWriter::writeData( std::ostream& output,
                                            const std::vector<T>& data )
 {
   HeaderType numberOfBytes = data.size( ) * sizeof( T );
@@ -66,7 +66,7 @@ inline void Base64BinaryWriter::writeData( std::ostream& output,
 
   output << "\n";
 }
-    
+
 inline void Base64BinaryWriter::writeAppended( std::ostream& )
 {
 

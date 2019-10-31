@@ -13,6 +13,6 @@ inline std::string endianness( );
 
 } // namespace vtu11
 
-#include "utilities_impl.hpp"
+#include "impl/utilities_impl.hpp"
 
 #endif // VTU11_UTILITIES_HPP

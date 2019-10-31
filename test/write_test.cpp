@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include "external/catch2/catch.hpp"
 #include "vtu11.hpp"
 
 #include <sstream>
@@ -17,7 +17,7 @@ TEST_CASE("writeAscii_test")
       0.5, 0.0, 0.5,    0.5, 0.3, 0.5,    0.5, 0.7, 0.5,    0.5, 1.0, 0.5, // 4,  5,  6,  7
       1.0, 0.0, 0.5,    1.0, 0.3, 0.5,    1.0, 0.7, 0.5,    1.0, 1.0, 0.5  // 8,  9, 10, 11
   };
-   
+
   std::vector<size_t> connectivity
   {
      0,  4,  5,  1, // 0
@@ -27,29 +27,29 @@ TEST_CASE("writeAscii_test")
      5,  9, 10,  6, // 4
      6, 10, 11,  7  // 5
   };
-   
+
   std::vector<size_t> offsets { 4, 8, 12, 16, 20, 24 };
   std::vector<VtkCellType> types { 9, 9, 9, 9, 9, 9 };
-   
+
   Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
-   
+
   std::vector<double> pointData1 { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
   std::vector<double> pointData2 { 0.1, -0.2, 0.3, -0.4, 0.5, 0.6, -0.7, 0.8, 0.9, 1.0, 1.1, -1.2 };
   std::vector<double> cellData1 { 3.2, 4.3, 5.4, 6.5, 7.6, 8.7 };
   std::vector<double> cellData2 { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0  };
   std::vector<double> cellData3 = cellData1;
-  
+
   std::vector<DataSet> pointData
   {
-    { std::string( "pointData1" ), 1, pointData1 },
-    { std::string( "pointData2" ), 1, pointData2 },
+    DataSet { std::string( "pointData1" ), 1, pointData1 },
+    DataSet { std::string( "pointData2" ), 1, pointData2 },
   };
 
   std::vector<DataSet> cellData
   {
-    { std::string( "cellData1" ), 1, cellData1 },
-    { std::string( "cellData2" ), 1, cellData2 },
-    { std::string( "cellData3" ), 1, cellData3 }
+    DataSet { std::string( "cellData1" ), 1, cellData1 },
+    DataSet { std::string( "cellData2" ), 1, cellData2 },
+    DataSet { std::string( "cellData3" ), 1, cellData3 }
   };
 
   auto readFile = []( const std::string& filename )

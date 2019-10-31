@@ -1,7 +1,7 @@
 #ifndef VTU11_ZLIBWRITER_IMPL_HPP
 
 #include "zlib.h"
-#include "utilities.hpp"
+#include "inc/utilities.hpp"
 
 #include <iostream> // remove
 

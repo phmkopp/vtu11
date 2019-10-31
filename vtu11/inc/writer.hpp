@@ -1,8 +1,8 @@
 #ifndef VTU11_WRITER_HPP
 #define VTU11_WRITER_HPP
 
-#include "alias.hpp"
-#include "zlibWriter.hpp"
+#include "inc/alias.hpp"
+#include "external/zlib/inc/zlibWriter.hpp"
 
 namespace vtu11
 {
@@ -70,9 +70,9 @@ struct RawBinaryAppendedWriter
 
   std::vector<std::pair<const char*, HeaderType>> appendedData;
 };
-            
+
 } // namespace vtu11
 
-#include "writer_impl.hpp"
+#include "impl/writer_impl.hpp"
 
 #endif // VTU11_WRITER_HPP

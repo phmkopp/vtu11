@@ -1,8 +1,8 @@
 #ifndef VTU11_VTU11_HPP
 #define VTU11_VTU11_HPP
 
-#include "alias.hpp"
-#include "writer.hpp"
+#include "inc/alias.hpp"
+#include "inc/writer.hpp"
 
 namespace vtu11
 {
@@ -29,9 +29,9 @@ void write( const std::string& filename,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData,
             Writer writer = Writer( ) );
-            
+
 } // namespace vtu11
 
-#include "vtu11_impl.hpp"
+#include "impl/vtu11_impl.hpp"
 
 #endif // VTU11_VTU11_HPP
