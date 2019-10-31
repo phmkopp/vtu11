@@ -14,8 +14,6 @@ OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." ON )
 
 if( VTU11_ENABLE_TESTS )
 
-    include_directories( external/catch2 )
-
     file( GLOB TEST_FILES test/*.cpp)
 
     # Add an executable and link to the library
