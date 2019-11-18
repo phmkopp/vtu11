@@ -41,21 +41,22 @@ endif( VTU11_STRICT_COMPILER )
 
 # -------------------- zlib dependency ---------------------------
 
-set( ZLIB_LIBRARIES )
-
 find_package( ZLIB )
 
 if( ZLIB_FOUND )
 
-    set( VTU11_ENABLE_ZLIB ON )
-
     message( STATUS "Enabling vtu11 with zlib compression" )
+
+    set( VTU11_ENABLE_ZLIB ON )
+    set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} )
 
     include_directories( ${ZLIB_INCLUDE_DIRS} )
     
 else( ZLIB_FOUND )
 
     message( STATUS "Enabling vtu11 without zlib compression" )
+    
+    set( VTU11_ZLIB_LIBRARIES )
     
 endif( ZLIB_FOUND )
 
@@ -88,7 +89,7 @@ if(hasParent)
     set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
     
     # If zlib libraries are found, 
-    set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} PARENT_SCOPE )
+    set( VTU11_ZLIB_LIBRARIES ${VTU11_ZLIB_LIBRARIES} PARENT_SCOPE )
 
 endif()
 
