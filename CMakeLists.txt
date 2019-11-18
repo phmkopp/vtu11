@@ -18,35 +18,6 @@ set( CMAKE_CXX_STANDARD 11 )
 include_directories( vtu11 )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR}/config )
 
-# -------------------- Set up testrunner --------------------------
-
-OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." ON )
-
-if( VTU11_ENABLE_TESTS )
-
-    file( GLOB TEST_FILES test/*.cpp)
-
-    # Add an executable and link to the library
-    add_executable( vtu11_testrunner ${TEST_FILES} )
-
-    file(COPY test/testfiles DESTINATION . )
-
-endif( VTU11_ENABLE_TESTS )
-
-# -------------------- propagate include list --------------------------
-
-get_directory_property( hasParent PARENT_DIRECTORY )
-
-if(hasParent)
-
-    # Write all include directories into ALL_INCLUDES variable
-    get_property( ALL_INCLUDES DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
-
-    # Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
-    set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
-
-endif()
-
 # ---------------------------------------------------------------------
 
 OPTION ( VTU11_STRICT_COMPILER "Enable more warnings as errors." OFF )
@@ -70,6 +41,8 @@ endif( VTU11_STRICT_COMPILER )
 
 # -------------------- zlib dependency ---------------------------
 
+set( ZLIB_LIBRARIES )
+
 find_package( ZLIB )
 
 if( ZLIB_FOUND )
@@ -79,16 +52,45 @@ if( ZLIB_FOUND )
     message( STATUS "Enabling vtu11 with zlib compression" )
 
     include_directories( ${ZLIB_INCLUDE_DIRS} )
-
-    if( VTU11_ENABLE_TESTS )
-        target_link_libraries( vtu11_testrunner ${ZLIB_LIBRARIES} )
-    endif( VTU11_ENABLE_TESTS )
     
 else( ZLIB_FOUND )
 
     message( STATUS "Enabling vtu11 without zlib compression" )
     
 endif( ZLIB_FOUND )
+
+# -------------------- Set up testrunner --------------------------
+
+OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." ON )
+
+if( VTU11_ENABLE_TESTS )
+
+    file( GLOB TEST_FILES test/*.cpp)
+
+    add_executable( vtu11_testrunner ${TEST_FILES} )
+    
+    target_link_libraries( vtu11_testrunner ${ZLIB_LIBRARIES} )
+
+    file(COPY test/testfiles DESTINATION . )
+
+endif( VTU11_ENABLE_TESTS )
+
+# ---------------- propagate to parent scope ----------------------
+
+get_directory_property( hasParent PARENT_DIRECTORY )
+
+if(hasParent)
+
+    # Write all include directories into ALL_INCLUDES variable
+    get_property( ALL_INCLUDES DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
+
+    # Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
+    set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
+    
+    # If zlib libraries are found, 
+    set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} PARENT_SCOPE )
+
+endif()
 
 # ---------------------- Copy / install ----------------------------
 
