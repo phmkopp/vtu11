@@ -72,7 +72,9 @@ endif( VTU11_STRICT_COMPILER )
 
 find_package( ZLIB )
 
-if ( ZLIB_FOUND )
+if( ZLIB_FOUND )
+
+    set( VTU11_ENABLE_ZLIB ON )
 
     message( STATUS "Enabling vtu11 with zlib compression" )
 
@@ -82,7 +84,7 @@ if ( ZLIB_FOUND )
         target_link_libraries( vtu11_testrunner ${ZLIB_LIBRARIES} )
     endif( VTU11_ENABLE_TESTS )
     
-else ( ZLIB_FOUND )
+else( ZLIB_FOUND )
 
     message( STATUS "Enabling vtu11 without zlib compression" )
     
