@@ -70,7 +70,7 @@ if( VTU11_ENABLE_TESTS )
 
     add_executable( vtu11_testrunner ${TEST_FILES} )
     
-    target_link_libraries( vtu11_testrunner ${ZLIB_LIBRARIES} )
+    target_link_libraries( vtu11_testrunner ${VTU11_ZLIB_LIBRARIES} )
 
     file(COPY test/testfiles DESTINATION . )
 
