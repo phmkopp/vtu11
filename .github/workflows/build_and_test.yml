@@ -26,6 +26,4 @@ jobs:
         cmake --build "build" --target all
 
     - name: Run tests
-      run: |
-        cd tests
-        python run_all_tests.py
+      run: ./vtu11_testrunner
