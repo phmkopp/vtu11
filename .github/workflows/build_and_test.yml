@@ -1,0 +1,40 @@
+name: Building and Testing
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron:  '0 1 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        python-version: [3.7]
+        cxx-standard: [11, 17]
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Building
+      run: |
+        cmake -H"." -B"build" -DBUILD_SOCKETS_COMM=ON -DBUILD_INTERPROCESS_COMM=ON
+        cmake --build "build" --target install
+      env:
+        COMM_TESTS_CXX_STANDARD: ${{ matrix.cxx-standard }}
+
+    - name: Run tests
+      run: |
+        cd tests
+        python run_all_tests.py
