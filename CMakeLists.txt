@@ -51,13 +51,13 @@ if( ZLIB_FOUND )
     set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} )
 
     include_directories( ${ZLIB_INCLUDE_DIRS} )
-    
+
 else( ZLIB_FOUND )
 
     message( STATUS "Enabling vtu11 without zlib compression" )
-    
+
     set( VTU11_ZLIB_LIBRARIES )
-    
+
 endif( ZLIB_FOUND )
 
 # -------------------- Set up testrunner --------------------------
@@ -66,10 +66,12 @@ OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." ON )
 
 if( VTU11_ENABLE_TESTS )
 
+    message( STATUS "Enabling vtu11 tests" )
+
     file( GLOB TEST_FILES test/*.cpp)
 
     add_executable( vtu11_testrunner ${TEST_FILES} )
-    
+
     target_link_libraries( vtu11_testrunner ${VTU11_ZLIB_LIBRARIES} )
 
     file(COPY test/testfiles DESTINATION . )
@@ -87,8 +89,8 @@ if(hasParent)
 
     # Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
     set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
-    
-    # If zlib libraries are found, 
+
+    # If zlib libraries are found,
     set( VTU11_ZLIB_LIBRARIES ${VTU11_ZLIB_LIBRARIES} PARENT_SCOPE )
 
 endif()
