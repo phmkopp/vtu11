@@ -21,8 +21,8 @@ jobs:
 
     - name: Building
       run: |
-        cmake -H"." -B"build"
-        cmake --build "build" --target all
+        cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
+        cmake --build "build"
 
     - name: Run tests
       run: |
