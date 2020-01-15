@@ -21,10 +21,16 @@ jobs:
 
     - name: Building
       run: |
-        cmake -H"." -B"build"
-        cmake --build "build" --target all
+        cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
+        cmake --build "build"
 
     - name: Run tests
       run: |
         cd build
-        ./vtu11_testrunner
+        if [ -f "vtu11_testrunner" ]; then
+            ./vtu11_testrunner
+        fi
+        if [ -f "Debug/vtu11_testrunner.exe" ]; then
+            Debug/vtu11_testrunner.exe
+        fi
+      shell: bash
