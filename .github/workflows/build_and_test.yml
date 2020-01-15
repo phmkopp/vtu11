@@ -33,3 +33,4 @@ jobs:
         if [ -f "Debug/vtu11_testrunner.exe" ]; then
             Debug/vtu11_testrunner.exe
         fi
+        shell: bash
