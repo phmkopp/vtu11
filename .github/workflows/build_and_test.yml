@@ -27,13 +27,9 @@ jobs:
     - name: Run tests
       run: |
         cd build
-
-        % Unix like
         if [ -f "vtu11_testrunner" ]; then
             ./vtu11_testrunner
         fi
-
-        % Visual Studio on Windows
         if [ -f "Debug/vtu11_testrunner.exe" ]; then
             Debug/vtu11_testrunner.exe
         fi
