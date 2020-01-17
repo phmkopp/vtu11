@@ -65,6 +65,12 @@ TEST_CASE("writeAscii_test")
   {
     std::ifstream file( filename );
 
+    if (!file.is_open()) {
+        std::stringstream err_msg;
+        err_msg << filename << " could not be opened!";
+        throw std::runtime_error(err_msg.str());
+    }
+
     std::string contents, str;
 
     while( std::getline( file, str ) )
