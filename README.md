@@ -10,7 +10,7 @@ ___  ___/  |_ __ _/_   /_   |
 vtu11
 Small lib to read/write vtu files
 
-
+This is stupid
 
 # Decoding base64 data with python
 
