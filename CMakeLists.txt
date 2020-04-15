@@ -69,8 +69,9 @@ if( VTU11_ENABLE_TESTS )
     message( STATUS "Enabling vtu11 tests" )
 
     file( GLOB TEST_FILES test/*.cpp)
+	file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
 
-    add_executable( vtu11_testrunner ${TEST_FILES} )
+	add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} )
 
     target_link_libraries( vtu11_testrunner ${VTU11_ZLIB_LIBRARIES} )
 

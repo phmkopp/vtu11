@@ -16,7 +16,6 @@
 
 namespace vtu11
 {
-
 TEST_CASE("writeAscii_test")
 {
 
@@ -27,7 +26,7 @@ TEST_CASE("writeAscii_test")
       1.0, 0.0, 0.5,    1.0, 0.3, 0.5,    1.0, 0.7, 0.5,    1.0, 1.0, 0.5  // 8,  9, 10, 11
   };
 
-  std::vector<size_t> connectivity
+  std::vector<_int64> connectivity
   {
      0,  4,  5,  1, // 0
      1,  5,  6,  2, // 1
@@ -37,7 +36,7 @@ TEST_CASE("writeAscii_test")
      6, 10, 11,  7  // 5
   };
 
-  std::vector<size_t> offsets { 4, 8, 12, 16, 20, 24 };
+  std::vector<_int64> offsets { 4, 8, 12, 16, 20, 24 };
   std::vector<VtkCellType> types { 9, 9, 9, 9, 9, 9 };
 
   Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
@@ -83,21 +82,21 @@ TEST_CASE("writeAscii_test")
     return contents;
   };
 
-  std::string filename = "2x3_test.vtu";
+  std::string filename = "ascii.vtu";
 
   SECTION( "ascii" )
   {
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/2x3_ascii.vtu" );
+    auto expected = readFile( "testfiles/ascii.vtu" );
 
     CHECK( written == expected );
   }
 
   // The files assume that, we need to add a big endian version
   REQUIRE( endianness( ) == "LittleEndian" );
-
+  filename = "base64.vtu";
   SECTION( "base64" )
   {
     Base64BinaryWriter writer;
@@ -105,11 +104,11 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/2x3_base64.vtu" );
+    auto expected = readFile( "testfiles/base64.vtu" );
 
     CHECK( written == expected );
   }
-
+  filename = "base64appended.vtu";
   SECTION( "base64appended" )
   {
     Base64BinaryAppendedWriter writer;
@@ -117,11 +116,11 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/2x3_base64appended.vtu" );
+    auto expected = readFile( "testfiles/base64appended.vtu" );
 
     CHECK( written == expected );
   }
-
+  filename = "raw.vtu";
   SECTION( "raw" )
   {
     RawBinaryAppendedWriter writer;
@@ -133,7 +132,7 @@ TEST_CASE("writeAscii_test")
 
     CHECK( written == expected );
   }
-
+  filename = "raw_compressed.vtu";
 #ifdef VTU11_ENABLE_ZLIB
   SECTION( "raw_compressed" )
   {
