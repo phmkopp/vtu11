@@ -40,5 +40,6 @@ namespace vtu11
 
 		std::vector<DataSet> pointData{ DataSet{std::string("Flash Strength Points"), 1, flashStrengthPoints } };
 		std::vector<DataSet> cellData{ DataSet{std::string("cell Colour"), 1, cellColour} };
+		write("ascii3D.vtu", mesh, pointData, cellData);
 	}
 }
