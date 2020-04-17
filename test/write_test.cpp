@@ -26,7 +26,7 @@ TEST_CASE("writeAscii_test")
       1.0, 0.0, 0.5,    1.0, 0.3, 0.5,    1.0, 0.7, 0.5,    1.0, 1.0, 0.5  // 8,  9, 10, 11
   };
 
-  std::vector<_int64> connectivity
+  std::vector<VtkIndexType> connectivity
   {
      0,  4,  5,  1, // 0
      1,  5,  6,  2, // 1
@@ -36,7 +36,7 @@ TEST_CASE("writeAscii_test")
      6, 10, 11,  7  // 5
   };
 
-  std::vector<_int64> offsets { 4, 8, 12, 16, 20, 24 };
+  std::vector<VtkIndexType> offsets { 4, 8, 12, 16, 20, 24 };
   std::vector<VtkCellType> types { 9, 9, 9, 9, 9, 9 };
 
   Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
@@ -128,7 +128,7 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/2x3_raw.vtu" );
+    auto expected = readFile( "testfiles/raw.vtu" );
 
     CHECK( written == expected );
   }

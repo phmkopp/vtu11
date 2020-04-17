@@ -28,6 +28,8 @@ using HeaderType = size_t;
 
 using Byte = unsigned char;
 
+using VtkIndexType = std::int64_t;
+
 } // namespace vtu11
 
 #endif // VTU11_ALIAS_HPP
