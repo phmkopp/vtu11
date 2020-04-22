@@ -24,7 +24,7 @@ namespace vtu11
 			2,-2,-2,    2,-2, 2,   -2,-2, 2,  //6, 7, 8
 		   -2,-2,-2							  //9
 		};
-		std::vector<_int64> connectivity{
+		std::vector<VtkIndexType> connectivity{
 			5, 0, 1, 2,
 			2, 0, 1, 3,
 			3, 0, 1, 4,
@@ -32,7 +32,7 @@ namespace vtu11
 			8, 7, 6, 9, 0  //Pyramid
 		};
 		std::vector<VtkCellType> types{ 10, 10, 10, 10, 14 };
-		std::vector<_int64> offsets{ 4, 8, 12, 16, 21 };
+		std::vector<VtkIndexType> offsets{ 4, 8, 12, 16, 21 };
 		Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
 
 		std::vector<double> flashStrengthPoints{ 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 };
