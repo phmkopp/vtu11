@@ -149,5 +149,15 @@ TEST_CASE("writeAscii_test")
 
 }
 
+TEST_CASE( "encodedNumberOfBytes_test" )
+{
+    std::array<size_t, 11> expectedSizes { 0, 4, 4, 4, 8, 8, 8, 12, 12, 12, 16 };
+
+    for( size_t numberOfBytes = 0; numberOfBytes < expectedSizes.size( ); ++numberOfBytes )
+    {
+        CHECK( encodedNumberOfBytes( numberOfBytes ) == expectedSizes[numberOfBytes] );
+    }
+}
+
 } // namespace vtu11
 
