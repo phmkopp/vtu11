@@ -84,7 +84,88 @@ namespace vtu11
 			DataSet {std::string("Cell_Height_2"), 1, cellHeight2}
 		};
 		
-		write("icosahedron_test_3D.vtu", mesh, pointData, cellData);
+		auto readFile = []( const std::string& filename )
+		{
+			std::ifstream file( filename );
+
+			if ( !file.is_open() )
+			{
+				std::stringstream err_msg;
+				err_msg << filename << " could not be opened!";
+				throw std::runtime_error( err_msg.str() );
+			}
+
+			std::string contents, str;
+
+			while ( std::getline(file, str) )
+			{
+				contents += str + "\n";
+			}
+
+			file.close();
+
+			return contents;
+		};				
+		std::string filename = "ico3D_test.vtu";
+		// The files assume that, we need to add a big endian version
+		REQUIRE(endianness() == "LittleEndian");
+		//filename = "ico3D_ascii_test.vtu";
+		SECTION( "ascii" )
+		{
+			REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData));
+			auto written = readFile(filename);
+			auto expected = readFile("testfiles/icosahedron/ico3D_ascii_test.vtu");
+
+			CHECK(written == expected);
+		}
+		//filename = "ico3D_base64_test.vtu";
+		SECTION( "base64" )
+		{
+			Base64BinaryWriter writer;
+			
+			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+			auto written = readFile( filename );
+			auto expected = readFile( "testfiles/icosahedron/ico3D_base64_test.vtu" );
+
+			CHECK( written == expected );
+		}
+		//filename = "ico3D_base64appended_test.vtu";
+		SECTION( "base64appended" )
+		{
+			Base64BinaryAppendedWriter writer;
+
+			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+			auto written = readFile( filename );
+			auto expected = readFile( "testfiles/icosahedron/ico3D_base64appended_test.vtu" );
+
+			CHECK( written == expected );
+		}
+		//filename = "ico3D_raw_test.vtu";
+		SECTION( "raw" )
+		{
+			RawBinaryAppendedWriter writer;
+
+			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+			auto written = readFile( filename );
+			auto expected = readFile( "testfiles/icosahedron/ico3D_raw_test.vtu" );
+
+			CHECK( written == expected );
+		}
+		// filename = "ico3D_raw_compressed_test.vtu";
+#ifdef VTU11_ENABLE_ZLIB
+		SECTION( "raw_compressed" )
+		{
+			CompressedRawBinaryAppendedWriter writer;
+
+			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+
+			auto written = readFile( filename );
+			auto expected = readFile( "ico3D_raw_compressed_test.vtu" );
+
+			CHECK( written == expected );
+		}
+#endif
+		
 	}
 
-}
+} // namespace vtu11
