@@ -63,7 +63,7 @@ namespace vtu11
 
 			return contents;
 		};
-		std::string filename = "2x3_test.vtu";
+		std::string filename = "3D_test.vtu";
 		//std::string filename = "ascii.vtu";
 
 		SECTION("ascii_3D")
@@ -91,7 +91,7 @@ namespace vtu11
 			CHECK(written == expected);
 		}
 		//The file base64appended.vtu still cannot be opened within ParaView!!!
-		filename = "base64appended.vtu";
+		//filename = "base64appended.vtu";
 		SECTION("base64appended_3D")
 		{
 			Base64BinaryAppendedWriter writer;
@@ -103,7 +103,7 @@ namespace vtu11
 
 			CHECK(written == expected);
 		}
-		filename = "raw.vtu";
+		//filename = "raw.vtu";
 		SECTION("raw_3D")
 		{
 			RawBinaryAppendedWriter writer;
