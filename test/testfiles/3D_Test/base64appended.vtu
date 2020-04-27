@@ -9,12 +9,12 @@
 <DataArray Name="cell Colour" format="appended" offset="120" type="Float64"/>
 </CellData>
 <Points>
-<DataArray NumberOfComponents="3" format="appended" offset="188" type="Float64"/>
+<DataArray NumberOfComponents="3" format="appended" offset="184" type="Float64"/>
 </Points>
 <Cells>
-<DataArray Name="connectivity" format="appended" offset="520" type="Int64"/>
-<DataArray Name="offsets" format="appended" offset="756" type="Int64"/>
-<DataArray Name="types" format="appended" offset="824" type="Int8"/>
+<DataArray Name="connectivity" format="appended" offset="516" type="Int64"/>
+<DataArray Name="offsets" format="appended" offset="752" type="Int64"/>
+<DataArray Name="types" format="appended" offset="816" type="Int8"/>
 </Cells>
 </Piece>
 </UnstructuredGrid>

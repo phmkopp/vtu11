@@ -97,7 +97,7 @@ namespace vtu11
 			CHECK( written == expected );
 		}
 		//The file base64appended.vtu still cannot be opened within ParaView!!!
-		//filename = "hexas_base64appended_test.vtu";
+		filename = "hexas_base64appended_test.vtu";
 		SECTION( "base64appended" )
 		{
 			Base64BinaryAppendedWriter writer;
@@ -108,7 +108,7 @@ namespace vtu11
 
 			CHECK( written == expected );
 		}
-		//filename = "hexas_raw_test.vtu";
+		filename = "hexas_raw_test.vtu";
 		SECTION( "raw" )
 		{
 			RawBinaryAppendedWriter writer;

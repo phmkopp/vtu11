@@ -8,15 +8,15 @@
 </PointData>
 <CellData>
 <DataArray Name="Cell_1" format="appended" offset="368" type="Float64"/>
-<DataArray Name="Cell_2" format="appended" offset="404" type="Float64"/>
+<DataArray Name="Cell_2" format="appended" offset="400" type="Float64"/>
 </CellData>
 <Points>
-<DataArray NumberOfComponents="3" format="appended" offset="440" type="Float64"/>
+<DataArray NumberOfComponents="3" format="appended" offset="432" type="Float64"/>
 </Points>
 <Cells>
-<DataArray Name="connectivity" format="appended" offset="964" type="Int64"/>
-<DataArray Name="offsets" format="appended" offset="1148" type="Int64"/>
-<DataArray Name="types" format="appended" offset="1184" type="Int8"/>
+<DataArray Name="connectivity" format="appended" offset="956" type="Int64"/>
+<DataArray Name="offsets" format="appended" offset="1140" type="Int64"/>
+<DataArray Name="types" format="appended" offset="1172" type="Int8"/>
 </Cells>
 </Piece>
 </UnstructuredGrid>
