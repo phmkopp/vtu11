@@ -160,7 +160,7 @@ namespace vtu11
 			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
 			auto written = readFile( filename );
-			auto expected = readFile( "ico3D_raw_compressed_test.vtu" );
+			auto expected = readFile( "testfiles/icosahedron/raw_compressed.vtu" );
 
 			CHECK( written == expected );
 		}

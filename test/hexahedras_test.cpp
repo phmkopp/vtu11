@@ -128,7 +128,7 @@ namespace vtu11
 			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
 			auto written = readFile( filename );
-			auto expected = readFile( "hexas_raw_compressed_test.vtu" );
+			auto expected = readFile( "testfiles/hexas/raw_compressed.vtu" );
 
 			CHECK( written == expected );
 		}

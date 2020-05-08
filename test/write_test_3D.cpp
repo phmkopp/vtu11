@@ -124,7 +124,7 @@ namespace vtu11
 			REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
 
 			auto written = readFile(filename);
-			auto expected = readFile("testfiles/2x3_compressed.vtu");
+			auto expected = readFile("testfiles/3D_Test/raw_compressed.vtu");
 
 			CHECK(written == expected);
 		}
