@@ -81,7 +81,7 @@ TEST_CASE("writeAscii_test")
 
     return contents;
   };
-  std::string filename = "2x3_test.vtu";
+  std::string filename = "testfiles/square_2D/test.vtu";
  // std::string filename = "ascii.vtu";
 
   SECTION( "ascii" )
@@ -89,7 +89,7 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/ascii.vtu" );
+    auto expected = readFile( "testfiles/square_2D/ascii.vtu" );
 
     CHECK( written == expected );
   }
@@ -104,7 +104,7 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/base64.vtu" );
+    auto expected = readFile( "testfiles/square_2D/base64.vtu" );
 
     CHECK( written == expected );
   }
@@ -116,7 +116,7 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/base64appended.vtu" );
+    auto expected = readFile( "testfiles/square_2D/base64appended.vtu" );
 
     CHECK( written == expected );
   }
@@ -128,7 +128,7 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/raw.vtu" );
+    auto expected = readFile( "testfiles/square_2D/raw.vtu" );
 
     CHECK( written == expected );
   }
@@ -141,7 +141,7 @@ TEST_CASE("writeAscii_test")
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
     auto written = readFile( filename );
-    auto expected = readFile( "testfiles/2x3_compressed.vtu" );
+    auto expected = readFile( "testfiles/square_2D/raw_compressed.vtu" );
 
     CHECK( written == expected );
   }
