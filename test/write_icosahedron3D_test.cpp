@@ -106,52 +106,52 @@ namespace vtu11
 
 			return contents;
 		};				
-		std::string filename = "ico3D_test.vtu";
+		std::string filename = "testfiles/icosahedron_3D/test.vtu";
 		// The files assume that, we need to add a big endian version
 		REQUIRE(endianness() == "LittleEndian");
-		//filename = "ico3D_ascii_test.vtu";
-		SECTION( "ascii" )
+		//filename = "ascii.vtu";
+		SECTION( "ascii_3D" )
 		{
 			REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData));
 			auto written = readFile(filename);
-			auto expected = readFile("testfiles/icosahedron/ico3D_ascii_test.vtu");
+			auto expected = readFile("testfiles/icosahedron_3D/ascii.vtu");
 
 			CHECK(written == expected);
 		}
-		//filename = "ico3D_base64_test.vtu";
-		SECTION( "base64" )
+		//filename = "base64.vtu";
+		SECTION( "base64_3D" )
 		{
 			Base64BinaryWriter writer;
 			
 			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 			auto written = readFile( filename );
-			auto expected = readFile( "testfiles/icosahedron/ico3D_base64_test.vtu" );
+			auto expected = readFile( "testfiles/icosahedron_3D/base64.vtu" );
 
 			CHECK( written == expected );
 		}
-		//filename = "ico3D_base64appended_test.vtu";
-		SECTION( "base64appended" )
+		//filename = "base64appended.vtu";
+		SECTION( "base64appended_3D" )
 		{
 			Base64BinaryAppendedWriter writer;
 
 			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 			auto written = readFile( filename );
-			auto expected = readFile( "testfiles/icosahedron/ico3D_base64appended_test.vtu" );
+			auto expected = readFile( "testfiles/icosahedron_3D/base64appended.vtu" );
 
 			CHECK( written == expected );
 		}
-		//filename = "ico3D_raw_test.vtu";
-		SECTION( "raw" )
+		//filename = "raw.vtu";
+		SECTION( "raw_3D" )
 		{
 			RawBinaryAppendedWriter writer;
 
 			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 			auto written = readFile( filename );
-			auto expected = readFile( "testfiles/icosahedron/ico3D_raw_test.vtu" );
+			auto expected = readFile( "testfiles/icosahedron_3D/raw.vtu" );
 
 			CHECK( written == expected );
 		}
-		// filename = "ico3D_raw_compressed_test.vtu";
+		// filename = "raw_compressed.vtu";
 #ifdef VTU11_ENABLE_ZLIB
 		SECTION( "raw_compressed" )
 		{
@@ -160,7 +160,7 @@ namespace vtu11
 			REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
 			auto written = readFile( filename );
-			auto expected = readFile( "testfiles/icosahedron/raw_compressed.vtu" );
+			auto expected = readFile( "testfiles/icosahedron_3D/raw_compressed.vtu" );
 
 			CHECK( written == expected );
 		}
