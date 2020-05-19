@@ -27,13 +27,13 @@
 </DataArray>
 </Points>
 <Cells>
-<DataArray Name="connectivity" format="ascii" type="UInt64">
+<DataArray Name="connectivity" format="ascii" type="Int64">
 0 4 5 1 1 5 6 2 2 6 7 3 4 8 9 5 5 9 10 6 6 10 11 7 
 </DataArray>
-<DataArray Name="offsets" format="ascii" type="UInt64">
+<DataArray Name="offsets" format="ascii" type="Int64">
 4 8 12 16 20 24 
 </DataArray>
-<DataArray Name="types" format="ascii" type="UInt8">
+<DataArray Name="types" format="ascii" type="Int8">
 9 9 9 9 9 9 
 </DataArray>
 </Cells>
