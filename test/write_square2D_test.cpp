@@ -82,7 +82,6 @@ TEST_CASE("writeAscii_test")
     return contents;
   };
   std::string filename = "testfiles/square_2D/test.vtu";
- // std::string filename = "ascii.vtu";
 
   SECTION( "ascii" )
   {
@@ -96,7 +95,6 @@ TEST_CASE("writeAscii_test")
 
   // The files assume that, we need to add a big endian version
   REQUIRE( endianness( ) == "LittleEndian" );
-  //filename = "base64.vtu";
   SECTION( "base64" )
   {
     Base64BinaryWriter writer;
@@ -108,7 +106,6 @@ TEST_CASE("writeAscii_test")
 
     CHECK( written == expected );
   }
- // filename = "base64appended.vtu";
   SECTION( "base64appended" )
   {
     Base64BinaryAppendedWriter writer;
@@ -120,7 +117,6 @@ TEST_CASE("writeAscii_test")
 
     CHECK( written == expected );
   }
-  //filename = "raw.vtu";
   SECTION( "raw" )
   {
     RawBinaryAppendedWriter writer;
@@ -132,7 +128,6 @@ TEST_CASE("writeAscii_test")
 
     CHECK( written == expected );
   }
- // filename = "raw_compressed.vtu";
 #ifdef VTU11_ENABLE_ZLIB
   SECTION( "raw_compressed" )
   {

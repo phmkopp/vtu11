@@ -107,7 +107,6 @@ TEST_CASE("write_test_icosahedron")
   std::string filename = "testfiles/icosahedron_3D/test.vtu";
   // The files assume that, we need to add a big endian version
   REQUIRE(endianness() == "LittleEndian");
-  //filename = "ascii.vtu";
   SECTION( "ascii_3D" )
   {
     REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData));
@@ -116,7 +115,6 @@ TEST_CASE("write_test_icosahedron")
 
     CHECK(written == expected);
   }
-//filename = "base64.vtu";
   SECTION( "base64_3D" )
   {
     Base64BinaryWriter writer;
@@ -127,7 +125,6 @@ TEST_CASE("write_test_icosahedron")
 
     CHECK( written == expected );
   }
-//filename = "base64appended.vtu";
   SECTION( "base64appended_3D" )
   {
     Base64BinaryAppendedWriter writer;
@@ -138,7 +135,6 @@ TEST_CASE("write_test_icosahedron")
 
     CHECK( written == expected );
   }
-//filename = "raw.vtu";
   SECTION( "raw_3D" )
   {
     RawBinaryAppendedWriter writer;
@@ -149,7 +145,6 @@ TEST_CASE("write_test_icosahedron")
 
     CHECK( written == expected );
   }
-// filename = "raw_compressed.vtu";
 #ifdef VTU11_ENABLE_ZLIB
   SECTION( "raw_compressed" )
   {

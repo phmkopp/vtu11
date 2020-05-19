@@ -77,7 +77,6 @@ TEST_CASE("hexahedras_test")
     return contents;
   };
   std::string filename = "testfiles/hexas_3D/test.vtu";
-  //filename = "ascii.vtu";
  
   SECTION( "ascii_3D" )
   {
@@ -91,7 +90,6 @@ TEST_CASE("hexahedras_test")
 
   // The files assume that, we need to add a big endian version
   REQUIRE( endianness() == "LittleEndian" );
-  // filename = "base64.vtu";
   SECTION( "base64_3D" )
   {
     Base64BinaryWriter writer;
@@ -102,7 +100,6 @@ TEST_CASE("hexahedras_test")
 
     CHECK( written == expected );
     }
-  // filename = "base64appended.vtu";
   SECTION( "base64appended_3D" )
   {
     Base64BinaryAppendedWriter writer;
@@ -113,7 +110,6 @@ TEST_CASE("hexahedras_test")
 
     CHECK( written == expected );
     }
-  // filename = "hexas_raw_test.vtu";
   SECTION( "raw_3D" )
   {
     RawBinaryAppendedWriter writer;
@@ -124,7 +120,6 @@ TEST_CASE("hexahedras_test")
 
     CHECK( written == expected );
   }
-  // filename = "raw_compressed.vtu";
 #ifdef VTU11_ENABLE_ZLIB
   SECTION( "raw_compressed" )
   {

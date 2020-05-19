@@ -63,7 +63,6 @@ TEST_CASE("write_Pyramids3D_Test")
   	return contents;
   };
   std::string filename = "testfiles/pyramids_3D/test.vtu";
-  //std::string filename = "testfiles/pyramids_3D/ascii_test.vtu";
   
   SECTION("ascii_3D")
   {
@@ -77,7 +76,7 @@ TEST_CASE("write_Pyramids3D_Test")
   
   // The files assume that, we need to add a big endian version
   REQUIRE(endianness() == "LittleEndian");
-  //filename = "testfiles/pyramids_3D/base64_test.vtu";
+
   SECTION("base64_3D")
   {
   	Base64BinaryWriter writer;
@@ -90,7 +89,6 @@ TEST_CASE("write_Pyramids3D_Test")
   	CHECK(written == expected);
   }
   //The file base64appended.vtu still cannot be opened within ParaView!!!
-  //filename = "testfiles/pyramids_3D/base64appended_test.vtu";
   SECTION("base64appended_3D")
   {
   	Base64BinaryAppendedWriter writer;
@@ -102,7 +100,6 @@ TEST_CASE("write_Pyramids3D_Test")
   
   	CHECK(written == expected);
   }
-  //filename = "testfiles/pyramids_3D/raw_test.vtu";
   SECTION("raw_3D")
   {
   	RawBinaryAppendedWriter writer;
@@ -114,7 +111,6 @@ TEST_CASE("write_Pyramids3D_Test")
   
   	CHECK(written == expected);
   }
-  //filename = "testfiles/pyramids_3D/raw_compressed_test.vtu";
 #ifdef VTU11_ENABLE_ZLIB
   SECTION("raw_compressed")
   {
