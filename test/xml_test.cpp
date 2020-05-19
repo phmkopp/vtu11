@@ -7,7 +7,7 @@
 //  License: BSD License ; see LICENSE
 //
 
-#include "external/catch2/catch.hpp"
+#include "vtu11_testing.hpp"
 #include "inc/xml.hpp"
 
 #include <sstream>
