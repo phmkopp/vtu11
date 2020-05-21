@@ -7,7 +7,7 @@
 //  License: BSD License ; see LICENSE
 //
 
-#include "external/catch2/catch.hpp"
+#include "vtu11_testing.hpp"
 #include "vtu11.hpp"
 
 #include <sstream>
@@ -63,9 +63,9 @@ TEST_CASE("write_test_icosahedron")
 
   std::vector<VtkIndexType> offsets { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 85 };
   std::vector<VtkCellType> types { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 14 };
-	
+
   Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
-	
+
   std::vector<double> pointData1 { 100.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, -100.0, -100.0, -100.0, -100.0, 0.0, -100.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   std::vector<double> pointData2 { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, -1.0, -1.0, -1.0, -1.0 };
   std::vector<double> cellHeight1 { -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 0 };
@@ -82,7 +82,7 @@ TEST_CASE("write_test_icosahedron")
     DataSet { std::string( "Cell_Height_1" ), 1, cellHeight1 },
     DataSet { std::string( "Cell_Height_2" ), 1, cellHeight2 }
   };
-	
+
   auto readFile = []( const std::string& filename )
   {
     std::ifstream file( filename );
@@ -103,7 +103,7 @@ TEST_CASE("write_test_icosahedron")
     file.close();
 
     return contents;
-  };				
+  };
   std::string filename = "testfiles/icosahedron_3D/test.vtu";
   // The files assume that, we need to add a big endian version
   REQUIRE(endianness() == "LittleEndian");
@@ -118,7 +118,7 @@ TEST_CASE("write_test_icosahedron")
   SECTION( "base64_3D" )
   {
     Base64BinaryWriter writer;
-			
+
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
     auto written = readFile( filename );
     auto expected = readFile( "testfiles/icosahedron_3D/base64.vtu" );
@@ -158,7 +158,7 @@ TEST_CASE("write_test_icosahedron")
     CHECK( written == expected );
   }
 #endif
-		
+
 }
 
 } // namespace vtu11

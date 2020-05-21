@@ -7,7 +7,7 @@
 //  License: BSD License ; see LICENSE
 //
 
-#include "external/catch2/catch.hpp"
+#include "vtu11_testing.hpp"
 #include "vtu11.hpp"
 
 #include <sstream>
@@ -32,17 +32,17 @@ TEST_CASE("hexahedras_test")
      0, 1, 2, 3, 4, 5, 6, 7, //0
      8, 9, 10, 11, 12, 13, 14, 15 //1, hexahedra - cubes
  };
-  
+
   std::vector<VtkIndexType> offsets{ 8, 16 };
   std::vector<VtkCellType> types{ 11, 11 };
 
   Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
-			
+
   std::vector<double> pointData1{ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 5.0, 5.0, 5.0 };
   std::vector<double> pointData2{ 41.0, 13.0, 16.0, 81.0, 51.0, 31.0, 18.0, 12.0, 19.0, 21.0, 11.0, 19.0, 16.0, 45.0, 35.0, 58.0 };
   std::vector<double> cell_1{ 1.0, 2.0 };
   std::vector<double> cell_2{ 10.0, 20.0 };
-		
+
   std::vector<DataSet> pointData
   {
     DataSet {std::string("Point_Data_1"), 1, pointData1},
@@ -54,7 +54,7 @@ TEST_CASE("hexahedras_test")
     DataSet {std::string("Cell_1"), 1, cell_1},
     DataSet {std::string("Cell_2"), 1, cell_2}
   };
-  
+
   auto readFile = []( const std::string& filename )
   {
     std::ifstream file( filename );
@@ -77,7 +77,7 @@ TEST_CASE("hexahedras_test")
     return contents;
   };
   std::string filename = "testfiles/hexas_3D/test.vtu";
- 
+
   SECTION( "ascii_3D" )
   {
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
