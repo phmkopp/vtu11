@@ -8,4 +8,4 @@
 //
 
 #define CATCH_CONFIG_MAIN
-#include "../external_libraries/catch2/catch.hpp"
+#include "catch2/catch.hpp"
