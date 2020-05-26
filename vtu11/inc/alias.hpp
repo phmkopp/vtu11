@@ -41,11 +41,11 @@ using VtkIndexType = std::int64_t;
         #include <experimental/filesystem>
         namespace fs = std::experimental::filesystem;
     #else
-        #include "../external_libraries/filesystem/filesystem.hpp"
+        #include "external/filesystem/filesystem.hpp"
         namespace fs = ghc::filesystem;
     #endif
 #else
-    #include "../external_libraries/filesystem/filesystem.hpp"
+    #include "external/filesystem/filesystem.hpp"
     namespace fs = ghc::filesystem;
 #endif
 

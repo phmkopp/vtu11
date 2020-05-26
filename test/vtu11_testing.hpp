@@ -7,4 +7,4 @@
 //  License: BSD License ; see LICENSE
 //
 
-#include "external/catch2/catch.hpp"
+#include "catch2/catch.hpp"
