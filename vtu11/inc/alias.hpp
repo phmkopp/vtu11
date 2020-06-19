@@ -32,4 +32,21 @@ using VtkIndexType = std::int64_t;
 
 } // namespace vtu11
 
+// To dynamically select std::filesystem where available, you could use:
+#if defined(__cplusplus) && __cplusplus >= 201703L
+    #if __has_include(<filesystem>) // has_include is C++17
+        #include <filesystem>
+        namespace fs = std::filesystem;
+    #elif __has_include(<experimental/filesystem>)
+        #include <experimental/filesystem>
+        namespace fs = std::experimental::filesystem;
+    #else
+        #include "external/filesystem/filesystem.hpp"
+        namespace fs = ghc::filesystem;
+    #endif
+#else
+    #include "external/filesystem/filesystem.hpp"
+    namespace fs = ghc::filesystem;
+#endif
+
 #endif // VTU11_ALIAS_HPP

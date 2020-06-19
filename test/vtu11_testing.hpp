@@ -7,5 +7,4 @@
 //  License: BSD License ; see LICENSE
 //
 
-#define CATCH_CONFIG_MAIN
 #include "catch2/catch.hpp"
