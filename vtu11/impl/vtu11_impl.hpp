@@ -61,6 +61,36 @@ inline void addDataSet( Writer& writer,
   }
 }
 
+/* ToDo: write this function in the utilities header
+ *       or create a proper header for this parallel_helper.hpp
+ * NOTES: Could we somehow add this to the original addDataSet via another input argument,
+ *        e.g. "Bool = true/false" for Parallel, and then add an if-else statement to use
+ *        the writeEmptyTag function accordingly?
+ */
+template<typename Writer, typename DataType>
+inline void addPEmptyDataSet( Writer& writer,
+                             std::ostream& output,
+                             const std::vector<DataType>& data,
+                             size_t numberOfComponents = 1,
+                             const std::string& name = "" )
+{
+  StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
+
+  if( numberOfComponents > 1 )
+  {
+    attributes["NumberOfComponents"] = std::to_string( numberOfComponents );
+  }
+
+  if( name != "" )
+  {
+    attributes["Name"] = name;
+  }
+
+  writer.addDataAttributes( attributes );
+
+  writeEmptyTag( output, "PDataArray", attributes );
+}
+
 } // namespace detail
 
 
@@ -144,6 +174,73 @@ void write( const std::string& filename,
   } // VTKFile
 
   output.close( );
+}
+
+template<typename MeshGenerator, typename Writer>
+void parallelWrite( const std::string& path,
+                    const std::string& baseName,
+                    MeshGenerator& mesh,
+                    const std::vector<DataSet>& pointData,
+                    const std::vector<DataSet>& cellData,
+                    size_t fileId, size_t numberOfFiles,
+                    Writer writer )
+{
+    //Here OpenMp or MPI is needed to distribute all data and write the files in parallel!!!
+    //The commands are from MPI, right now, but OpenMP is probably easier!
+    //Probably dataParallelism (distribute the data) is best here to make it work in parallel!
+
+    //OpenMP: Use a parallel for loop as dataParallelism will probably be the only useful thing here
+    //        Make a dependency Analysis and think about the status of all variables!! (private, lastprivate,.....)
+
+    //MPI: The Master process Scatters the data to distribute it to all other processes --> a Send message is needed and all other processes needs to receive it
+    //        Think about the way of sending!!!! (synchronous, buffered,...)
+
+//start the parallel part with this command
+//Until MPI_finalize, the processes work in parallel
+//ToDo: MPI_Init(int*argc,char***argv)
+
+//Get the actual rank of the process, that is working in exactly this parallel part
+//useful for determining the fileId of the actual process
+//ToDo: MPI_Comm_rank(MPI_COMM_WORLD, int &rank)
+
+    if (fileId == 0)//Here fileId=rank
+    {
+        //Finding the amount of processes, that are working in the Communicator = numberOfFiles
+        //ToDo: MPI_Comm_size(MPI_COMM_WORLD, int &size)
+
+        //If MPI is used: The master process distributes the data into smaller, equally sized pieces and sends it to every other process
+        //Think about the way of sending (asynchronous, buffered,...)
+        //Is a Wait command necessary somewhere?
+        //ToDo: MPI_Scatter.......
+        //This function writes the one .pvtu file, that keeps together all pieces, that contain the actual data
+      // Eulogio comment out: writePVTUfile(path, baseName, fileId, numberOfFiles);//why fileId here? fileId of pvtu file is always the master process, so probably 0
+      
+      // ToDo: Leave it in utilities or in parallel_helper?
+      vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
+
+    }
+    //else { --> I think an else is needed here, as the master process is not doing, what all other processes are doing
+
+
+
+        
+    //OpenMP: The status of pointData, cellData and mesh is very important!!!
+    //        Do they need to be private, lastprivate, public, ... ? --> probably public, as only parts of the data are taken!!!
+    //        The for loop is doing the data distribution, but it needs to be an openMP parallel loop!!
+    //            
+    //If OpenMp is used, a parallel for loop is probably necessary, will look something like that
+    //ToDo: #pragma omp for [what about the status of all variables?, clauses,...]e.g.: for (i=1;i<=numberOfFiles;i++){
+
+    //rank is the same as the fileId!!
+    // std::string name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
+
+    
+    // write(name, mesh(somehow dependent of i), pointData(i), cellData(i), writer);
+    // Eulogio comment out: write(name, mesh, pointData, cellData, writer);
+    //} until here goes the for loop of OpenMP
+    //} the final bracket of the else loop
+    
+//MPI_Finalize(void)
 }
 
 } // namespace vtu11
