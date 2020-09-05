@@ -12,7 +12,7 @@
 
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
-
+#include "inc/parallelWriteHelper.hpp"
 #include <limits>
 
 namespace vtu11
@@ -176,6 +176,8 @@ void write( const std::string& filename,
   output.close( );
 }
 
+//ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
+//Each piece consists of a set of points and using those points some full cells
 template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
                     const std::string& baseName,
@@ -185,6 +187,9 @@ void parallelWrite( const std::string& path,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
 {
+	//ToDo: Write a function that distributes the data into "numberOfFiles" equal pieces!!
+	//This function finds the amount of cells per piece
+	std::array<size_t, 2> distributer = vtu11::parallelHelper::GetAmountOfCells(&numberOfFiles, mesh.numberOfCells());
     //Here OpenMp or MPI is needed to distribute all data and write the files in parallel!!!
     //The commands are from MPI, right now, but OpenMP is probably easier!
     //Probably dataParallelism (distribute the data) is best here to make it work in parallel!

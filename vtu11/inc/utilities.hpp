@@ -10,6 +10,8 @@
 #ifndef VTU11_UTILITIES_HPP
 #define VTU11_UTILITIES_HPP
 
+#include "vtu11.hpp"
+
 namespace vtu11
 {
 
@@ -28,7 +30,6 @@ void writePVTUfile( const std::string& path,
                     const std::vector<DataSet>& cellData,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer = Writer( ) );
-
 } // namespace vtu11
 
 #include "impl/utilities_impl.hpp"

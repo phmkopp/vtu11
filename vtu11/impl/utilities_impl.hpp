@@ -11,7 +11,8 @@
 #define VTU11_UTILITIES_IMPL_HPP
 
 #include <limits>
-
+#include "inc/xml.hpp"
+#include "vtu11_impl.hpp"
 namespace vtu11
 {
 
@@ -37,6 +38,8 @@ inline std::string dataTypeString( )
 }
 
 // Declaration of writePVTUfile(path, baseName, fileId, numberOfFiles);
+//numberOfFiles returns the number of all created vtu pieces
+//fileId returns the actual ghost level?
 template<typename Writer>
 void writePVTUfile( const std::string& path,
                     const std::string& baseName,
@@ -51,18 +54,23 @@ void writePVTUfile( const std::string& path,
         VTU11_CHECK(output.is_open(), "Failed to open file \"" + baseName + "\"");
 
         output << "<?xml version=\"1.0\"?>\n";
-
+	//Std::Map is a class, that contains key-value pairs with unique keys
+		//Header Attributes of the PvtuFile
         StringStringMap headerAttributes{ { "byte_order",  endianness()       },
                                           { "type"      ,  "PUnstructuredGrid" },
                                           { "version"   ,  "0.1"              } };
 
         writer.addHeaderAttributes(headerAttributes);
 
+	//ScopedXmlTag is a class
         {
           ScopedXmlTag vtkFileTag(output, "VTKFile", headerAttributes);
           {
+          	//Does the file Id really define the ghost level?-->Probably yes, it is needed at least for the piece names
+          	//As many ghost levels, as there exist pieces?
             ScopedXmlTag pUnstructuredGridFileTag(output, "PUnstructuredGrid", { { "GhostLevel", std::to_string(fileId) } });
             {
+            	//What Point Data comes here?
               ScopedXmlTag pPointDataTag(output, "PPointData", { });
             
               for (const auto& dataSet : pointData)
@@ -81,6 +89,7 @@ void writePVTUfile( const std::string& path,
             
             // ToDo: -absolute path or relative path? Currently relative path, results appear in build folder.
             //       -should we store this somehow? And reuse for the processes to write. I think not, we can create the name on the fly
+            //       -Janina: I think relative path should be all right in the beginning, we can still change it later though
             for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
             {
               std::string pieceName = path + baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";

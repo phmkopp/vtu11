@@ -12,6 +12,7 @@
 
 #include "inc/alias.hpp"
 #include "inc/writer.hpp"
+#include "inc/parallelWriteHelper.hpp"
 
 namespace vtu11
 {
@@ -38,6 +39,7 @@ void write( const std::string& filename,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData,
             Writer writer = Writer( ) );
+	
 //The declaration of the parallelWrite function
 template<typename MeshGenerator, typename Writer = AsciiWriter>
 void parallelWrite( const std::string& path,
