@@ -66,8 +66,9 @@ void writePVTUfile( const std::string& path,
         {
           ScopedXmlTag vtkFileTag(output, "VTKFile", headerAttributes);
           {
-          	//Does the file Id really define the ghost level?-->Probably yes, it is needed at least for the piece names
-          	//As many ghost levels, as there exist pieces?
+          	//Does the file Id really define the ghost level?
+			//I think we should start pretending, that we have always ghostLevel=0, as it would make everything much harder in the beginning.
+			// we can still change it in the end, if everything else works... What do you think?
             ScopedXmlTag pUnstructuredGridFileTag(output, "PUnstructuredGrid", { { "GhostLevel", std::to_string(fileId) } });
             {
             	//What Point Data comes here?
