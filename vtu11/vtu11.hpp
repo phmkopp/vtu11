@@ -12,7 +12,7 @@
 
 #include "inc/alias.hpp"
 #include "inc/writer.hpp"
-#include "inc/parallelWriteHelper.hpp"
+#include "inc/parallel_helper.hpp"
 
 namespace vtu11
 {

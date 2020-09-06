@@ -21,15 +21,6 @@ inline std::string dataTypeString( );
 inline std::string endianness( );
 
 #define VTU11_CHECK( expr, message ) if( !( expr ) ) throw std::runtime_error( message )
-
-// ToDo: Check if it is ok to put this function here. It does not seem to belong here, actually
-template<typename Writer = AsciiWriter>
-void writePVTUfile( const std::string& path,
-                    const std::string& baseName,
-                    const std::vector<DataSet>& pointData,
-                    const std::vector<DataSet>& cellData,
-                    size_t fileId, size_t numberOfFiles,
-                    Writer writer = Writer( ) );
 } // namespace vtu11
 
 #include "impl/utilities_impl.hpp"

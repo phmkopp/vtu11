@@ -12,7 +12,7 @@
 
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
-#include "inc/parallelWriteHelper.hpp"
+#include "inc/parallel_helper.hpp"
 #include <limits>
 
 namespace vtu11
