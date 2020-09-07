@@ -12,10 +12,9 @@
 
 #include <limits>
 #include "inc/xml.hpp"
-#include "vtu11_impl.hpp"
+#include "impl/vtu11_impl.hpp"
 namespace vtu11
 {
-
 template<typename DataType>
 inline std::string dataTypeString( )
 {

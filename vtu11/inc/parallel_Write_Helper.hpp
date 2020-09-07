@@ -31,6 +31,15 @@ namespace vtu11
 		//		(only, if there are at least one cell for each requested piece. Otherwise the numberOfFiles gets adjusted!)
 		inline std::array<size_t, 2> GetAmountOfCells(size_t * numberOfFiles, size_t numberOfCells);
 
+		//This function returns the cell data for one piece-file
+		template<typename MeshGenerator>
+		inline std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>>
+			GetCurrentCellData(MeshGenerator& mesh,
+				const std::vector<DataSet>& pointData,
+				const std::vector<DataSet>& cellData,
+				std::array<size_t, 2> cellDistribution,
+				size_t fileId);
+		
 		template<typename Writer, typename DataType>
 		inline void addPEmptyDataSet(Writer& writer,
 			std::ostream& output,
