@@ -31,15 +31,22 @@ namespace vtu11
 		//		(only, if there are at least one cell for each requested piece. Otherwise the numberOfFiles gets adjusted!)
 		inline std::array<size_t, 2> GetAmountOfCells(size_t * numberOfFiles, size_t numberOfCells);
 
-		//This function returns the cell data for one piece-file
+		//This function distributes the global mesh into equal small pieces and returns those mesh-pieces and the associated data
 		template<typename MeshGenerator>
 		inline std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>>
-			GetCurrentCellData(MeshGenerator& mesh,
+			GetCurrentDataSet(MeshGenerator& mesh,
 				const std::vector<DataSet>& pointData,
 				const std::vector<DataSet>& cellData,
 				std::array<size_t, 2> cellDistribution,
 				size_t fileId);
+
+		//This function returns the cell and point datasets only for one specific piece
+		inline std::array<std::vector<DataSet>, 2> GetCurrentCellPointData(const std::vector<DataSet>& pointDataGlobal,
+			const std::vector<DataSet>& cellDataGlobal,
+			std::vector<VtkIndexType>& globalTranslation,
+			size_t firstCellId, size_t lastCellId);
 		
+		//This function adds an empty Parallel Dataset to the xml-format
 		template<typename Writer, typename DataType>
 		inline void addPEmptyDataSet(Writer& writer,
 			std::ostream& output,

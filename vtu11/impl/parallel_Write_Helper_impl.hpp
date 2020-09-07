@@ -153,7 +153,6 @@ namespace vtu11
 				std::array<size_t, 2> cellDistribution,
 				size_t fileId)
 		{
-			MeshGenerator meshPiece;
 			std::vector<double> points;
 			std::vector<VtkIndexType> relevantConnectivity, connectivity, offsets;
 			std::vector<VtkCellType> types;
