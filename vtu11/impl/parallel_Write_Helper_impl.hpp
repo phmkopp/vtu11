@@ -10,8 +10,10 @@
 #define VTU11_PARALLEL_HELPER_IMPL_HPP
 
 #include <iostream>
+#include <math.h>
 #include "inc/xml.hpp"
 #include "vtu11_impl.hpp"
+
 namespace vtu11
 {
 	// Declaration of writePVTUfile(path, baseName, fileId, numberOfFiles);
@@ -117,25 +119,29 @@ namespace vtu11
 		{
 			size_t cellsPerFile = 1;
 			//Check if the number of cells can be distributed equally to each file-piece
-			if (numberOfCells % *numberOfFiles == 0)
+			if(*numberOfFiles==0)
+			{
+				throw std::exception("Determining the amount of cells per file-piece went wrong!");
+			}
+			else if (numberOfCells % *numberOfFiles == 0)
 			{
 				cellsPerFile = numberOfCells / *numberOfFiles;
 				return { cellsPerFile , *numberOfFiles };
 			}
 			//If there are less cells then numberOfFiles, the numberOfFiles-Variable needs to be adjusted,
 			//so that each file-piece contains all data, that concerns exactly one cell
-			else if (floor(numberOfCells / *numberOfFiles) == 0.)
+			else if (floor(numberOfCells / double(*numberOfFiles)) == 0.)
 			{
 				*numberOfFiles = numberOfCells;
+				std::cout << "The number of files has been decreased to " << *numberOfFiles << ", as there are not that many cells!" << std::endl;
 				return { cellsPerFile,*numberOfFiles };
 			}
 			//If the numberOfCells is not divisible by the number of Files, there are "cellsPerFile" cells in the first file-pieces
 			//and "cellsPerFile - 1" cells in all pieces, with the fileId > lastFileWithCellsPerFile
 			else if (floor(numberOfCells / *numberOfFiles) > 0.)
 			{
-				cellsPerFile = ceil(numberOfCells / *numberOfFiles);
+				cellsPerFile = ceil(numberOfCells / double (*numberOfFiles));
 				size_t lastFileWithCellsPerFile = numberOfCells % *numberOfFiles;
-				std::cout << "The number of files has been decreased to " << *numberOfFiles << ", as there are not that many cells!" << std::endl;
 				return { cellsPerFile, lastFileWithCellsPerFile };
 			}
 			else
@@ -185,8 +191,12 @@ namespace vtu11
 				types.push_back(mesh.types()[currentCell]);
 
 				//Determine the number of Points a cell consists of
-				size_t numberOfCellPoints = mesh.offsets()[currentCell] - mesh.offsets()[currentCell - 1];
+				size_t numberOfCellPoints;
 				if (currentCell == 0) { numberOfCellPoints = mesh.offsets()[currentCell]; }
+				else
+				{
+					numberOfCellPoints = mesh.offsets()[currentCell] - mesh.offsets()[currentCell - 1];
+				}
 
 				//loop over each point of each cell in that piece to get the connectivity
 				for (size_t cellPoint=numberOfCellPoints; cellPoint>0; --cellPoint)
@@ -229,7 +239,9 @@ namespace vtu11
 				}
 			}
 			std::array < std::vector<DataSet>, 2> pointCellData = GetCurrentCellPointData(pointData, cellData, globalTranslation, firstCellId, lastCellId);
-			return { { points, connectivity, offsets, types }, pointCellData[0], pointCellData[1] };
+			MeshGenerator meshPiece{ points, connectivity, offsets, types };
+			auto result=std::make_tuple(meshPiece, pointCellData[0], pointCellData[1]);
+			return result;
 		}//GetCurrentDataSet
 		
 		inline std::array<std::vector<DataSet>, 2> GetCurrentCellPointData(const std::vector<DataSet>& pointDataGlobal,

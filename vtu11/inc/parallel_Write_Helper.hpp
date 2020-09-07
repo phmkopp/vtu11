@@ -33,7 +33,7 @@ namespace vtu11
 
 		//This function distributes the global mesh into equal small pieces and returns those mesh-pieces and the associated data
 		template<typename MeshGenerator>
-		inline std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>>
+		std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>>
 			GetCurrentDataSet(MeshGenerator& mesh,
 				const std::vector<DataSet>& pointData,
 				const std::vector<DataSet>& cellData,

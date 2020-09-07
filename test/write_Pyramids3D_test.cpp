@@ -8,7 +8,7 @@
 //
 
 #include "vtu11_testing.hpp"
-#include "vtu11.hpp"
+#include "inc/vtu11.hpp"
 
 #include <sstream>
 #include <fstream>
@@ -22,7 +22,7 @@ TEST_CASE("write_Pyramids3D_Test")
   	0.0, 0.0, 0.0,    0.0, 3.0, 0.0,    1.0, 2.0, 2.0, //0, 1, 2
   	1.0, 3.0,-2.0,   -2.0, 2.0, 0.0,   -1.0, 1.0, 2.0, //3, 4, 5
   	2.0,-2.0,-2.0,    2.0,-2.0, 2.0,   -2.0,-2.0, 2.0, //6, 7, 8
-     -2.0,-2.0,-2.0                                      //9
+     -2.0,-2.0,-2.0                                    //9
   };
   std::vector<VtkIndexType> connectivity{
   	5,  0,  1,  2,  //0
