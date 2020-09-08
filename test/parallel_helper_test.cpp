@@ -8,7 +8,7 @@
 //
 
 #include "vtu11_testing.hpp"
-#include "inc/vtu11.hpp"
+#include "vtu11.hpp"
 #include "inc/parallel_helper.hpp"
 #include <sstream>
 #include <fstream>
