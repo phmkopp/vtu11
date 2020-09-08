@@ -178,7 +178,7 @@ void write( const std::string& filename,
 
 //ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
 //Each piece consists of a set of points and using those points some full cells
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer, typename AllMeshData>
 void parallelWrite( const std::string& path,
                     const std::string& baseName,
                     MeshGenerator& mesh,
@@ -190,7 +190,6 @@ void parallelWrite( const std::string& path,
 	//ToDo: Write a function that distributes the data into "numberOfFiles" equal pieces!!
 	//This function finds the amount of cells per piece
 	std::array<size_t, 2> distributer = vtu11::parallelHelper::GetAmountOfCells(&numberOfFiles, mesh.numberOfCells());
-
 	//ToDo: Start the parallelSection here! 
     //Here OpenMp or MPI is needed to distribute all data and write the files in parallel!!!
     //The commands are from MPI, right now, but OpenMP is probably easier!
@@ -239,14 +238,14 @@ void parallelWrite( const std::string& path,
     //ToDo: #pragma omp for [what about the status of all variables?, clauses,...]e.g.: for (i=1;i<=numberOfFiles;i++){
 
 
-	std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>> pieceData =
-		parallelHelper::GetCurrentDataSet(mesh, pointData, cellData, distributer, fileId /*=rank*/);
+	AllMeshData pieceData =
+		parallelHelper::GetCurrentDataSet <MeshGenerator,AllMeshData> (mesh, pointData, cellData, distributer, fileId /*=rank*/);
     //rank is the same as the fileId!!
     std::string name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
 
     
     // write(name, mesh(somehow dependent of i), pointData(i), cellData(i), writer);
-    write(name, std::get<0>(pieceData), std::get<1>(pieceData), std::get<2>(pieceData), writer);
+    write(name, pieceData.mesh(), pieceData.pointData(), pieceData.cellData(), writer);
     //} until here goes the for loop of OpenMP
     //} the final bracket of the else loop
     

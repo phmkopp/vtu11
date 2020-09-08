@@ -33,9 +33,8 @@ namespace vtu11
 		inline std::array<size_t, 2> GetAmountOfCells(size_t * numberOfFiles, size_t numberOfCells);
 
 		//This function distributes the global mesh into equal small pieces and returns those mesh-pieces and the associated data
-		template<typename MeshGenerator>
-		std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>>
-			GetCurrentDataSet(MeshGenerator& mesh,
+		template<typename MeshGenerator, typename AllMeshData>
+		AllMeshData GetCurrentDataSet(MeshGenerator& mesh,
 				const std::vector<DataSet>& pointData,
 				const std::vector<DataSet>& cellData,
 				std::array<size_t, 2> cellDistribution,

@@ -83,12 +83,11 @@ namespace vtu11
 			};
 			size_t numberOfFiles = 3;
 			std::array<size_t, 2> cellDistribution=parallelHelper::GetAmountOfCells(&numberOfFiles, mesh.numberOfCells());
-			//std::tuple<Vtu11UnstructuredMesh, std::vector<DataSet>, std::vector<DataSet>> pieceData;
+			Vtu11AllData allData{ mesh,pointData,cellData };
 			SECTION("Piece1")
 			{
 				size_t fileId = 1;
-				std::tuple<Vtu11UnstructuredMesh, std::vector<DataSet>, std::vector<DataSet>> pieceData{ GetCurrentDataSet(mesh, pointData, cellData, cellDistribution, fileId) };
-				CHECK(1==1);
+				Vtu11AllData pieceDataSets{ GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>(mesh, pointData, cellData, cellDistribution, fileId) };
 			}
 		}
 	}//namespace parallelHelper

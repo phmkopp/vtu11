@@ -151,9 +151,8 @@ namespace vtu11
 
 		}
 
-		template<typename MeshGenerator>
-		inline std::tuple<MeshGenerator, std::vector<DataSet>, std::vector<DataSet>>
-			GetCurrentDataSet(MeshGenerator& mesh,
+		template<typename MeshGenerator, typename AllMeshData>
+		inline AllMeshData GetCurrentDataSet(MeshGenerator& mesh,
 				const std::vector<DataSet>& pointData,
 				const std::vector<DataSet>& cellData,
 				std::array<size_t, 2> cellDistribution,
@@ -239,9 +238,9 @@ namespace vtu11
 				}
 			}
 			std::array < std::vector<DataSet>, 2> pointCellData = GetCurrentCellPointData(pointData, cellData, globalTranslation, firstCellId, lastCellId);
-			MeshGenerator meshPiece{ points, connectivity, offsets, types };
-			auto result = std::make_tuple(meshPiece, pointCellData[0], pointCellData[1]);
-			return result; 
+			MeshGenerator meshPiece1{ points, connectivity, offsets, types };
+			AllMeshData allDataPiece{ meshPiece1,pointCellData[0],pointCellData[1] };
+			return allDataPiece; 
 		}//GetCurrentDataSet
 
 		inline std::array<std::vector<DataSet>, 2> GetCurrentCellPointData(const std::vector<DataSet> & pointDataGlobal,
