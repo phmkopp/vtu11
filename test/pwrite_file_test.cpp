@@ -90,7 +90,7 @@ namespace vtu11
     std::string path = "testfiles/parallelWrite/";
     SECTION("parallel_writing_successful")
     {
-      REQUIRE_NOTHROW( parallelWrite(path, basename, mesh, pointData, cellData, 0, 2) ); // changed to basename
+      REQUIRE_NOTHROW( parallelWrite<Vtu11UnstructuredMesh,AsciiWriter,Vtu11AllData>(path, basename, mesh, pointData, cellData, 0, 2) ); // changed to basename
 
       // ToDo: Create a pvtu ascii file to to compare with.
       /*auto written = readFile(filename);

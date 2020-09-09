@@ -9,7 +9,7 @@
 
 #include "vtu11_testing.hpp"
 #include "vtu11.hpp"
-
+#include "inc/parallel_helper.hpp"
 #include <sstream>
 #include <fstream>
 namespace vtu11
@@ -47,6 +47,47 @@ namespace vtu11
 				numberOfFiles = 0;
 				numberOfCells = 6;
 				REQUIRE_THROWS(GetAmountOfCells(&numberOfFiles, numberOfCells));
+			}
+		}
+		TEST_CASE("Distribute_Data_test")
+		{
+			std::vector<double> points{
+			0.0, 0.0, 0.0,    0.0, 3.0, 0.0,    1.0, 2.0, 2.0, //0, 1, 2
+			1.0, 3.0,-2.0,   -2.0, 2.0, 0.0,   -1.0, 1.0, 2.0, //3, 4, 5
+			2.0,-2.0,-2.0,    2.0,-2.0, 2.0,   -2.0,-2.0, 2.0, //6, 7, 8
+			-2.0,-2.0,-2.0                                     //9
+			};
+			std::vector<VtkIndexType> connectivity{
+			  5,  0,  1,  2,  //0
+			  2,  0,  1,  3,  //1
+			  3,  0,  1,  4,  //2
+			  4,  0,  1,  5,  //3
+			  8,  7,  6,  9,  0  //4  --> Pyramid
+			};
+			std::vector<VtkCellType> types{ 10, 10, 10, 10, 14 };
+			std::vector<VtkIndexType> offsets{ 4, 8, 12, 16, 21 };
+			Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
+
+			std::vector<double> flashStrengthPoints{ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
+			std::vector<double> pointData2{ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 };
+			std::vector<double> cellColour{ 1.0, 2.0, 3.0, 4.0, 0.0 };
+			std::vector<double> cellData2{ 5.0, 6.0, 7.0, 8.0, 9.0 };
+
+			std::vector<DataSet> pointData{
+				DataSet{std::string("Flash Strength Points"), 1, flashStrengthPoints },
+				DataSet{std::string("pointData2"), 1, pointData2 }
+			};
+			std::vector<DataSet> cellData{
+				DataSet{std::string("cell Colour"), 1, cellColour },
+				DataSet{std::string("cellData2"),1, cellData2 }
+			};
+			size_t numberOfFiles = 3;
+			std::array<size_t, 2> cellDistribution=parallelHelper::GetAmountOfCells(&numberOfFiles, mesh.numberOfCells());
+			Vtu11AllData allData{ mesh,pointData,cellData };
+			SECTION("Piece1")
+			{
+				size_t fileId = 1;
+				Vtu11AllData pieceDataSets{ GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>(mesh, pointData, cellData, cellDistribution, fileId) };
 			}
 		}
 	}//namespace parallelHelper

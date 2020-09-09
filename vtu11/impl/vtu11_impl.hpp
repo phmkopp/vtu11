@@ -178,7 +178,7 @@ void write( const std::string& filename,
 
 //ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
 //Each piece consists of a set of points and using those points some full cells
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer, typename AllMeshData>
 void parallelWrite( const std::string& path,
                     const std::string& baseName,
                     MeshGenerator& mesh,
@@ -190,6 +190,7 @@ void parallelWrite( const std::string& path,
 	//ToDo: Write a function that distributes the data into "numberOfFiles" equal pieces!!
 	//This function finds the amount of cells per piece
 	std::array<size_t, 2> distributer = vtu11::parallelHelper::GetAmountOfCells(&numberOfFiles, mesh.numberOfCells());
+	//ToDo: Start the parallelSection here! 
     //Here OpenMp or MPI is needed to distribute all data and write the files in parallel!!!
     //The commands are from MPI, right now, but OpenMP is probably easier!
     //Probably dataParallelism (distribute the data) is best here to make it work in parallel!
@@ -236,12 +237,15 @@ void parallelWrite( const std::string& path,
     //If OpenMp is used, a parallel for loop is probably necessary, will look something like that
     //ToDo: #pragma omp for [what about the status of all variables?, clauses,...]e.g.: for (i=1;i<=numberOfFiles;i++){
 
+
+	AllMeshData pieceData =
+		parallelHelper::GetCurrentDataSet <MeshGenerator,AllMeshData> (mesh, pointData, cellData, distributer, fileId /*=rank*/);
     //rank is the same as the fileId!!
-    // std::string name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
+    std::string name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
 
     
     // write(name, mesh(somehow dependent of i), pointData(i), cellData(i), writer);
-    // Eulogio comment out: write(name, mesh, pointData, cellData, writer);
+    write(name, pieceData.mesh(), pieceData.pointData(), pieceData.cellData(), writer);
     //} until here goes the for loop of OpenMP
     //} the final bracket of the else loop
     
