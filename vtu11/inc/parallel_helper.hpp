@@ -40,5 +40,5 @@ namespace vtu11
 	}//namespace parallelHelper
 
 }//namespace vtu11
-#include "impl/parallel_Write_Helper_impl.hpp"
+#include "impl/parallel_helper_impl.hpp"
 #endif //VTU11_PARALLEL_WRITE_HELPER_HPP
