@@ -39,7 +39,7 @@ namespace vtu11
 			{
 				numberOfFiles = 4;
 				numberOfCells = 6;
-				result = { 2,2 };
+				result = { 2,1 };
 				CHECK(GetAmountOfCells(&numberOfFiles, numberOfCells) == result);
 			}
 			SECTION("checkThrow")
@@ -83,11 +83,18 @@ namespace vtu11
 			};
 			size_t numberOfFiles = 3;
 			std::array<size_t, 2> cellDistribution=parallelHelper::GetAmountOfCells(&numberOfFiles, mesh.numberOfCells());
-			Vtu11AllData allData{ mesh,pointData,cellData };
-			SECTION("Piece1")
+			Vtu11AllData allData{ points, connectivity, offsets, types,pointData,cellData };
+			std::string path = "testfiles/parallelWrite/" ;
+			std::string basename = "Pyramids3D_parallel_test";
+			
+			SECTION("Test_All_Pieces")
 			{
-				size_t fileId = 1;
-				Vtu11AllData pieceDataSets{ GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>(mesh, pointData, cellData, cellDistribution, fileId) };
+				for (size_t fileId=0; fileId < numberOfFiles ;fileId++)
+				{
+					Vtu11AllData pieceDataSets{ GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>(mesh, pointData, cellData, cellDistribution, fileId) };
+					Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points(),pieceDataSets.connectivity(),pieceDataSets.offsets(),pieceDataSets.types() };
+					parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles);
+				}
 			}
 		}
 	}//namespace parallelHelper

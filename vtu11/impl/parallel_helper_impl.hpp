@@ -141,7 +141,7 @@ namespace vtu11
 			else if (floor(numberOfCells / *numberOfFiles) > 0.)
 			{
 				cellsPerFile = ceil(numberOfCells / double(*numberOfFiles));
-				size_t lastFileWithCellsPerFile = numberOfCells % *numberOfFiles;
+				size_t lastFileWithCellsPerFile = numberOfCells % *numberOfFiles-1;
 				return { cellsPerFile, lastFileWithCellsPerFile };
 			}
 			else
@@ -165,8 +165,8 @@ namespace vtu11
 			if (fileId <= cellDistribution[1])
 			{
 				//There is no change in the amount of cells per file
-				firstCellId = fileId * cellDistribution[0] - cellDistribution[0]; //Id of the first cell in that piece
-				lastCellId = fileId * cellDistribution[0]; //Id of the last cell + 1 in that piece
+				firstCellId = fileId * cellDistribution[0]; //Id of the first cell in that piece
+				lastCellId = fileId * cellDistribution[0]+cellDistribution[0]; //Id of the last cell + 1 in that piece
 			}
 			else
 			{
@@ -238,8 +238,7 @@ namespace vtu11
 				}
 			}
 			std::array < std::vector<DataSet>, 2> pointCellData = GetCurrentCellPointData(pointData, cellData, globalTranslation, firstCellId, lastCellId);
-			MeshGenerator meshPiece1{ points, connectivity, offsets, types };
-			AllMeshData allDataPiece{ meshPiece1,pointCellData[0],pointCellData[1] };
+			AllMeshData allDataPiece{ points, connectivity, offsets, types, pointCellData[0], pointCellData[1] };
 			return allDataPiece; 
 		}//GetCurrentDataSet
 
