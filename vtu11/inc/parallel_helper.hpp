@@ -15,6 +15,24 @@
 #include "utilities.hpp"
 namespace vtu11
 {
+	struct Vtu11AllData
+	{
+		std::vector<double> points_;
+		std::vector<VtkIndexType> connectivity_;
+		std::vector<VtkIndexType> offsets_;
+		std::vector<VtkCellType> types_;
+		std::vector<DataSet> pointData_;
+		std::vector<DataSet> cellData_;
+		
+		std::vector<double>& points() { return points_; }
+		std::vector<VtkIndexType>& connectivity() { return connectivity_; }
+		std::vector<VtkIndexType>& offsets() { return offsets_; }
+		std::vector<VtkCellType>& types() { return types_; }
+		std::vector<DataSet>& pointData() { return pointData_; }
+		std::vector<DataSet>& cellData() { return cellData_; }
+		size_t numberOfPoints() { return points_.size() / 3; }
+		size_t numberOfCells() { return types_.size(); }
+	};
 	//writes the .pvtu file, that keeps together all vtu pieces
 	template<typename Writer = AsciiWriter>
 	void writePVTUfile(const std::string & path,
@@ -33,6 +51,7 @@ namespace vtu11
 		inline std::array<size_t, 2> GetAmountOfCells(size_t * numberOfFiles, size_t numberOfCells);
 
 		//This function distributes the global mesh into equal small pieces and returns those mesh-pieces and the associated data
+		//There is no fileId 0, it starts with fileId==1
 		template<typename MeshGenerator, typename AllMeshData>
 		AllMeshData GetCurrentDataSet(MeshGenerator& mesh,
 				const std::vector<DataSet>& pointData,
