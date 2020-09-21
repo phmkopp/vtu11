@@ -11,6 +11,7 @@
 #define VTU11_VTU11_IMPL_HPP
 
 #include <filesystem>
+#include <direct.h>
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 #include "inc/parallel_helper.hpp"
@@ -189,9 +190,22 @@ void parallelWrite( const std::string& path,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
 {
-	//ToDo: check, if subfolder was already created and create it, if not
+	//ToDo: 1. check, if it works in linux and ... too (propably only a solution for windows)
+	//ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
+
+	//Probably better, if the correct folder structure is created before the parallelWrite function is called! to avoid any parallel clashes!
 	
+	if(!directoryExists(path+baseName))
+	{
+	//	//create an array of chars out of the pathname
+	//	//(source: https://www.journaldev.com/37220/convert-string-to-char-array-c-plus-plus#:~:text=1.-,The%20c_str()%20and%20strcpy()%20function%20in%20C%2B%2B,('%5C0'). )
+		const std::string name = path+baseName+"/";
+		const char * charName=name.c_str();
 	
+	//	//create directory (source:https://stackoverflow.com/questions/30937227/create-directory-in-c)
+	//	//will probably also only work in windows
+		_mkdir(charName);
+	}
 
     if (fileId == 0)
     {

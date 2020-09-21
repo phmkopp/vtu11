@@ -35,6 +35,17 @@ inline std::string dataTypeString( )
 
   return base + std::to_string( sizeof( DataType ) * 8 );
 }
+inline bool directoryExists(const std::string& directoryPath)
+{
+	DWORD ftyp = GetFileAttributesA(directoryPath.c_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES)
+		return false;  //something is wrong with your path!
+
+	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		return true;   // this is a directory!
+
+	return false;    // this is not a directory!
+}
 } // namespace vtu11
 
 inline std::string vtu11::endianness( )
