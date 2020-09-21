@@ -30,6 +30,7 @@ namespace vtu11
 		std::string parallelName = path + baseName + ".pvtu";
 		std::ofstream output(parallelName, std::ios::binary);
 		size_t ghostLevel = 0;
+		std::vector<double> points;
 		VTU11_CHECK(output.is_open(), "Failed to open file \"" + baseName + "\"");
 
 		output << "<?xml version=\"1.0\"?>\n";
@@ -66,13 +67,20 @@ namespace vtu11
 						parallelHelper::addPEmptyDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet));
 					}
 				} // PCellData
-
+				{
+					ScopedXmlTag pPointsTag(output, "PPoints", {});
+					parallelHelper::addPEmptyDataSet(writer, output, points, 3, "");
+					//add:
+					//<PPoints>
+					//<DataArray NumberOfComponents = "3" format = "ascii" type = "Float64" / >
+					//< / PPoints>
+				} // PPoints
 				// ToDo: -absolute path or relative path? Currently relative path, results appear in build folder.
 				//       -should we store this somehow? And reuse for the processes to write. I think not, we can create the name on the fly
 				//       -Janina: I think relative path should be all right in the beginning, we can still change it later though
 				for (size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles)
 				{
-					std::string pieceName = path + baseName + "/" + baseName + "_" + std::to_string(nFiles) + ".vtu";
+					std::string pieceName = baseName + "/" + baseName + "_" + std::to_string(nFiles) + ".vtu";
 					writeEmptyTag(output, "Piece", { { "Source", pieceName } });
 				} // Pieces
 
@@ -171,9 +179,9 @@ namespace vtu11
 			else
 			{
 				//There is a change in the amount of cells per file
-				firstCellId = cellDistribution[1] * cellDistribution[0] + (fileId - cellDistribution[1])
-					* (cellDistribution[0] - 1) - (cellDistribution[0] - 1);//Id of the first cell in that piece
-				lastCellId = cellDistribution[1] * cellDistribution[0] + (fileId - cellDistribution[1])
+				firstCellId = (cellDistribution[1]+1) * cellDistribution[0] + (fileId - cellDistribution[1]-1)
+					* (cellDistribution[0] - 1);//Id of the first cell in that piece
+				lastCellId = (cellDistribution[1]+1) * cellDistribution[0] + (fileId - cellDistribution[1])
 					* (cellDistribution[0] - 1);//Id of the last cell + 1 in that piece
 			}
 			//loop over all cells in that piece to store the new types, new offsets and select the relevant connectivity

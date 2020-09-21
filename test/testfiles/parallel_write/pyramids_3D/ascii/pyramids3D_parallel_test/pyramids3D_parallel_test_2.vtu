@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<VTKFile byte_order="LittleEndian" type="UnstructuredGrid" version="0.1">
+<UnstructuredGrid>
+<Piece NumberOfCells="1" NumberOfPoints="5">
+<PointData>
+<DataArray Name="Flash Strength Points" format="ascii" type="Float64">
+0 0 0 0 1 
+</DataArray>
+<DataArray Name="pointData2" format="ascii" type="Float64">
+8 7 6 9 0 
+</DataArray>
+</PointData>
+<CellData>
+<DataArray Name="cell Colour" format="ascii" type="Float64">
+0 
+</DataArray>
+<DataArray Name="cellData2" format="ascii" type="Float64">
+9 
+</DataArray>
+</CellData>
+<Points>
+<DataArray NumberOfComponents="3" format="ascii" type="Float64">
+-2 -2 2 2 -2 2 2 -2 -2 -2 -2 -2 0 0 0 
+</DataArray>
+</Points>
+<Cells>
+<DataArray Name="connectivity" format="ascii" type="Int64">
+0 1 2 3 4 
+</DataArray>
+<DataArray Name="offsets" format="ascii" type="Int64">
+5 
+</DataArray>
+<DataArray Name="types" format="ascii" type="Int8">
+14 
+</DataArray>
+</Cells>
+</Piece>
+</UnstructuredGrid>
+</VTKFile>
