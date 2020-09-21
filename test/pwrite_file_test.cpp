@@ -87,16 +87,16 @@ namespace vtu11
 
     std::string filename = "parallel_write_test.pvtu";
     std::string basename = "parallel_write_test";
-    std::string path = "testfiles/parallelWrite/";
+    std::string path = "testfiles/parallel_write/";
     SECTION("parallel_writing_successful")
     {
-      REQUIRE_NOTHROW( parallelWrite<Vtu11UnstructuredMesh,AsciiWriter>(path, basename, mesh, pointData, cellData, 0, 2) ); // changed to basename
+      REQUIRE_NOTHROW( parallelWrite(path, basename, mesh, pointData, cellData, 0, 2) ); // changed to basename
 
       // ToDo: Create a pvtu ascii file to to compare with.
-      /*auto written = readFile(filename);
-      auto expected = readFile("testfiles/ascii.vtu");
+      //auto written = readFile(filename);
+      //auto expected = readFile("testfiles/ascii.vtu");
 
-      CHECK(written == expected);
+      //CHECK(written == expected);
       // End of block comment */
     }
 
