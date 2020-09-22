@@ -87,7 +87,9 @@ namespace vtu11
 
     std::string filename = "parallel_write_test.pvtu";
     std::string basename = "parallel_write_test";
-    std::string path = "testfiles/parallel_write/";
+    fs::path path = "testfiles/parallel_write/pwrite_tester/";
+    fs::create_directory(path);
+
     SECTION("parallel_writing_successful")
     {
       REQUIRE_NOTHROW( parallelWrite(path, basename, mesh, pointData, cellData, 0, 2) ); // changed to basename

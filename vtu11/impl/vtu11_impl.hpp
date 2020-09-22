@@ -204,7 +204,8 @@ void parallelWrite( const std::string& path,
 	
 	//	//create directory (source:https://stackoverflow.com/questions/30937227/create-directory-in-c)
 	//	//will probably also only work in windows
-		_mkdir(charName);
+        fs::create_directory(charName); //  Solution: use filesystem library.
+		//_mkdir(charName);
 	}
 
     if (fileId == 0)
