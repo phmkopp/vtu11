@@ -180,7 +180,7 @@ void write( const std::string& filename,
 }
 
 //ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
-//Each piece consists of a set of points and using those points some full cells
+//Each piece consists of a set of points and cells
 template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
                     const std::string& baseName,
@@ -191,26 +191,25 @@ void parallelWrite( const std::string& path,
                     Writer writer )
 {
 	//ToDo: 1. check, if it works in linux and ... too (propably only a solution for windows)
-	//ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
-
-	//Probably better, if the correct folder structure is created before the parallelWrite function is called! to avoid any parallel clashes!
-	
+	//ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)	
 	if(!directoryExists(path+baseName))
 	{
 	//	//create an array of chars out of the pathname
 	//	//(source: https://www.journaldev.com/37220/convert-string-to-char-array-c-plus-plus#:~:text=1.-,The%20c_str()%20and%20strcpy()%20function%20in%20C%2B%2B,('%5C0'). )
 		const std::string name = path+baseName+"/";
 		const char * charName=name.c_str();
-	
-	//	//create directory (source:https://stackoverflow.com/questions/30937227/create-directory-in-c)
-	//	//will probably also only work in windows
-        fs::create_directory(charName); //  Solution: use filesystem library.
-		//_mkdir(charName);
+        fs::create_directory(charName);
 	}
 
     if (fileId == 0)
     {
       vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
+    //Clean the folder, if there are additional .vtu pieces of a previous run
+	  size_t additionalFiles = numberOfFiles;
+    	while (fs::remove(path + baseName + "/" + baseName + "_" + std::to_string(additionalFiles) + ".vtu"))
+    	{
+			additionalFiles++;
+    	}
     }
     std::string name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
 
