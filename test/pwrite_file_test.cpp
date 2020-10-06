@@ -16,7 +16,7 @@
 
 namespace vtu11
 {
-  TEST_CASE("write_parallel_file_test") // CEFF COMMENTS: I'm purposedly abusing the test file to write the parallel file
+  TEST_CASE( "write_parallel_file_test" ) // Test for creating the first parallel files
   {
 
     std::vector<double> points
@@ -49,15 +49,15 @@ namespace vtu11
 
     std::vector<DataSet> pointData
     {
-      DataSet { std::string("pointData1"), 1, pointData1 },
-      DataSet { std::string("pointData2"), 1, pointData2 },
+      DataSet { std::string( "pointData1" ), 1, pointData1 },
+      DataSet { std::string( "pointData2" ), 1, pointData2 },
     };
 
     std::vector<DataSet> cellData
     {
-      DataSet { std::string("cellData1"), 1, cellData1 },
-      DataSet { std::string("cellData2"), 1, cellData2 },
-      DataSet { std::string("cellData3"), 1, cellData3 }
+      DataSet { std::string( "cellData1" ), 1, cellData1 },
+      DataSet { std::string( "cellData2" ), 1, cellData2 },
+      DataSet { std::string( "cellData3" ), 1, cellData3 }
     };
     /* Eulogio: For the moment we don't need this, we don't have a file to compare with
     auto readFile = [](const std::string& filename)
@@ -88,11 +88,11 @@ namespace vtu11
     std::string filename = "parallel_write_test.pvtu";
     std::string basename = "parallel_write_test";
     fs::path path = "testfiles/parallel_write/pwrite_tester/";
-    fs::create_directory(path);
+    fs::create_directory( path );
 
-    SECTION("parallel_writing_successful")
+    SECTION( "parallel_writing_successful" )
     {
-      REQUIRE_NOTHROW( parallelWrite(path, basename, mesh, pointData, cellData, 0, 2) ); // changed to basename
+      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2 ) ); // changed to basename
 
       // ToDo: Create a pvtu ascii file to to compare with.
       //auto written = readFile(filename);
@@ -103,7 +103,7 @@ namespace vtu11
     }
 
     // The files assume that, we need to add a big endian version
-    REQUIRE(endianness() == "LittleEndian");
+    REQUIRE( endianness( ) == "LittleEndian" );
     //filename = "base64.vtu";
   }
 } // namespace vtu11

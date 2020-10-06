@@ -190,31 +190,31 @@ void parallelWrite( const std::string& path,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
 {
-	//ToDo: 1. check, if it works in linux and ... too (propably only a solution for windows)
-	//ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)	
-	if(!directoryExists(path+baseName))
-	{
-	//	//create an array of chars out of the pathname
-	//	//(source: https://www.journaldev.com/37220/convert-string-to-char-array-c-plus-plus#:~:text=1.-,The%20c_str()%20and%20strcpy()%20function%20in%20C%2B%2B,('%5C0'). )
-		const std::string name = path+baseName+"/";
-		const char * charName=name.c_str();
-        fs::create_directory(charName);
-	}
+  //ToDo: 1. check, if it works in linux and ... too (probably only a solution for windows)
+  //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)	
+  if( !directoryExists( path + baseName ) )
+  {
+    //create an array of chars out of the pathname
+    //(source: https://www.journaldev.com/37220/convert-string-to-char-array-c-plus-plus#:~:text=1.-,The%20c_str()%20and%20strcpy()%20function%20in%20C%2B%2B,('%5C0'). )
+    const std::string name = path + baseName + "/";
+    const char * charName = name.c_str( );
+    fs::create_directory(charName);
+  }
 
-    if (fileId == 0)
-    {
-      vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
+  if( fileId == 0 )
+  {
+    vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
     //Clean the folder, if there are additional .vtu pieces of a previous run
-	  size_t additionalFiles = numberOfFiles;
-    	while (fs::remove(path + baseName + "/" + baseName + "_" + std::to_string(additionalFiles) + ".vtu"))
-    	{
-			additionalFiles++;
-    	}
+    size_t additionalFiles = numberOfFiles;
+    while( fs::remove( path + baseName + "/" + baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
+    {
+      additionalFiles++;
     }
-    std::string name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
+  }
+  std::string name = path + baseName + "/" + baseName + "_" + std::to_string( fileId ) + ".vtu";
 
-    write(name, mesh, pointData, cellData, writer);
-}//parallelWrite
+  write( name, mesh, pointData, cellData, writer );
+} // parallelWrite
 } // namespace vtu11
 
 #endif // VTU11_VTU11_IMPL_HPP
