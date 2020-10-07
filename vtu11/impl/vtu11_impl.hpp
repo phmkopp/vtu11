@@ -191,14 +191,10 @@ void parallelWrite( const std::string& path,
                     Writer writer )
 {
   //ToDo: 1. check, if it works in linux and ... too (probably only a solution for windows)
-  //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)	
-  if( !directoryExists( path + baseName ) )
+  //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
+  if( !fs::exists( path + baseName ) )
   {
-    //create an array of chars out of the pathname
-    //(source: https://www.journaldev.com/37220/convert-string-to-char-array-c-plus-plus#:~:text=1.-,The%20c_str()%20and%20strcpy()%20function%20in%20C%2B%2B,('%5C0'). )
-    const std::string name = path + baseName + "/";
-    const char * charName = name.c_str( );
-    fs::create_directory(charName);
+    fs::create_directory( path + baseName + "/" );
   }
 
   if( fileId == 0 )
