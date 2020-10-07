@@ -59,7 +59,7 @@ namespace vtu11
       DataSet { std::string( "cellData2" ), 1, cellData2 },
       DataSet { std::string( "cellData3" ), 1, cellData3 }
     };
-    /* Eulogio: For the moment we don't need this, we don't have a file to compare with
+    /* // For the moment we don't need this, we don't have a file to compare with
     auto readFile = [](const std::string& filename)
     {
       std::ifstream file(filename);
@@ -92,9 +92,9 @@ namespace vtu11
 
     SECTION( "parallel_writing_successful" )
     {
-      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2 ) ); // changed to basename
+      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2 ) );
 
-      // ToDo: Create a pvtu ascii file to to compare with.
+      //ToDo: write the files for the test
       //auto written = readFile(filename);
       //auto expected = readFile("testfiles/ascii.vtu");
 

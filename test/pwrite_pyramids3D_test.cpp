@@ -264,7 +264,6 @@ namespace distributeData
     Vtu11AllData allData{ points, connectivity, offsets, types,pointData,cellData };
     std::string path = "testfiles/parallel_write/pyramids_3D/tester/";
     std::string basename = "pyramids3D_parallel_test";
-    fs::create_directories( path ); //Must create the tester folder on the go for this test.
 
     auto readFile = []( const std::string& filename )
     {
