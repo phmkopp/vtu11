@@ -11,10 +11,10 @@
 #define VTU11_UTILITIES_IMPL_HPP
 
 #include <limits>
-
+#include "inc/xml.hpp"
+#include "impl/vtu11_impl.hpp"
 namespace vtu11
 {
-
 template<typename DataType>
 inline std::string dataTypeString( )
 {
@@ -35,7 +35,6 @@ inline std::string dataTypeString( )
 
   return base + std::to_string( sizeof( DataType ) * 8 );
 }
-
 } // namespace vtu11
 
 inline std::string vtu11::endianness( )

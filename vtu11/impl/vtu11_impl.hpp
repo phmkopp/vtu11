@@ -10,10 +10,13 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
+#include <filesystem>
+#include <direct.h>
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
-
+#include "inc/parallel_helper.hpp"
 #include <limits>
+
 
 namespace vtu11
 {
@@ -59,6 +62,36 @@ inline void addDataSet( Writer& writer,
 
     writer.writeData( output, data );
   }
+}
+
+/* ToDo: write this function in the utilities header
+ *       or create a proper header for this parallel_helper.hpp
+ * NOTES: Could we somehow add this to the original addDataSet via another input argument,
+ *        e.g. "Bool = true/false" for Parallel, and then add an if-else statement to use
+ *        the writeEmptyTag function accordingly?
+ */
+template<typename Writer, typename DataType>
+inline void addPEmptyDataSet( Writer& writer,
+                             std::ostream& output,
+                             const std::vector<DataType>& data,
+                             size_t numberOfComponents = 1,
+                             const std::string& name = "" )
+{
+  StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
+
+  if( numberOfComponents > 1 )
+  {
+    attributes["NumberOfComponents"] = std::to_string( numberOfComponents );
+  }
+
+  if( name != "" )
+  {
+    attributes["Name"] = name;
+  }
+
+  writer.addDataAttributes( attributes );
+
+  writeEmptyTag( output, "PDataArray", attributes );
 }
 
 } // namespace detail
@@ -146,6 +179,38 @@ void write( const std::string& filename,
   output.close( );
 }
 
+//ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
+//Each piece consists of a set of points and cells
+template<typename MeshGenerator, typename Writer>
+void parallelWrite( const std::string& path,
+                    const std::string& baseName,
+                    MeshGenerator& mesh,
+                    const std::vector<DataSet>& pointData,
+                    const std::vector<DataSet>& cellData,
+                    size_t fileId, size_t numberOfFiles,
+                    Writer writer )
+{
+  //ToDo: 1. check, if it works in linux and ... too (probably only a solution for windows)
+  //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
+  if( !fs::exists( path + baseName ) )
+  {
+    fs::create_directory( path + baseName + "/" );
+  }
+
+  if( fileId == 0 )
+  {
+    vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
+    //Clean the folder, if there are additional .vtu pieces of a previous run
+    size_t additionalFiles = numberOfFiles;
+    while( fs::remove( path + baseName + "/" + baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
+    {
+      additionalFiles++;
+    }
+  }
+  std::string name = path + baseName + "/" + baseName + "_" + std::to_string( fileId ) + ".vtu";
+
+  write( name, mesh, pointData, cellData, writer );
+} // parallelWrite
 } // namespace vtu11
 
 #endif // VTU11_VTU11_IMPL_HPP

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<VTKFile byte_order="LittleEndian" header_type="UInt64" type="UnstructuredGrid" version="0.1">
+<UnstructuredGrid>
+<Piece NumberOfCells="2" NumberOfPoints="5">
+<PointData>
+<DataArray Name="Flash Strength Points" format="binary" type="Float64">
+KAAAAAAAAAA=AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPw==
+</DataArray>
+<DataArray Name="pointData2" format="binary" type="Float64">
+KAAAAAAAAAA=AAAAAAAAFEAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAEAAAAAAAAAIQA==
+</DataArray>
+</PointData>
+<CellData>
+<DataArray Name="cell Colour" format="binary" type="Float64">
+EAAAAAAAAAA=AAAAAAAA8D8AAAAAAAAAQA==
+</DataArray>
+<DataArray Name="cellData2" format="binary" type="Float64">
+EAAAAAAAAAA=AAAAAAAAFEAAAAAAAAAYQA==
+</DataArray>
+</CellData>
+<Points>
+<DataArray NumberOfComponents="3" format="binary" type="Float64">
+eAAAAAAAAAA=AAAAAAAA8L8AAAAAAADwPwAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAQAAAAAAAAABAAAAAAAAA8D8AAAAAAAAIQAAAAAAAAADA
+</DataArray>
+</Points>
+<Cells>
+<DataArray Name="connectivity" format="binary" type="Int64">
+QAAAAAAAAAA=AAAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAwAAAAAAAAADAAAAAAAAAAEAAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA==
+</DataArray>
+<DataArray Name="offsets" format="binary" type="Int64">
+EAAAAAAAAAA=BAAAAAAAAAAIAAAAAAAAAA==
+</DataArray>
+<DataArray Name="types" format="binary" type="Int8">
+AgAAAAAAAAA=Cgo=
+</DataArray>
+</Cells>
+</Piece>
+</UnstructuredGrid>
+</VTKFile>
