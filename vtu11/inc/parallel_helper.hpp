@@ -10,9 +10,9 @@
 #define VTU11_PARALLEL_HELPER_HPP
 
 #include <array>
-#include "alias.hpp"
+#include "inc/alias.hpp"
 #include "vtu11.hpp"
-#include "utilities.hpp"
+#include "inc/utilities.hpp"
 namespace vtu11
 {
   //writes the .pvtu file, that keeps together all vtu pieces
