@@ -10,7 +10,7 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-#include </home/jsymeonidou/Schreibtisch/SoftwareLab/vtu11_SL/vtu11/vtu11/external/filesystem/filesystem.hpp>
+#include "external/filesystem/filesystem.hpp"
 //#include <direct.h>
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
