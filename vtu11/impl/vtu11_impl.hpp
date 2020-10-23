@@ -10,8 +10,8 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-#include <filesystem>
-#include <direct.h>
+#include </home/jsymeonidou/Schreibtisch/SoftwareLab/vtu11_SL/vtu11/vtu11/external/filesystem/filesystem.hpp>
+//#include <direct.h>
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 #include "inc/parallel_helper.hpp"
@@ -192,9 +192,24 @@ void parallelWrite( const std::string& path,
 {
   //ToDo: 1. check, if it works in linux and ... too (probably only a solution for windows)
   //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
-  if( !fs::exists( path + baseName ) )
+  fs::path p1 = path;
+  p1.make_preferred();
+  if( !fs::exists( p1 ) )
   {
-    fs::create_directory( path + baseName + "/" );
+    //directory = path + baseName + "/";
+    //directory.make_preferred();
+    fs::create_directory( p1 );
+    
+  }
+  
+  fs::path directory = path + baseName + "/";
+  directory.make_preferred();
+  if( !fs::exists( directory ) )
+  {
+    //directory = path + baseName + "/";
+    //directory.make_preferred();
+    fs::create_directory( directory );
+    
   }
 
   if( fileId == 0 )
@@ -202,12 +217,14 @@ void parallelWrite( const std::string& path,
     vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
     //Clean the folder, if there are additional .vtu pieces of a previous run
     size_t additionalFiles = numberOfFiles;
-    while( fs::remove( path + baseName + "/" + baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
+
+    while( fs::remove( directory += baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
     {
       additionalFiles++;
     }
   }
-  std::string name = path + baseName + "/" + baseName + "_" + std::to_string( fileId ) + ".vtu";
+  fs::path name = path + baseName + "/" + baseName + "_" + std::to_string( fileId ) + ".vtu";
+  name.make_preferred();
 
   write( name, mesh, pointData, cellData, writer );
 } // parallelWrite

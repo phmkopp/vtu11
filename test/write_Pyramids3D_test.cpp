@@ -66,7 +66,8 @@ TEST_CASE("write_Pyramids3D_Test")
 
   SECTION("ascii_3D")
   {
-  	REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData));
+        AsciiWriter writer;
+  	REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
 
   	auto written = readFile(filename);
   	auto expected = readFile("testfiles/pyramids_3D/ascii.vtu");

@@ -80,7 +80,8 @@ TEST_CASE("hexahedras_test")
 
   SECTION( "ascii_3D" )
   {
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+    AsciiWriter writer;
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer) );
 
     auto written = readFile( filename );
     auto expected = readFile( "testfiles/hexas_3D/ascii.vtu" );
