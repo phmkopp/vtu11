@@ -10,8 +10,6 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-#include <filesystem>
-#include <direct.h>
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 #include "inc/parallel_helper.hpp"
