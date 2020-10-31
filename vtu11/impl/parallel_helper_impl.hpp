@@ -26,7 +26,7 @@ namespace vtu11
   {
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );
-    size_t ghostLevel = 0;
+    //size_t ghostLevel = 0;
     std::vector<double> points;
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
 
