@@ -100,3 +100,5 @@ endif()
 # ---------------------- Copy / install ----------------------------
 
 CONFIGURE_FILE ( vtu11_config.hpp.in config/inc/vtu11_config.hpp )
+#CONFIGURE_FILE ( vtu11_config.hpp.in inc/vtu11_config.hpp )
+#CONFIGURE_FILE ( vtu11_config.hpp.in external/zlib/inc/vtu11_config.hpp )
