@@ -183,65 +183,52 @@ void write( const std::string& filename,
 //Each piece consists of a set of points and cells
 template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
-                    const std::string& baseName,
+                    std::string baseName,
+                    std::string timestep,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
-{
-  //ToDo: 1. check, if it works in linux and ... too (probably only a solution for windows)
-  //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
-  std::string baseNameCopy = baseName;
-  std::string applicationName = "VtuFile";
-  if(baseNameCopy.find(".vtu"))
-  {
-	int n = baseNameCopy.length()-1;
-	//std::cout << baseName[n] << std::endl;
-	
-	while(baseNameCopy[n] != '.')
-	{
-		baseNameCopy.pop_back();
-		n--;
-	}
-	baseNameCopy.pop_back();
-  }
-
-  fs::path p1 = path;
-  p1.make_preferred();
-  if( !fs::exists( p1 ) )
-  {
-    //directory = path + baseName + "/";
-    //directory.make_preferred();
-    fs::create_directory( p1 );
+{ 
+    baseName = baseName + "_ts_"+ timestep;
+    fs::path p1 = path;
+    p1.make_preferred();
+    if( !fs::exists( p1 ) )
+    {
+      fs::create_directory( p1 );
+    }  
     
-  }
+    fs::path directory = path + baseName + "/";
+    directory.make_preferred();
+    //std::cout <<"\nDIRECTORY: " << directory << std::endl;
+    if( !fs::exists( directory ) )
+    {
+      //directory = path + baseName + "/";
+      //directory.make_preferred();
+      fs::create_directory( directory );
+     // std::cout << "directory " << directory << " created." << std::endl;
+
+    }
   
-  fs::path directory = path + baseNameCopy + "/";
-  directory.make_preferred();
-  if( !fs::exists( directory ) )
-  {
-    //directory = path + baseName + "/";
-    //directory.make_preferred();
-    fs::create_directory( directory );
-    
-  }
-
   if( fileId == 0 )
   {
-    vtu11::writePVTUfile( path, baseNameCopy, pointData, cellData, fileId, numberOfFiles, writer );
+    vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
     //Clean the folder, if there are additional .vtu pieces of a previous run
-    size_t additionalFiles = numberOfFiles;
-
-    while( fs::remove( directory += baseNameCopy + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
-    {
-      additionalFiles++;
-    }
+    //size_t additionalFiles = numberOfFiles;
+   // std::cout << "before fs::remove" << std::endl;
+    //while( fs::remove( directory += baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
+    //{
+      //additionalFiles++;
+    //}
   }
-  fs::path name = path + baseNameCopy + "/" + applicationName + "_" + std::to_string(fileId) + ".vtu";
+  //std::cout << "after fs::remove for cleaning the directory and for PROCESS= " << fileId << std::endl;
+  fs::path name = path + baseName + "/" + baseName + "_pid_" + std::to_string(fileId) + ".vtu";
   name.make_preferred();
 
   write( name, mesh, pointData, cellData, writer );
+  
+ // std::cout << "file created with name --> " << name << std::endl;
 } // parallelWrite
 } // namespace vtu11
 

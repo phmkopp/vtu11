@@ -18,7 +18,7 @@ namespace vtu11
 {
   template<typename Writer>
   void writePVTUfile( const std::string& path,
-                      const std::string& baseName,
+                      std::string baseName,
                       const std::vector<DataSet>& pointData,
                       const std::vector<DataSet>& cellData,
                       size_t fileId, size_t numberOfFiles,
@@ -26,6 +26,11 @@ namespace vtu11
   {
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );
+    std::string baseNameModified = baseName;
+    //std::cout << baseName.find('/') << std::endl;
+    //int cnt = baseName.find('/');
+    //baseNameModified.erase(0, cnt+1);
+    
     //size_t ghostLevel = 0;
     std::vector<double> points;
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
@@ -62,7 +67,10 @@ namespace vtu11
         } // PPoints
         for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
         {
-          std::string pieceName = baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";
+          //int cnt = baseNameModified.find('_');
+          //baseNameModified.erase(0, cnt+1);
+          //std::string pieceName = baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";
+          std::string pieceName = baseName + "/" + baseName + "_pid_" + std::to_string( nFiles ) + ".vtu";
           writeEmptyTag( output, "Piece", { { "Source", pieceName } } );
         } // Pieces
       } // PUnstructuredGrid
