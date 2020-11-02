@@ -25,12 +25,7 @@ namespace vtu11
                       Writer writer )
   {
     std::string parallelName = path + baseName + ".pvtu";
-    std::ofstream output( parallelName, std::ios::binary );
-    std::string baseNameModified = baseName;
-    //std::cout << baseName.find('/') << std::endl;
-    //int cnt = baseName.find('/');
-    //baseNameModified.erase(0, cnt+1);
-    
+    std::ofstream output( parallelName, std::ios::binary );    
     //size_t ghostLevel = 0;
     std::vector<double> points;
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
@@ -67,15 +62,11 @@ namespace vtu11
         } // PPoints
         for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
         {
-          //int cnt = baseNameModified.find('_');
-          //baseNameModified.erase(0, cnt+1);
-          //std::string pieceName = baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";
           std::string pieceName = baseName + "/" + baseName + "_pid_" + std::to_string( nFiles ) + ".vtu";
           writeEmptyTag( output, "Piece", { { "Source", pieceName } } );
         } // Pieces
       } // PUnstructuredGrid
     } // VTKFile
-
     output.close( );
   } // writePVTUfile
 namespace parallelHelper

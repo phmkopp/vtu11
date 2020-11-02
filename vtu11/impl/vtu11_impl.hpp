@@ -190,13 +190,16 @@ void parallelWrite( const std::string& path,
                     const std::vector<DataSet>& cellData,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
-{ 
+{
+	//ToDo: We somehow need to take care of cleaning the original folder!
+	
     baseName = baseName + "_ts_"+ timestep;
     fs::path p1 = path;
     p1.make_preferred();
     if( !fs::exists( p1 ) )
     {
       fs::create_directory( p1 );
+	  std::cout << "Original path, where the parallel files should be stored, does not exist!" << std::endl;
     }  
     
     fs::path directory = path + baseName + "/";
@@ -204,10 +207,8 @@ void parallelWrite( const std::string& path,
     //std::cout <<"\nDIRECTORY: " << directory << std::endl;
     if( !fs::exists( directory ) )
     {
-      //directory = path + baseName + "/";
-      //directory.make_preferred();
       fs::create_directory( directory );
-     // std::cout << "directory " << directory << " created." << std::endl;
+     //std::cout << "directory " << directory << " created." << std::endl;
 
     }
   

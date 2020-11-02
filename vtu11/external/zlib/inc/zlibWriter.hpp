@@ -14,8 +14,8 @@
 //#include "inc/vtu11_config.hpp"
 #include "inc/alias.hpp"
 //#include "config/inc/vtu11_config.hpp"
-
-#define VTU11_ENABLE_ZLIB
+//ToDo: Here we need to check, if we are using Zlib, if yes, enable next line!!
+//#define VTU11_ENABLE_ZLIB
 #ifdef VTU11_ENABLE_ZLIB
 
 namespace vtu11
