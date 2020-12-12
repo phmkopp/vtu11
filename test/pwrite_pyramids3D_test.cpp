@@ -303,7 +303,7 @@ namespace distributeData
 
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename,timestep, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
+        parallelWrite( path, basename, timestep, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
         std::string filename = path + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string( fileId ) + ".vtu";
 
         auto written = readFile( filename );

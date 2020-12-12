@@ -22,7 +22,7 @@ namespace vtu11
                       std::string baseName,
                       const std::vector<DataSet> & pointData,
                       const std::vector<DataSet> & cellData,
-                      size_t fileId, size_t numberOfFiles,
+                      size_t numberOfFiles,
                       Writer writer );
 
 namespace parallelHelper

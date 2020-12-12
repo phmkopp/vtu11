@@ -214,14 +214,13 @@ void parallelWrite( const std::string& path,
   
   if( fileId == 0 )
   {
-    vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
+    vtu11::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
     //Clean the folder, if there are additional .vtu pieces of a previous run
-    //size_t additionalFiles = numberOfFiles;
-   // std::cout << "before fs::remove" << std::endl;
-    //while( fs::remove( directory += baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
-    //{
-      //additionalFiles++;
-    //}
+ //   size_t additionalFiles = numberOfFiles;
+ //   while( fs::remove( directory += baseName + "_pid_" + std::to_string(additionalFiles) + ".vtu" ) )
+	//{
+ //     additionalFiles++;
+ //   }
   }
   //std::cout << "after fs::remove for cleaning the directory and for PROCESS= " << fileId << std::endl;
   fs::path name = path + baseName + "/" + baseName + "_pid_" + std::to_string(fileId) + ".vtu";

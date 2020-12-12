@@ -21,12 +21,12 @@ namespace vtu11
                       std::string baseName,
                       const std::vector<DataSet>& pointData,
                       const std::vector<DataSet>& cellData,
-                      size_t fileId, size_t numberOfFiles,
+                      size_t numberOfFiles,
                       Writer writer )
   {
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );    
-    //size_t ghostLevel = 0;
+    size_t ghostLevel = 0;
     std::vector<double> points;
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
 
@@ -39,7 +39,7 @@ namespace vtu11
     {
       ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
       {
-        ScopedXmlTag pUnstructuredGridFileTag( output, "PUnstructuredGrid", { { "GhostLevel", std::to_string( fileId ) } });
+        ScopedXmlTag pUnstructuredGridFileTag( output, "PUnstructuredGrid", { { "GhostLevel", std::to_string( ghostLevel ) } });
         {
           ScopedXmlTag pPointDataTag( output, "PPointData", { } );
 
