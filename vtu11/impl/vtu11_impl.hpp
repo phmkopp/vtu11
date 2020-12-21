@@ -184,7 +184,6 @@ void write( const std::string& filename,
 template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
                     std::string baseName,
-                    std::string timestep,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
@@ -192,8 +191,6 @@ void parallelWrite( const std::string& path,
                     Writer writer )
 {
 	//ToDo: We somehow need to take care of cleaning the original folder!
-	
-    baseName = baseName + "_ts_"+ timestep;
     fs::path p1 = path;
     p1.make_preferred();
     if( !fs::exists( p1 ) )
@@ -204,31 +201,26 @@ void parallelWrite( const std::string& path,
     
     fs::path directory = path + baseName + "/";
     directory.make_preferred();
-    //std::cout <<"\nDIRECTORY: " << directory << std::endl;
     if( !fs::exists( directory ) )
     {
       fs::create_directory( directory );
-     //std::cout << "directory " << directory << " created." << std::endl;
-
     }
   
   if( fileId == 0 )
   {
     vtu11::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
-    //Clean the folder, if there are additional .vtu pieces of a previous run
+   //Clean the folder, if there are additional .vtu pieces of a previous run
  //   size_t additionalFiles = numberOfFiles;
- //   while( fs::remove( directory += baseName + "_pid_" + std::to_string(additionalFiles) + ".vtu" ) )
-	//{
+ //   while( fs::remove( directory += baseName + "_" + std::to_string(additionalFiles) + ".vtu" ) )
+    //{
  //     additionalFiles++;
  //   }
   }
-  //std::cout << "after fs::remove for cleaning the directory and for PROCESS= " << fileId << std::endl;
-  fs::path name = path + baseName + "/" + baseName + "_pid_" + std::to_string(fileId) + ".vtu";
+  fs::path name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
   name.make_preferred();
 
   write( name, mesh, pointData, cellData, writer );
   
- // std::cout << "file created with name --> " << name << std::endl;
 } // parallelWrite
 } // namespace vtu11
 

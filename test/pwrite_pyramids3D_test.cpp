@@ -272,7 +272,6 @@ namespace distributeData
     Vtu11AllData allData{ points, connectivity, offsets, types,pointData,cellData };
     std::string path = "testfiles/parallel_write/pyramids_3D/tester/";
     std::string basename = "pyramids3D_parallel_test";
-	std::string timestep = "1";
     auto readFile = []( const std::string& filename )
     {
       std::ifstream file( filename );
@@ -303,17 +302,17 @@ namespace distributeData
 
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename, timestep, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
-        std::string filename = path + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string( fileId ) + ".vtu";
+        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
+        std::string filename = path + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu";
 
         auto written = readFile( filename );
-        auto expected = readFile( "testfiles/parallel_write/pyramids_3D/ascii/" + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string( fileId ) + ".vtu" );
+        auto expected = readFile( "testfiles/parallel_write/pyramids_3D/ascii/" + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu" );
 
         CHECK( written == expected );
       }
       //check the .pvtu file
-      auto written = readFile( path + basename + "_ts_" + timestep + ".pvtu" );
-      auto expected = readFile( "testfiles/parallel_write/pyramids_3D/ascii/" + basename + "_ts_" + timestep + ".pvtu" );
+      auto written = readFile( path + basename + ".pvtu" );
+      auto expected = readFile( "testfiles/parallel_write/pyramids_3D/ascii/" + basename + ".pvtu" );
 
       CHECK( written == expected );
     }
@@ -324,17 +323,17 @@ namespace distributeData
       {
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-		parallelWrite(path, basename, timestep, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
-		std::string filename = path + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string(fileId) + ".vtu";
+		parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
+		std::string filename = path + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu";
 
 		auto written = readFile(filename);
-		auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64/" + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string(fileId) + ".vtu");
+		auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64/" + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu");
 
 		CHECK(written == expected);
 	  }
 	  //check the .pvtu file
-	  auto written = readFile(path + basename + "_ts_" + timestep + ".pvtu");
-	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64/" + basename + "_ts_" + timestep + ".pvtu");
+	  auto written = readFile(path + basename + ".pvtu");
+	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64/" + basename + ".pvtu");
 
       CHECK( written == expected );
     }
@@ -345,17 +344,17 @@ namespace distributeData
       {
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>(mesh, pointData, cellData, cellDistribution, fileId) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-		parallelWrite(path, basename, timestep, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
-		std::string filename = path + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string(fileId) + ".vtu";
+		parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
+		std::string filename = path + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu";
 
 		auto written = readFile(filename);
-		auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64appended/" + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string(fileId) + ".vtu");
+		auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64appended/" + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu");
 
 		CHECK(written == expected);
 	  }
 	  //check the .pvtu file
-	  auto written = readFile(path + basename + "_ts_" + timestep + ".pvtu");
-	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64appended/" + basename + "_ts_" + timestep + ".pvtu");
+	  auto written = readFile(path + basename + ".pvtu");
+	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64appended/" + basename + ".pvtu");
 
       CHECK( written == expected );
     }
@@ -366,17 +365,17 @@ namespace distributeData
       {
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-		parallelWrite(path, basename, timestep, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
-		std::string filename = path + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string(fileId) + ".vtu";
+		parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
+		std::string filename = path + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu";
 
 		auto written = readFile(filename);
-		auto expected = readFile("testfiles/parallel_write/pyramids_3D/raw/" + basename + "_ts_" + timestep + "/" + basename + "_ts_" + timestep + "_pid_" + std::to_string(fileId) + ".vtu");
+		auto expected = readFile("testfiles/parallel_write/pyramids_3D/raw/" + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu");
 
 		CHECK(written == expected);
 	  }
 	  //check the .pvtu file
-	  auto written = readFile(path + basename + "_ts_" + timestep + ".pvtu");
-	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/raw/" + basename + "_ts_" + timestep + ".pvtu");
+	  auto written = readFile(path + basename + ".pvtu");
+	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/raw/" + basename + ".pvtu");
 
       CHECK( written == expected );
     }

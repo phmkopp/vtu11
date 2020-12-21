@@ -46,7 +46,6 @@ void write( const std::string& filename,
 template<typename MeshGenerator, typename Writer = AsciiWriter>
 void parallelWrite( const std::string& path,
                     std::string baseName,
-                    std::string timestep,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,

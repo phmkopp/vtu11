@@ -62,7 +62,7 @@ namespace vtu11
         } // PPoints
         for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
         {
-          std::string pieceName = baseName + "/" + baseName + "_pid_" + std::to_string( nFiles ) + ".vtu";
+          std::string pieceName = baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";
           writeEmptyTag( output, "Piece", { { "Source", pieceName } } );
         } // Pieces
       } // PUnstructuredGrid

@@ -12,8 +12,8 @@
 <PPoints>
 <PDataArray NumberOfComponents="3" format="binary" type="Float64"/>
 </PPoints>
-<Piece Source="pyramids3D_parallel_test_ts_1/pyramids3D_parallel_test_ts_1_pid_0.vtu"/>
-<Piece Source="pyramids3D_parallel_test_ts_1/pyramids3D_parallel_test_ts_1_pid_1.vtu"/>
-<Piece Source="pyramids3D_parallel_test_ts_1/pyramids3D_parallel_test_ts_1_pid_2.vtu"/>
+<Piece Source="pyramids3D_parallel_test/pyramids3D_parallel_test_0.vtu"/>
+<Piece Source="pyramids3D_parallel_test/pyramids3D_parallel_test_1.vtu"/>
+<Piece Source="pyramids3D_parallel_test/pyramids3D_parallel_test_2.vtu"/>
 </PUnstructuredGrid>
 </VTKFile>
