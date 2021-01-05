@@ -10,12 +10,9 @@
 #ifndef VTU11_ZLIBWRITER_HPP
 #define VTU11_ZLIBWRITER_HPP
 
-//#include "/home/jsymeonidou/Schreibtisch/SoftwareLab/vtu11_SL/build/config/inc/vtu11_config.hpp"
-//#include "inc/vtu11_config.hpp"
+#include "inc/vtu11_config.hpp"
 #include "inc/alias.hpp"
-//#include "config/inc/vtu11_config.hpp"
-//ToDo: Here we need to check, if we are using Zlib, if yes, enable next line!!
-//#define VTU11_ENABLE_ZLIB
+
 #ifdef VTU11_ENABLE_ZLIB
 
 namespace vtu11
