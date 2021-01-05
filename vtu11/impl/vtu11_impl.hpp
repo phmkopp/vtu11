@@ -10,6 +10,7 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
+#include "external/filesystem/filesystem.hpp"
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 #include "inc/parallel_helper.hpp"
@@ -181,33 +182,44 @@ void write( const std::string& filename,
 //Each piece consists of a set of points and cells
 template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
-                    const std::string& baseName,
+                    std::string baseName,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
 {
-  //ToDo: 1. check, if it works in linux and ... too (probably only a solution for windows)
-  //ToDo: 2. check, if there is a problem, if the code is run in parallel (checked at the same time and then created twice or more often)
-  if( !fs::exists( path + baseName ) )
-  {
-    fs::create_directory( path + baseName + "/" );
-  }
-
+	//ToDo: We somehow need to take care of cleaning the original folder!
+    fs::path p1 = path;
+    p1.make_preferred();
+    if( !fs::exists( p1 ) )
+    {
+      fs::create_directory( p1 );
+	  std::cout << "Original path, where the parallel files should be stored, does not exist!" << std::endl;
+    }  
+    
+    fs::path directory = path + baseName + "/";
+    directory.make_preferred();
+    if( !fs::exists( directory ) )
+    {
+      fs::create_directory( directory );
+    }
+  
   if( fileId == 0 )
   {
-    vtu11::writePVTUfile( path, baseName, pointData, cellData, fileId, numberOfFiles, writer );
-    //Clean the folder, if there are additional .vtu pieces of a previous run
-    size_t additionalFiles = numberOfFiles;
-    while( fs::remove( path + baseName + "/" + baseName + "_" + std::to_string( additionalFiles ) + ".vtu" ) )
-    {
-      additionalFiles++;
-    }
+    vtu11::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
+   //Clean the folder, if there are additional .vtu pieces of a previous run
+ //   size_t additionalFiles = numberOfFiles;
+ //   while( fs::remove( directory += baseName + "_" + std::to_string(additionalFiles) + ".vtu" ) )
+    //{
+ //     additionalFiles++;
+ //   }
   }
-  std::string name = path + baseName + "/" + baseName + "_" + std::to_string( fileId ) + ".vtu";
+  fs::path name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
+  name.make_preferred();
 
   write( name, mesh, pointData, cellData, writer );
+  
 } // parallelWrite
 } // namespace vtu11
 

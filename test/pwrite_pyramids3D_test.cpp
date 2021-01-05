@@ -47,7 +47,7 @@ namespace distributeData
     //Check if the number of cells can be distributed equally to each file-piece
     if( *numberOfFiles == 0 )
     {
-      throw std::exception( "Determining the amount of cells per file-piece went wrong!" );
+      throw std::runtime_error( "Determining the amount of cells per file-piece went wrong!" );
     }
     else if( numberOfCells % *numberOfFiles == 0 )
     {
@@ -71,11 +71,45 @@ namespace distributeData
     }
     else
     {
-      throw std::exception( "Determining the amount of cells per file-piece went wrong!" );
+      throw std::runtime_error( "Determining the amount of cells per file-piece went wrong!" );
     }
 
   } // GetAmountOfCells
-  //This function distributes the global mesh into equal small pieces and returns those mesh-pieces and the associated data
+  
+    //This function returns the cell and point datasets only for one specific piece
+    std::array<std::vector<DataSet>, 2> GetCurrentCellPointData( const std::vector<DataSet> & pointDataGlobal,
+                                                                      const std::vector<DataSet> & cellDataGlobal,
+                                                                      std::vector<VtkIndexType> & globalTranslation,
+                                                                      size_t firstCellId, size_t lastCellId )
+  {
+    std::vector<DataSet> pointData, cellData;
+    for( DataSet pointSet : pointDataGlobal )
+    {
+      std::vector<double> data;
+      for( VtkIndexType pointId : globalTranslation )
+      {
+        data.push_back( std::get<2>( pointSet )[pointId] );
+      }
+      pointData.push_back( DataSet{ std::get<0>( pointSet ),std::get<1>( pointSet ),data } );
+    }
+    for( DataSet cellSet : cellDataGlobal )
+    {
+      std::vector<double> data;
+      for( size_t cellId = firstCellId; cellId < lastCellId; ++cellId )
+      {
+        data.push_back( std::get<2>( cellSet )[cellId] );
+      }
+      cellData.push_back( DataSet{ std::get<0>( cellSet ),std::get<1>( cellSet ),data } );
+    }
+    return { pointData, cellData };
+  } // GetCurrentCellPointData
+
+
+
+
+
+
+//This function distributes the global mesh into equal small pieces and returns those mesh-pieces and the associated data
   //There is no fileId 0, it starts with fileId==1
   template<typename MeshGenerator, typename AllMeshData>
   inline AllMeshData GetCurrentDataSet( MeshGenerator& mesh,
@@ -166,33 +200,7 @@ namespace distributeData
     return allDataPiece;
   } // GetCurrentDataSet
 
-  //This function returns the cell and point datasets only for one specific piece
-  inline std::array<std::vector<DataSet>, 2> GetCurrentCellPointData( const std::vector<DataSet> & pointDataGlobal,
-                                                                      const std::vector<DataSet> & cellDataGlobal,
-                                                                      std::vector<VtkIndexType> & globalTranslation,
-                                                                      size_t firstCellId, size_t lastCellId )
-  {
-    std::vector<DataSet> pointData, cellData;
-    for( DataSet pointSet : pointDataGlobal )
-    {
-      std::vector<double> data;
-      for( VtkIndexType pointId : globalTranslation )
-      {
-        data.push_back( std::get<2>( pointSet )[pointId] );
-      }
-      pointData.push_back( DataSet{ std::get<0>( pointSet ),std::get<1>( pointSet ),data } );
-    }
-    for( DataSet cellSet : cellDataGlobal )
-    {
-      std::vector<double> data;
-      for( size_t cellId = firstCellId; cellId < lastCellId; ++cellId )
-      {
-        data.push_back( std::get<2>( cellSet )[cellId] );
-      }
-      cellData.push_back( DataSet{ std::get<0>( cellSet ),std::get<1>( cellSet ),data } );
-    }
-    return { pointData, cellData };
-  } // GetCurrentCellPointData
+  
   TEST_CASE( "getAmountOfCells_test" )
   {
     size_t numberOfFiles, numberOfCells;
@@ -264,7 +272,6 @@ namespace distributeData
     Vtu11AllData allData{ points, connectivity, offsets, types,pointData,cellData };
     std::string path = "testfiles/parallel_write/pyramids_3D/tester/";
     std::string basename = "pyramids3D_parallel_test";
-
     auto readFile = []( const std::string& filename )
     {
       std::ifstream file( filename );
@@ -288,12 +295,14 @@ namespace distributeData
     };
     SECTION( "test_pyramids3D_parallel_ascii" )
     {
+      AsciiWriter writer;      
       //create all pieces and the .pvtu file and check the pieces for correctness
       for( size_t fileId = 0; fileId < numberOfFiles; fileId++ )
       {
+
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles );
+        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
         std::string filename = path + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu";
 
         auto written = readFile( filename );
@@ -314,17 +323,17 @@ namespace distributeData
       {
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
-        std::string filename = path + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu";
+		parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
+		std::string filename = path + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu";
 
-        auto written = readFile( filename );
-        auto expected = readFile( "testfiles/parallel_write/pyramids_3D/base64/" + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu" );
+		auto written = readFile(filename);
+		auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64/" + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu");
 
-        CHECK( written == expected );
-      }
-      //check the .pvtu file
-      auto written = readFile( path + basename + ".pvtu" );
-      auto expected = readFile( "testfiles/parallel_write/pyramids_3D/base64/" + basename + ".pvtu" );
+		CHECK(written == expected);
+	  }
+	  //check the .pvtu file
+	  auto written = readFile(path + basename + ".pvtu");
+	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64/" + basename + ".pvtu");
 
       CHECK( written == expected );
     }
@@ -335,17 +344,17 @@ namespace distributeData
       {
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>(mesh, pointData, cellData, cellDistribution, fileId) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
-        std::string filename = path + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu";
+		parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
+		std::string filename = path + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu";
 
-        auto written = readFile( filename );
-        auto expected = readFile( "testfiles/parallel_write/pyramids_3D/base64appended/" + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu" );
+		auto written = readFile(filename);
+		auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64appended/" + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu");
 
-        CHECK( written == expected );
-      }
-      //check the .pvtu file
-      auto written = readFile( path + basename + ".pvtu" );
-      auto expected = readFile( "testfiles/parallel_write/pyramids_3D/base64appended/" + basename + ".pvtu" );
+		CHECK(written == expected);
+	  }
+	  //check the .pvtu file
+	  auto written = readFile(path + basename + ".pvtu");
+	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/base64appended/" + basename + ".pvtu");
 
       CHECK( written == expected );
     }
@@ -356,17 +365,17 @@ namespace distributeData
       {
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles, writer );
-        std::string filename = path + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu";
+		parallelWrite(path, basename, pieceMesh, pieceDataSets.pointData(), pieceDataSets.cellData(), fileId, numberOfFiles, writer);
+		std::string filename = path + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu";
 
-        auto written = readFile( filename );
-        auto expected = readFile( "testfiles/parallel_write/pyramids_3D/raw/" + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu" );
+		auto written = readFile(filename);
+		auto expected = readFile("testfiles/parallel_write/pyramids_3D/raw/" + basename + "/" + basename + "_" + std::to_string(fileId) + ".vtu");
 
-        CHECK( written == expected );
-      }
-      //check the .pvtu file
-      auto written = readFile( path + basename + ".pvtu" );
-      auto expected = readFile( "testfiles/parallel_write/pyramids_3D/raw/" + basename + ".pvtu" );
+		CHECK(written == expected);
+	  }
+	  //check the .pvtu file
+	  auto written = readFile(path + basename + ".pvtu");
+	  auto expected = readFile("testfiles/parallel_write/pyramids_3D/raw/" + basename + ".pvtu");
 
       CHECK( written == expected );
     }

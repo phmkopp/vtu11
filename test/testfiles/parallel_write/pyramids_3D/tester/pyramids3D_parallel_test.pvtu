@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<VTKFile byte_order="LittleEndian" header_type="UInt64" type="PUnstructuredGrid" version="0.1">
+<PUnstructuredGrid GhostLevel="0">
+<PPointData>
+<PDataArray Name="Flash Strength Points" format="appended" offset="0" type="Float64"/>
+<PDataArray Name="pointData2" format="appended" offset="0" type="Float64"/>
+</PPointData>
+<PCellData>
+<PDataArray Name="cell Colour" format="appended" offset="0" type="Float64"/>
+<PDataArray Name="cellData2" format="appended" offset="0" type="Float64"/>
+</PCellData>
+<PPoints>
+<PDataArray NumberOfComponents="3" format="appended" offset="0" type="Float64"/>
+</PPoints>
+<Piece Source="pyramids3D_parallel_test/pyramids3D_parallel_test_0.vtu"/>
+<Piece Source="pyramids3D_parallel_test/pyramids3D_parallel_test_1.vtu"/>
+<Piece Source="pyramids3D_parallel_test/pyramids3D_parallel_test_2.vtu"/>
+</PUnstructuredGrid>
+</VTKFile>

@@ -92,7 +92,8 @@ namespace vtu11
 
     SECTION( "parallel_writing_successful" )
     {
-      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2 ) );
+      AsciiWriter writer;
+      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2, writer) );
 
       //ToDo: write the files for the test
       //auto written = readFile(filename);
