@@ -11,7 +11,6 @@
 #define VTU11_VTU11_IMPL_HPP
 
 #include "external/filesystem/filesystem.hpp"
-//#include <direct.h>
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 #include "inc/parallel_helper.hpp"
