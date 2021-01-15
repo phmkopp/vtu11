@@ -37,7 +37,7 @@ namespace vtu11
 
     writer.addHeaderAttributes( headerAttributes );
     {
-      ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
+      ScopedXmlTag vtkFileTag( output, "VTUFile", headerAttributes );
       {
         ScopedXmlTag pUnstructuredGridFileTag( output, "PUnstructuredGrid", { { "GhostLevel", std::to_string( ghostLevel ) } });
         {
@@ -66,7 +66,7 @@ namespace vtu11
           writeEmptyTag( output, "Piece", { { "Source", pieceName } } );
         } // Pieces
       } // PUnstructuredGrid
-    } // VTKFile
+    } // VTUFile
     output.close( );
   } // writePVTUfile
 namespace parallelHelper
