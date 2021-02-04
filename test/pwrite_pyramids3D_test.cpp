@@ -298,14 +298,13 @@ namespace distributeData
     };
     SECTION( "test_pyramids3D_parallel_ascii" )
     {
-      //AsciiWriter writer;      
       //create all pieces and the .pvtu file and check the pieces for correctness
       for( size_t fileId = 0; fileId < numberOfFiles; fileId++ )
       {
 
         Vtu11AllData pieceDataSets{ distributeData::GetCurrentDataSet<Vtu11UnstructuredMesh,Vtu11AllData>( mesh, pointData, cellData, cellDistribution, fileId ) };
         Vtu11UnstructuredMesh pieceMesh{ pieceDataSets.points( ),pieceDataSets.connectivity( ),pieceDataSets.offsets( ),pieceDataSets.types( ) };
-        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles/*, writer*/ );
+        parallelWrite( path, basename, pieceMesh, pieceDataSets.pointData( ), pieceDataSets.cellData( ), fileId, numberOfFiles );
         std::string filename = path + basename + "/" + basename + "_" + std::to_string( fileId ) + ".vtu";
 
         auto written = readFile( filename );
