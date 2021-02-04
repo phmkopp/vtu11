@@ -14,7 +14,6 @@
 #include <map>
 #include <utility>
 #include <vector>
-#include <array>
 
 
 namespace vtu11

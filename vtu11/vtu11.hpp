@@ -50,7 +50,7 @@ void parallelWrite( const std::string& path,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
                     size_t fileId, size_t numberOfFiles,
-                    Writer writer);
+                    Writer writer );
 
 } // namespace vtu11
 

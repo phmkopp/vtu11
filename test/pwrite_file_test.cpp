@@ -12,11 +12,11 @@
 
 #include <sstream>
 #include <fstream>
-#include <iostream> // remove
 
 namespace vtu11
 {
-  TEST_CASE( "write_parallel_file_test" ) // Test for creating the first parallel files
+// Tests, if parallelWrite is running without error. Successful and correct creation of .vtu files is not tested here
+  TEST_CASE( "write_parallel_file_test" )
   {
 
     std::vector<double> points
@@ -59,32 +59,6 @@ namespace vtu11
       DataSet { std::string( "cellData2" ), 1, cellData2 },
       DataSet { std::string( "cellData3" ), 1, cellData3 }
     };
-    /* // For the moment we don't need this, we don't have a file to compare with
-    auto readFile = [](const std::string& filename)
-    {
-      std::ifstream file(filename);
-
-      if (!file.is_open()) {
-        std::stringstream err_msg;
-        err_msg << filename << " could not be opened!";
-        throw std::runtime_error(err_msg.str());
-      }
-
-      std::string contents, str;
-
-      while (std::getline(file, str))
-      {
-        contents += str + "\n";
-      }
-
-      file.close();
-
-      return contents;
-    };
-    std::string filename = "2x3_test.vtu";
-    // std::string filename = "ascii.vtu";
-    End of block comment */
-
     std::string filename = "parallel_write_test.pvtu";
     std::string basename = "parallel_write_test";
     fs::path path = "testfiles/parallel_write/pwrite_tester/";
@@ -92,20 +66,10 @@ namespace vtu11
 
     SECTION( "parallel_writing_successful" )
     {
-      AsciiWriter writer;
-      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2, writer) );
-
-      //ToDo: write the files for the test
-      //auto written = readFile(filename);
-      //auto expected = readFile("testfiles/ascii.vtu");
-
-      //CHECK(written == expected);
-      // End of block comment */
+      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2) );
     }
-
-    // The files assume that, we need to add a big endian version
     REQUIRE( endianness( ) == "LittleEndian" );
-    //filename = "base64.vtu";
+
   }
 } // namespace vtu11
 

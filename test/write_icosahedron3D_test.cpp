@@ -109,8 +109,7 @@ TEST_CASE("write_test_icosahedron")
   REQUIRE(endianness() == "LittleEndian");
   SECTION( "ascii_3D" )
   {
-    AsciiWriter writer;
-    REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
+    REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData ));
     auto written = readFile(filename);
     auto expected = readFile("testfiles/icosahedron_3D/ascii.vtu");
 
