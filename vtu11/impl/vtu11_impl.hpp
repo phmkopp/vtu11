@@ -73,7 +73,7 @@ void write( const std::string& filename,
             MeshGenerator& mesh,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData,
-            Writer writer )
+            Writer writer = Writer())
 {
 	std::ofstream output(filename, std::ios::binary);
 
@@ -159,7 +159,7 @@ void parallelWrite( const std::string& path,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
                     size_t fileId, size_t numberOfFiles,
-                    Writer writer )
+                    Writer writer = Writer())
 {
 	//ToDo: Take care of cleaning the folder! not done in this code as Kratos takes care of it
     fs::path p1 = path;
