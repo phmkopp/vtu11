@@ -12,13 +12,13 @@
 #include "vtu11_impl.hpp"
 namespace vtu11
 {
-  template<typename Writer>
+  template<typename Writer = AsciiWriter>
   void writePVTUfile( const std::string& path,
                       std::string baseName,
                       const std::vector<DataSet>& pointData,
                       const std::vector<DataSet>& cellData,
                       size_t numberOfFiles,
-                      Writer writer )
+                      Writer writer = Writer() )
   {
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );    
