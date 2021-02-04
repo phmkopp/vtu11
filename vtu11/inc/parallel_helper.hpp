@@ -12,14 +12,13 @@
 namespace vtu11
 {
   //writes the .pvtu file, that keeps together all vtu pieces
-  template<typename Writer>
-  
+  template<typename Writer = AsciiWriter>
   void writePVTUfile( const std::string & path,
                       std::string baseName,
                       const std::vector<DataSet> & pointData,
                       const std::vector<DataSet> & cellData,
                       size_t numberOfFiles,
-                      Writer writer );
+                      Writer writer = Writer( ) );
 } // namespace vtu11
 #include "impl/parallel_helper_impl.hpp"
 #endif //VTU11_PARALLEL_HELPER_HPP

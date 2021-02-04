@@ -167,16 +167,16 @@ void parallelWrite( const std::string& path,
     if( !fs::exists( p1 ) )
     {
       fs::create_directory( p1 );
-	  std::cout << "Original path, where the parallel files should be stored, does not exist!" << std::endl;
-    }  
-    
+      std::cout << "Original path, where the parallel files should be stored, does not exist!" << std::endl;
+    }
+
     fs::path directory = path + baseName + "/";
     directory.make_preferred();
     if( !fs::exists( directory ) )
     {
       fs::create_directory( directory );
     }
-  
+
   if( fileId == 0 )
   {
     vtu11::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
@@ -185,7 +185,7 @@ void parallelWrite( const std::string& path,
   name.make_preferred();
 
   write( name, mesh, pointData, cellData, writer );
-  
+
 } // parallelWrite
 } // namespace vtu11
 

@@ -84,9 +84,7 @@ TEST_CASE("writeAscii_test")
 
   SECTION( "ascii" )
   {
-    AsciiWriter writer;
-
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer) );
+    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
 
     auto written = readFile( filename );
     auto expected = readFile( "testfiles/square_2D/ascii.vtu" );

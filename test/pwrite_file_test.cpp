@@ -66,8 +66,7 @@ namespace vtu11
 
     SECTION( "parallel_writing_successful" )
     {
-      AsciiWriter writer;
-      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2, writer) );
+      REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2) );
     }
     REQUIRE( endianness( ) == "LittleEndian" );
 
