@@ -11,8 +11,7 @@
 #define VTU11_UTILITIES_IMPL_HPP
 
 #include <limits>
-#include "inc/xml.hpp"
-#include "impl/vtu11_impl.hpp"
+
 namespace vtu11
 {
 template<typename DataType>

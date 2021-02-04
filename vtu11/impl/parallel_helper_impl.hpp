@@ -9,11 +9,7 @@
 #ifndef VTU11_PARALLEL_HELPER_IMPL_HPP
 #define VTU11_PARALLEL_HELPER_IMPL_HPP
 
-#include <iostream>
-#include <math.h>
-#include "inc/xml.hpp"
-
-
+#include "vtu11_impl.hpp"
 namespace vtu11
 {
   template<typename Writer>
@@ -26,7 +22,7 @@ namespace vtu11
   {
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );    
-    size_t ghostLevel = 0;
+    size_t ghostLevel = 0;//Hardcoded to be 0
     std::vector<double> points;
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
 
@@ -45,7 +41,7 @@ namespace vtu11
 
           for( const auto& dataSet : pointData )
           {
-            parallelHelper::addPEmptyDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ));
+            detail::addDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ), true);
           }
         } // PPointData
         {
@@ -53,12 +49,12 @@ namespace vtu11
 
           for( const auto& dataSet : cellData )
           {
-            parallelHelper::addPEmptyDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
+            detail::addDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ), true );
           }
         } // PCellData
         {
           ScopedXmlTag pPointsTag( output, "PPoints", {} );
-          parallelHelper::addPEmptyDataSet( writer, output, points, 3, "" );
+          detail::addDataSet( writer, output, points, 3, "", true );
         } // PPoints
         for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
         {
@@ -69,32 +65,5 @@ namespace vtu11
     } // VTKFile
     output.close( );
   } // writePVTUfile
-namespace parallelHelper
-{
-  // NOTES:Add this function to addDataSet via another input argument?
-  template<typename Writer, typename DataType>
-  inline void addPEmptyDataSet( Writer& writer,
-                                std::ostream& output,
-                                const std::vector<DataType>& data,
-                                size_t numberOfComponents,
-                                const std::string& name)
-  {
-    StringStringMap attributes = { { "type", dataTypeString<DataType>() } };
-
-    if( numberOfComponents > 1 )
-    {
-      attributes["NumberOfComponents"] = std::to_string( numberOfComponents );
-    }
-
-    if ( name != "" )
-    {
-      attributes["Name"] = name;
-    }
-
-    writer.addDataAttributes( attributes );
-
-    writeEmptyTag( output, "PDataArray", attributes );
-  } // addPEmptyDataSet
-} // namespace parallelHelper
 } // namespace vtu11
 #endif //VTU11_PARALLEL_HELPER_IMPL_HPP

@@ -10,7 +10,6 @@
 #ifndef VTU11_UTILITIES_HPP
 #define VTU11_UTILITIES_HPP
 
-#include "vtu11.hpp"
 
 namespace vtu11
 {

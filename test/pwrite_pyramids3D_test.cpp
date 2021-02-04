@@ -200,7 +200,7 @@ namespace distributeData
     return allDataPiece;
   } // GetCurrentDataSet
 
-  
+  //tests the function GetAmountOfCells() defined above
   TEST_CASE( "getAmountOfCells_test" )
   {
     size_t numberOfFiles, numberOfCells;
@@ -235,6 +235,9 @@ namespace distributeData
     }
   }
 } // namespace distributeData
+
+//Tests the creation of .vtu files and the according .pvtu file
+//Parallel imitation using a for-loop
   TEST_CASE("Distribute_Data_test")
   {
     std::vector<double> points{

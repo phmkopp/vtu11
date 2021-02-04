@@ -13,7 +13,6 @@
 #include "external/filesystem/filesystem.hpp"
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
-#include "inc/parallel_helper.hpp"
 #include <limits>
 
 
@@ -33,7 +32,8 @@ inline void addDataSet( Writer& writer,
                         std::ostream& output,
                         const std::vector<DataType>& data,
                         size_t numberOfComponents = 1,
-                        const std::string& name = "" )
+                        const std::string& name = "" ,
+	                    bool writePvtuCalls = false)
 {
   StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
 
@@ -48,8 +48,11 @@ inline void addDataSet( Writer& writer,
   }
 
   writer.addDataAttributes( attributes );
-
-  if( attributes["format"] != "appended" )
+  if (writePvtuCalls)
+  {
+	  writeEmptyTag(output, "PDataArray", attributes);
+  }
+  else if( attributes["format"] != "appended" )
   {
     ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
 
@@ -62,37 +65,6 @@ inline void addDataSet( Writer& writer,
     writer.writeData( output, data );
   }
 }
-
-/* ToDo: write this function in the utilities header
- *       or create a proper header for this parallel_helper.hpp
- * NOTES: Could we somehow add this to the original addDataSet via another input argument,
- *        e.g. "Bool = true/false" for Parallel, and then add an if-else statement to use
- *        the writeEmptyTag function accordingly?
- */
-template<typename Writer, typename DataType>
-inline void addPEmptyDataSet( Writer& writer,
-                             std::ostream& output,
-                             const std::vector<DataType>& data,
-                             size_t numberOfComponents = 1,
-                             const std::string& name = "" )
-{
-  StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
-
-  if( numberOfComponents > 1 )
-  {
-    attributes["NumberOfComponents"] = std::to_string( numberOfComponents );
-  }
-
-  if( name != "" )
-  {
-    attributes["Name"] = name;
-  }
-
-  writer.addDataAttributes( attributes );
-
-  writeEmptyTag( output, "PDataArray", attributes );
-}
-
 } // namespace detail
 
 
@@ -189,7 +161,7 @@ void parallelWrite( const std::string& path,
                     size_t fileId, size_t numberOfFiles,
                     Writer writer )
 {
-	//ToDo: We somehow need to take care of cleaning the original folder!
+	//ToDo: Take care of cleaning the folder! not done in this code as Kratos takes care of it
     fs::path p1 = path;
     p1.make_preferred();
     if( !fs::exists( p1 ) )
@@ -208,12 +180,6 @@ void parallelWrite( const std::string& path,
   if( fileId == 0 )
   {
     vtu11::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
-   //Clean the folder, if there are additional .vtu pieces of a previous run
- //   size_t additionalFiles = numberOfFiles;
- //   while( fs::remove( directory += baseName + "_" + std::to_string(additionalFiles) + ".vtu" ) )
-    //{
- //     additionalFiles++;
- //   }
   }
   fs::path name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
   name.make_preferred();
