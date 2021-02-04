@@ -18,7 +18,7 @@ namespace vtu11
                       const std::vector<DataSet>& pointData,
                       const std::vector<DataSet>& cellData,
                       size_t numberOfFiles,
-                      Writer writer )
+                      Writer writer)
   {
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );    

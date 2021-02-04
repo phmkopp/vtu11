@@ -68,7 +68,7 @@ inline void addDataSet( Writer& writer,
 } // namespace detail
 
 
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer = AsciiWriter>
 void write( const std::string& filename,
             MeshGenerator& mesh,
             const std::vector<DataSet>& pointData,
@@ -152,7 +152,7 @@ void write( const std::string& filename,
 
 //ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
 //Each piece consists of a set of points and cells
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer = AsciiWriter>
 void parallelWrite( const std::string& path,
                     std::string baseName,
                     MeshGenerator& mesh,

@@ -35,7 +35,7 @@ struct Vtu11UnstructuredMesh
 };
 
 
-template<typename MeshGenerator, typename Writer = AsciiWriter>
+template<typename MeshGenerator, typename Writer>
 void write( const std::string& filename,
             MeshGenerator& mesh,
             const std::vector<DataSet>& pointData,
@@ -43,7 +43,7 @@ void write( const std::string& filename,
             Writer writer );
 	
 //The declaration of the parallelWrite function
-template<typename MeshGenerator, typename Writer = AsciiWriter>
+template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
                     std::string baseName,
                     MeshGenerator& mesh,
