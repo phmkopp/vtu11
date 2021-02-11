@@ -9,7 +9,6 @@
 
 #include "vtu11_testing.hpp"
 #include "vtu11.hpp"
-#include "inc/parallel_helper.hpp"
 
 #include <sstream>
 #include <fstream>

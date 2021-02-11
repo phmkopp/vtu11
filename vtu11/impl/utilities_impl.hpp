@@ -14,6 +14,7 @@
 
 namespace vtu11
 {
+
 template<typename DataType>
 inline std::string dataTypeString( )
 {

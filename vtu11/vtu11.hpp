@@ -10,10 +10,8 @@
 #ifndef VTU11_VTU11_HPP
 #define VTU11_VTU11_HPP
 
-
 #include "inc/alias.hpp"
 #include "inc/writer.hpp"
-#include "inc/parallel_helper.hpp"
 
 namespace vtu11
 {
@@ -35,15 +33,15 @@ struct Vtu11UnstructuredMesh
 };
 
 
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer = AsciiWriter>
 void write( const std::string& filename,
             MeshGenerator& mesh,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData,
-            Writer writer );
+            Writer writer = Writer() );
 	
 //The declaration of the parallelWrite function
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer = AsciiWriter>
 void parallelWrite( const std::string& path,
                     const std::string& baseName,
                     MeshGenerator& mesh,
@@ -51,7 +49,7 @@ void parallelWrite( const std::string& path,
                     const std::vector<DataSet>& cellData,
                     const size_t fileId,
                     const size_t numberOfFiles,
-                    Writer writer );
+                    Writer writer = Writer());
 
 } // namespace vtu11
 
