@@ -95,7 +95,7 @@ void writePVTUfile(const std::string& path,
   	  
   	  	for (const auto& dataSet : pointData)
   	  	{
-  	  	  detail::addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
+  	  	  addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
   	  	}
   	  } // PPointData
   	  {
@@ -103,7 +103,7 @@ void writePVTUfile(const std::string& path,
   	  
   	  	for (const auto& dataSet : cellData)
   	  	{
-  	  	  detail::addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
+  	  	  addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
   	  	}
   	  } // PCellData
   	  {
