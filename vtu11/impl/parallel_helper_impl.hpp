@@ -14,7 +14,7 @@ namespace vtu11
 {
   template<typename Writer>
   void writePVTUfile( const std::string& path,
-                      std::string baseName,
+                      const std::string& baseName,
                       const std::vector<DataSet>& pointData,
                       const std::vector<DataSet>& cellData,
                       size_t numberOfFiles,
@@ -23,7 +23,7 @@ namespace vtu11
     std::string parallelName = path + baseName + ".pvtu";
     std::ofstream output( parallelName, std::ios::binary );    
     size_t ghostLevel = 0;//Hardcoded to be 0
-    std::vector<double> points;
+    //std::vector<double> points;
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
 
     output << "<?xml version=\"1.0\"?>\n";
@@ -54,7 +54,10 @@ namespace vtu11
         } // PCellData
         {
           ScopedXmlTag pPointsTag( output, "PPoints", {} );
-          detail::addDataSet( writer, output, points, 3, "", true );
+		  StringStringMap attributes = { { "type", dataTypeString<double>() }, { "NumberOfComponents", std::to_string(3) } };
+		  writer.addDataAttributes(attributes);
+          writeEmptyTag(output, "PDataArray", attributes);
+          // detail::addDataSet( writer, output, points, 3, "", true );
         } // PPoints
         for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
         {
@@ -62,7 +65,7 @@ namespace vtu11
           writeEmptyTag( output, "Piece", { { "Source", pieceName } } );
         } // Pieces
       } // PUnstructuredGrid
-    } // VTKFile
+    } // PVTUFile
     output.close( );
   } // writePVTUfile
 } // namespace vtu11

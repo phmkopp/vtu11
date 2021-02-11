@@ -13,8 +13,8 @@ namespace vtu11
 {
   //writes the .pvtu file, that keeps together all vtu pieces
   template<typename Writer>
-  void writePVTUfile( const std::string & path,
-                      std::string baseName,
+  void writePVTUfile( const std::string& path,
+                      const std::string& baseName,
                       const std::vector<DataSet> & pointData,
                       const std::vector<DataSet> & cellData,
                       size_t numberOfFiles,

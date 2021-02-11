@@ -45,11 +45,12 @@ void write( const std::string& filename,
 //The declaration of the parallelWrite function
 template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
-                    std::string baseName,
+                    const std::string& baseName,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
-                    size_t fileId, size_t numberOfFiles,
+                    const size_t fileId,
+                    const size_t numberOfFiles,
                     Writer writer );
 
 } // namespace vtu11

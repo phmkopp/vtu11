@@ -33,7 +33,7 @@ inline void addDataSet( Writer& writer,
                         const std::vector<DataType>& data,
                         size_t numberOfComponents = 1,
                         const std::string& name = "" ,
-	                    bool writePvtuCalls = false)
+                        bool writePvtuCalls = false)
 {
   StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
 
@@ -154,27 +154,26 @@ void write( const std::string& filename,
 //Each piece consists of a set of points and cells
 template<typename MeshGenerator, typename Writer = AsciiWriter>
 void parallelWrite( const std::string& path,
-                    std::string baseName,
+                    const std::string& baseName,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
-                    size_t fileId, size_t numberOfFiles,
+                    const size_t fileId,
+                    const size_t numberOfFiles,
                     Writer writer = Writer())
 {
-	//ToDo: Take care of cleaning the folder! not done in this code as Kratos takes care of it
     fs::path p1 = path;
     p1.make_preferred();
     if( !fs::exists( p1 ) )
     {
-      fs::create_directory( p1 );
-      std::cout << "Original path, where the parallel files should be stored, does not exist!" << std::endl;
+      fs::create_directories( p1 );
     }
 
     fs::path directory = path + baseName + "/";
     directory.make_preferred();
     if( !fs::exists( directory ) )
     {
-      fs::create_directory( directory );
+      fs::create_directories( directory );
     }
 
   if( fileId == 0 )
