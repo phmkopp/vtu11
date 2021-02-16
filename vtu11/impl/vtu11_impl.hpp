@@ -219,17 +219,17 @@ void parallelWrite( const std::string& path,
                     const size_t numberOfFiles,
                     Writer writer)
 {
-    fs::path directory = path;
-    if( !fs::exists( directory ) )
-    {
-      fs::create_directories( directory );
-    }
+  fs::path directory = path;
+  if( !fs::exists( directory ) )
+  {
+    fs::create_directories( directory );
+  }
 
-    directory /= baseName;
-    if( !fs::exists( directory ) )
-    {
-      fs::create_directories( directory );
-    }
+  directory /= baseName;
+  if( !fs::exists( directory ) )
+  {
+    fs::create_directories( directory );
+  }
 
   if( fileId == 0 )
   {
