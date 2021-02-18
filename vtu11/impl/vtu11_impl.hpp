@@ -219,28 +219,24 @@ void parallelWrite( const std::string& path,
                     const size_t numberOfFiles,
                     Writer writer)
 {
-    fs::path p1 = path;
-    p1.make_preferred();
-    if( !fs::exists( p1 ) )
-    {
-      fs::create_directories( p1 );
-    }
+  fs::path directory = path;
+  if( !fs::exists( directory ) )
+  {
+    fs::create_directories( directory );
+  }
 
-    fs::path directory = path + baseName + "/";
-    directory.make_preferred();
-    if( !fs::exists( directory ) )
-    {
-      fs::create_directories( directory );
-    }
+  directory /= baseName;
+  if( !fs::exists( directory ) )
+  {
+    fs::create_directories( directory );
+  }
 
   if( fileId == 0 )
   {
     detail::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
   }
-  fs::path name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
-  name.make_preferred();
-
-  write( name, mesh, pointData, cellData, writer );
+  directory /= baseName + "_" + std::to_string(fileId) + ".vtu";
+  write( directory, mesh, pointData, cellData, writer );
 
 } // parallelWrite
 } // namespace vtu11
