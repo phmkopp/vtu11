@@ -10,7 +10,6 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-//#include "external/filesystem/filesystem.hpp"
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 
