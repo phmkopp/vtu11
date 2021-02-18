@@ -12,7 +12,6 @@
 
 #include <sstream>
 #include <fstream>
-#include <iostream> // remove
 
 namespace vtu11
 {
