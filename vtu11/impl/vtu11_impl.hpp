@@ -77,7 +77,6 @@ void writePVTUfile(const std::string& path,
   std::string parallelName = path + baseName + ".pvtu";
   std::ofstream output(parallelName, std::ios::binary);
   size_t ghostLevel = 0;//Hardcoded to be 0
-  //std::vector<double> points;
   VTU11_CHECK(output.is_open(), "Failed to open file \"" + baseName + "\"");
   
   output << "<?xml version=\"1.0\"?>\n";
@@ -111,7 +110,6 @@ void writePVTUfile(const std::string& path,
   	  	StringStringMap attributes = { { "type", dataTypeString<double>() }, { "NumberOfComponents", std::to_string(3) } };
   	  	writer.addDataAttributes(attributes);
   	  	writeEmptyTag(output, "PDataArray", attributes);
-  	  	// detail::addDataSet( writer, output, points, 3, "", true );
   	  } // PPoints
   	  for (size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles)
   	  {
@@ -219,7 +217,7 @@ void parallelWrite( const std::string& path,
                     const size_t numberOfFiles,
                     Writer writer)
 {
-  fs::path directory = path;
+  fs::path directory(path);
   if( !fs::exists( directory ) )
   {
     fs::create_directories( directory );
