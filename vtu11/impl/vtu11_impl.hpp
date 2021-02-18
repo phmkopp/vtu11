@@ -10,9 +10,10 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-#include "external/filesystem/filesystem.hpp"
+//#include "external/filesystem/filesystem.hpp"
 #include "inc/xml.hpp"
 #include "inc/utilities.hpp"
+
 #include <limits>
 
 
@@ -33,7 +34,7 @@ inline void addDataSet( Writer& writer,
                         const std::vector<DataType>& data,
                         size_t numberOfComponents = 1,
                         const std::string& name = "" ,
-	                    bool writePvtuCalls = false)
+                        bool writePvtuCalls = false)
 {
   StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
 
@@ -65,15 +66,71 @@ inline void addDataSet( Writer& writer,
     writer.writeData( output, data );
   }
 }
+template<typename Writer>
+void writePVTUfile(const std::string& path,
+                   const std::string& baseName,
+                   const std::vector<DataSet>& pointData,
+                   const std::vector<DataSet>& cellData,
+                   size_t numberOfFiles,
+                   Writer writer)
+{
+  std::string parallelName = path + baseName + ".pvtu";
+  std::ofstream output(parallelName, std::ios::binary);
+  size_t ghostLevel = 0;//Hardcoded to be 0
+  //std::vector<double> points;
+  VTU11_CHECK(output.is_open(), "Failed to open file \"" + baseName + "\"");
+  
+  output << "<?xml version=\"1.0\"?>\n";
+  StringStringMap headerAttributes{ { "byte_order",  endianness()       },
+  								  { "type"      ,  "PUnstructuredGrid" },
+  								  { "version"   ,  "0.1"              } };
+  
+  writer.addHeaderAttributes(headerAttributes);
+  {
+  	ScopedXmlTag vtkFileTag(output, "VTKFile", headerAttributes);
+  	{
+  	  ScopedXmlTag pUnstructuredGridFileTag(output, "PUnstructuredGrid", { { "GhostLevel", std::to_string(ghostLevel) } });
+  	  {
+  	  	ScopedXmlTag pPointDataTag(output, "PPointData", { });
+  	  
+  	  	for (const auto& dataSet : pointData)
+  	  	{
+  	  	  addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
+  	  	}
+  	  } // PPointData
+  	  {
+  	  	ScopedXmlTag pCellDataTag(output, "PCellData", { });
+  	  
+  	  	for (const auto& dataSet : cellData)
+  	  	{
+  	  	  addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
+  	  	}
+  	  } // PCellData
+  	  {
+  	  	ScopedXmlTag pPointsTag(output, "PPoints", {});
+  	  	StringStringMap attributes = { { "type", dataTypeString<double>() }, { "NumberOfComponents", std::to_string(3) } };
+  	  	writer.addDataAttributes(attributes);
+  	  	writeEmptyTag(output, "PDataArray", attributes);
+  	  	// detail::addDataSet( writer, output, points, 3, "", true );
+  	  } // PPoints
+  	  for (size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles)
+  	  {
+  	  	std::string pieceName = baseName + "/" + baseName + "_" + std::to_string(nFiles) + ".vtu";
+  	  	writeEmptyTag(output, "Piece", { { "Source", pieceName } });
+  	  } // Pieces
+  	} // PUnstructuredGrid
+  } // PVTUFile
+  output.close();
+} // writePVTUfile
 } // namespace detail
 
 
-template<typename MeshGenerator, typename Writer = AsciiWriter>
+template<typename MeshGenerator, typename Writer>
 void write( const std::string& filename,
             MeshGenerator& mesh,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData,
-            Writer writer = Writer())
+            Writer writer)
 {
 	std::ofstream output(filename, std::ios::binary);
 
@@ -152,39 +209,34 @@ void write( const std::string& filename,
 
 //ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
 //Each piece consists of a set of points and cells
-template<typename MeshGenerator, typename Writer = AsciiWriter>
+template<typename MeshGenerator, typename Writer>
 void parallelWrite( const std::string& path,
-                    std::string baseName,
+                    const std::string& baseName,
                     MeshGenerator& mesh,
                     const std::vector<DataSet>& pointData,
                     const std::vector<DataSet>& cellData,
-                    size_t fileId, size_t numberOfFiles,
-                    Writer writer = Writer())
+                    const size_t fileId,
+                    const size_t numberOfFiles,
+                    Writer writer)
 {
-	//ToDo: Take care of cleaning the folder! not done in this code as Kratos takes care of it
-    fs::path p1 = path;
-    p1.make_preferred();
-    if( !fs::exists( p1 ) )
-    {
-      fs::create_directory( p1 );
-      std::cout << "Original path, where the parallel files should be stored, does not exist!" << std::endl;
-    }
+  fs::path directory = path;
+  if( !fs::exists( directory ) )
+  {
+    fs::create_directories( directory );
+  }
 
-    fs::path directory = path + baseName + "/";
-    directory.make_preferred();
-    if( !fs::exists( directory ) )
-    {
-      fs::create_directory( directory );
-    }
+  directory /= baseName;
+  if( !fs::exists( directory ) )
+  {
+    fs::create_directories( directory );
+  }
 
   if( fileId == 0 )
   {
-    vtu11::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
+    detail::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
   }
-  fs::path name = path + baseName + "/" + baseName + "_" + std::to_string(fileId) + ".vtu";
-  name.make_preferred();
-
-  write( name, mesh, pointData, cellData, writer );
+  directory /= baseName + "_" + std::to_string(fileId) + ".vtu";
+  write( directory, mesh, pointData, cellData, writer );
 
 } // parallelWrite
 } // namespace vtu11
