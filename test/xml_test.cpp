@@ -39,4 +39,3 @@ TEST_CASE("ScopedXmlTag_test")
 }
 
 } // namespace vtu11
-

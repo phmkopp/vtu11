@@ -47,4 +47,3 @@ TEST_CASE( "base64encode_test" )
 } // base64encode_test
 
 } // namespace vtu11
-

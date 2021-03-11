@@ -136,4 +136,3 @@ TEST_CASE( "encodedNumberOfBytes_test" )
 }
 
 } // namespace vtu11
-
