@@ -1,6 +1,6 @@
 # Vtu 11
 
-Vtu11 is a small project to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you.
+Vtu11 is a small project to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which vtu11 is used.
 
 ## Small example
 
@@ -44,4 +44,4 @@ int main( )
     vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, vtu11::RawBinaryAppendedWriter { } );
 }
 ```
-Other writes are `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
+Other writers are `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
