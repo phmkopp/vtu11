@@ -10,9 +10,6 @@
 #include "vtu11_testing.hpp"
 #include "vtu11.hpp"
 
-#include <sstream>
-#include <fstream>
-
 namespace vtu11
 {
 struct Vtu11AllData
@@ -338,15 +335,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = testhelper::readFile( writeDir + piecename );
-            auto expected = testhelper::readFile( expectedDir + "ascii/" + piecename );
+            auto written = vtu11testing::readFile( writeDir + piecename );
+            auto expected = vtu11testing::readFile( expectedDir + "ascii/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
-        auto expected = testhelper::readFile( expectedDir + "ascii/" + basename + ".pvtu" );
+        auto written = vtu11testing::readFile( writeDir + basename + ".pvtu" );
+        auto expected = vtu11testing::readFile( expectedDir + "ascii/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }
@@ -365,15 +362,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = testhelper::readFile( writeDir + piecename );
-            auto expected = testhelper::readFile( expectedDir + "base64/" + piecename );
+            auto written = vtu11testing::readFile( writeDir + piecename );
+            auto expected = vtu11testing::readFile( expectedDir + "base64/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
-        auto expected = testhelper::readFile( expectedDir + "base64/" + basename + ".pvtu" );
+        auto written = vtu11testing::readFile( writeDir + basename + ".pvtu" );
+        auto expected = vtu11testing::readFile( expectedDir + "base64/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }
@@ -392,15 +389,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = testhelper::readFile( writeDir + piecename );
-            auto expected = testhelper::readFile( expectedDir + "base64appended/" + piecename );
+            auto written = vtu11testing::readFile( writeDir + piecename );
+            auto expected = vtu11testing::readFile( expectedDir + "base64appended/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
-        auto expected = testhelper::readFile( expectedDir + "base64appended/" + basename + ".pvtu" );
+        auto written = vtu11testing::readFile( writeDir + basename + ".pvtu" );
+        auto expected = vtu11testing::readFile( expectedDir + "base64appended/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }
@@ -419,15 +416,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = testhelper::readFile( writeDir + piecename );
-            auto expected = testhelper::readFile( expectedDir + "raw/" + piecename );
+            auto written = vtu11testing::readFile( writeDir + piecename );
+            auto expected = vtu11testing::readFile( expectedDir + "raw/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
-        auto expected = testhelper::readFile( expectedDir + "raw/" + basename + ".pvtu" );
+        auto written = vtu11testing::readFile( writeDir + basename + ".pvtu" );
+        auto expected = vtu11testing::readFile( expectedDir + "raw/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }

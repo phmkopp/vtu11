@@ -10,9 +10,7 @@
 #include <sstream>
 #include <fstream>
 
-namespace vtu11
-{
-namespace testhelper
+namespace vtu11testing
 {
 
 std::string readFile( const std::string& filename )
@@ -38,5 +36,4 @@ std::string readFile( const std::string& filename )
     return contents;
 };
 
-} // namespace testhelper
-} // namespace vtu11
+} // namespace vtu11testing

@@ -10,9 +10,6 @@
 #include "vtu11_testing.hpp"
 #include "vtu11.hpp"
 
-#include <sstream>
-#include <fstream>
-
 namespace vtu11
 {
 

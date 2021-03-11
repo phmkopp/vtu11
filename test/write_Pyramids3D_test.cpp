@@ -10,9 +10,6 @@
 #include "vtu11_testing.hpp"
 #include "vtu11.hpp"
 
-#include <sstream>
-#include <fstream>
-
 namespace vtu11
 {
 
@@ -53,8 +50,8 @@ TEST_CASE( "write_Pyramids3D_Test" )
     {
         REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
 
-        auto written = testhelper::readFile( filename );
-        auto expected = testhelper::readFile( expectedpath + "ascii.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
 
         CHECK( written == expected );
     }
@@ -68,8 +65,8 @@ TEST_CASE( "write_Pyramids3D_Test" )
 
         REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-        auto written = testhelper::readFile( filename );
-        auto expected = testhelper::readFile( expectedpath + "base64.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
 
         CHECK( written == expected );
     }
@@ -81,8 +78,8 @@ TEST_CASE( "write_Pyramids3D_Test" )
 
         REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-        auto written = testhelper::readFile( filename );
-        auto expected = testhelper::readFile( expectedpath + "base64appended.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
 
         CHECK( written == expected );
     }
@@ -93,8 +90,8 @@ TEST_CASE( "write_Pyramids3D_Test" )
 
         REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-        auto written = testhelper::readFile( filename );
-        auto expected = testhelper::readFile( expectedpath + "raw.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
 
         CHECK( written == expected );
     }
@@ -106,8 +103,8 @@ TEST_CASE( "write_Pyramids3D_Test" )
 
         REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-        auto written = testhelper::readFile( filename );
-        auto expected = testhelper::readFile( expectedpath + "raw_compressed.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );
 
         CHECK( written == expected );
     }

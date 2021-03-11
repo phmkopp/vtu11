@@ -11,12 +11,9 @@
 
 #include <string>
 
-namespace vtu11
-{
-namespace testhelper
+namespace vtu11testing
 {
 
 std::string readFile( const std::string& filename );
 
-} // namespace
-} // namespace vtu11
+} // namespace vtu11testing
