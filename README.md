@@ -1,15 +1,8 @@
-~~~
-         __        ____ ____
-___  ___/  |_ __ _/_   /_   |
-\  \/ /\   __\  |  \   ||   |
- \   /  |  | |  |  /   ||   |
-  \_/   |__| |____/|___||___|
-
-~~~
+# Vtu 11
 
 Vtu11 is a small project to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you.
 
-# Small example
+## Small example
 
 ```cpp
 #include "vtu11.hpp"
@@ -51,19 +44,4 @@ int main( )
     vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, vtu11::RawBinaryAppendedWriter { } );
 }
 ```
-# Decoding base64 data with python
-
-
-~~~py
-import numpy
-import base64
-
-# Decode base64 encoded data back to raw binary
-raw = base64.b64decode('YAAAAAAAAAA=')
-
-# Interpret binary data as unsigned 32 bit integers
-data = numpy.frombuffer(raw, dtype=numpy.uint64)
-
-# Prints: [96]
-print(data)
-~~~
+Other writes are `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
