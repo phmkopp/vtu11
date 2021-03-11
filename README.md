@@ -41,7 +41,8 @@ int main( )
     vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
     // Write data to .vtu file using raw binary appended format
-    vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, vtu11::RawBinaryAppendedWriter { } );
+    vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, 
+                  vtu11::RawBinaryAppendedWriter { } );
 }
 ```
 Other writers available are: `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
