@@ -72,7 +72,7 @@ if( VTU11_ENABLE_TESTS )
 
     file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
 
-    add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} )
+    add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} test/vtu11_testing.hpp )
 
     target_link_libraries( vtu11_testrunner ${VTU11_ZLIB_LIBRARIES} )
 

@@ -15,114 +15,104 @@
 
 namespace vtu11
 {
-TEST_CASE("write_Pyramids3D_Test")
+
+TEST_CASE( "write_Pyramids3D_Test" )
 {
-  std::vector<double> points{
-    0.0, 0.0, 0.0,    0.0, 3.0, 0.0,    1.0, 2.0, 2.0, //0, 1, 2
-    1.0, 3.0,-2.0,   -2.0, 2.0, 0.0,   -1.0, 1.0, 2.0, //3, 4, 5
-    2.0,-2.0,-2.0,    2.0,-2.0, 2.0,   -2.0,-2.0, 2.0, //6, 7, 8
-   -2.0,-2.0,-2.0                                      //9
-  };
-  std::vector<VtkIndexType> connectivity{
-    5,  0,  1,  2,  //0
-    2,  0,  1,  3,  //1
-    3,  0,  1,  4,  //2
-    4,  0,  1,  5,  //3
-    8,  7,  6,  9,  0  //4  --> Pyramid
-  };
-  std::vector<VtkCellType> types{ 10, 10, 10, 10, 14 };
-  std::vector<VtkIndexType> offsets{ 4, 8, 12, 16, 21 };
-  Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
-
-  std::vector<double> flashStrengthPoints{ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
-  std::vector<double> cellColour{ 1.0, 2.0, 3.0, 4.0, 0.0 };
-
-  std::vector<DataSet> pointData{ DataSet{std::string("Flash Strength Points"), 1, flashStrengthPoints } };
-  std::vector<DataSet> cellData{ DataSet{std::string("cell Colour"), 1, cellColour } };
-
-  auto readFile = [](const std::string& filename)
-  {
-    std::ifstream file(filename);
-
-    if (!file.is_open()) {
-        std::stringstream err_msg;
-        err_msg << filename << " could not be opened!";
-        throw std::runtime_error(err_msg.str());
-    }
-
-    std::string contents, str;
-
-    while (std::getline(file, str))
+    std::vector<double> points 
     {
-      contents += str + "\n";
+        0.0, 0.0, 0.0,    0.0, 3.0, 0.0,    1.0, 2.0, 2.0, // 0, 1, 2
+        1.0, 3.0,-2.0,   -2.0, 2.0, 0.0,   -1.0, 1.0, 2.0, // 3, 4, 5
+        2.0,-2.0,-2.0,    2.0,-2.0, 2.0,   -2.0,-2.0, 2.0, // 6, 7, 8
+       -2.0,-2.0,-2.0                                      // 9
+    };
+
+    std::vector<VtkIndexType> connectivity 
+    {
+         5,  0,  1,  2,     // 0
+         2,  0,  1,  3,     // 1
+         3,  0,  1,  4,     // 2
+         4,  0,  1,  5,     // 3
+         8,  7,  6,  9,  0  // 4  --> Pyramid
+    };
+
+    std::vector<VtkCellType> types { 10, 10, 10, 10, 14 };
+    std::vector<VtkIndexType> offsets { 4, 8, 12, 16, 21 };
+    
+    Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
+
+    std::vector<double> flashStrengthPoints { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
+    std::vector<double> cellColour { 1.0, 2.0, 3.0, 4.0, 0.0 };
+
+    std::vector<DataSet> pointData { DataSet { std::string( "Flash Strength Points" ), 1, flashStrengthPoints } };
+    std::vector<DataSet> cellData { DataSet { std::string( "cell Colour" ), 1, cellColour } };
+
+    std::string filename = "testfiles/pyramids_3D/test.vtu";
+    std::string expectedpath = "testfiles/pyramids_3D/";
+
+    SECTION( "ascii_3D" )
+    {
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+
+        auto written = testhelper::readFile( filename );
+        auto expected = testhelper::readFile( expectedpath + "ascii.vtu" );
+
+        CHECK( written == expected );
     }
 
-    file.close();
+    // The files assume that, we need to add a big endian version
+    REQUIRE( endianness( ) == "LittleEndian" );
 
-    return contents;
-  };
-  std::string filename = "testfiles/pyramids_3D/test.vtu";
+    SECTION( "base64_3D" )
+    {
+        Base64BinaryWriter writer;
 
-  SECTION("ascii_3D")
-  {
-    REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData ));
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    auto written = readFile(filename);
-    auto expected = readFile("testfiles/pyramids_3D/ascii.vtu");
+        auto written = testhelper::readFile( filename );
+        auto expected = testhelper::readFile( expectedpath + "base64.vtu" );
 
-    CHECK(written == expected);
-  }
+        CHECK( written == expected );
+    }
 
-  // The files assume that, we need to add a big endian version
-  REQUIRE(endianness() == "LittleEndian");
+    //The file base64appended.vtu still cannot be opened within ParaView!!!
+    SECTION( "base64appended_3D" )
+    {
+        Base64BinaryAppendedWriter writer;
 
-  SECTION("base64_3D")
-  {
-    Base64BinaryWriter writer;
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
+        auto written = testhelper::readFile( filename );
+        auto expected = testhelper::readFile( expectedpath + "base64appended.vtu" );
 
-    auto written = readFile(filename);
-    auto expected = readFile("testfiles/pyramids_3D/base64.vtu");
+        CHECK( written == expected );
+    }
 
-    CHECK(written == expected);
-  }
-  //The file base64appended.vtu still cannot be opened within ParaView!!!
-  SECTION("base64appended_3D")
-  {
-    Base64BinaryAppendedWriter writer;
+    SECTION( "raw_3D" )
+    {
+        RawBinaryAppendedWriter writer;
 
-    REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    auto written = readFile(filename);
-    auto expected = readFile("testfiles/pyramids_3D/base64appended.vtu");
+        auto written = testhelper::readFile( filename );
+        auto expected = testhelper::readFile( expectedpath + "raw.vtu" );
 
-    CHECK(written == expected);
-  }
-  SECTION("raw_3D")
-  {
-    RawBinaryAppendedWriter writer;
+        CHECK( written == expected );
+    }
 
-    REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
+    #ifdef VTU11_ENABLE_ZLIB
+    SECTION( "raw_compressed" )
+    {
+        CompressedRawBinaryAppendedWriter writer;
 
-    auto written = readFile(filename);
-    auto expected = readFile("testfiles/pyramids_3D/raw.vtu");
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    CHECK(written == expected);
-  }
-#ifdef VTU11_ENABLE_ZLIB
-  SECTION("raw_compressed")
-  {
-  	CompressedRawBinaryAppendedWriter writer;
+        auto written = testhelper::readFile( filename );
+        auto expected = testhelper::readFile( expectedpath + "raw_compressed.vtu" );
 
-  	REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData, writer));
+        CHECK( written == expected );
+    }
+    #endif
 
-  	auto written = readFile(filename);
-  	auto expected = readFile("testfiles/pyramids_3D/raw_compressed.vtu");
+} // write_Pyramids3D_Test"
 
-  	CHECK(written == expected);
-  }
-#endif
-
-}
-}
+} // namespace vtu11

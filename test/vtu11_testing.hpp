@@ -8,3 +8,15 @@
 //
 
 #include "catch2/catch.hpp"
+
+#include <string>
+
+namespace vtu11
+{
+namespace testhelper
+{
+
+std::string readFile( const std::string& filename );
+
+} // namespace
+} // namespace vtu11

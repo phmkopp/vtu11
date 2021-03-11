@@ -266,29 +266,6 @@ TEST_CASE( "getAmountOfCells_test" )
     }
 }
 
-std::string readFile( const std::string& filename )
-{
-    std::ifstream file( filename );
-
-    if( !file.is_open( ) )
-    {
-        std::stringstream err_msg;
-        err_msg << filename << " could not be opened!";
-        throw std::runtime_error( err_msg.str( ) );
-    }
-
-    std::string contents, str;
-
-    while( std::getline( file, str ) )
-    {
-        contents += str + "\n";
-    }
-
-    file.close( );
-
-    return contents;
-};
-
 } // namespace distributeData
 
 // Tests the creation of .vtu files and the according .pvtu file
@@ -361,15 +338,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = distributeData::readFile( writeDir + piecename );
-            auto expected = distributeData::readFile( expectedDir + "ascii/" + piecename );
+            auto written = testhelper::readFile( writeDir + piecename );
+            auto expected = testhelper::readFile( expectedDir + "ascii/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = distributeData::readFile( writeDir + basename + ".pvtu" );
-        auto expected = distributeData::readFile( expectedDir + "ascii/" + basename + ".pvtu" );
+        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
+        auto expected = testhelper::readFile( expectedDir + "ascii/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }
@@ -388,15 +365,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = distributeData::readFile( writeDir + piecename );
-            auto expected = distributeData::readFile( expectedDir + "base64/" + piecename );
+            auto written = testhelper::readFile( writeDir + piecename );
+            auto expected = testhelper::readFile( expectedDir + "base64/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = distributeData::readFile( writeDir + basename + ".pvtu" );
-        auto expected = distributeData::readFile( expectedDir + "base64/" + basename + ".pvtu" );
+        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
+        auto expected = testhelper::readFile( expectedDir + "base64/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }
@@ -415,15 +392,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = distributeData::readFile( writeDir + piecename );
-            auto expected = distributeData::readFile( expectedDir + "base64appended/" + piecename );
+            auto written = testhelper::readFile( writeDir + piecename );
+            auto expected = testhelper::readFile( expectedDir + "base64appended/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = distributeData::readFile( writeDir + basename + ".pvtu" );
-        auto expected = distributeData::readFile( expectedDir + "base64appended/" + basename + ".pvtu" );
+        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
+        auto expected = testhelper::readFile( expectedDir + "base64appended/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }
@@ -442,15 +419,15 @@ TEST_CASE( "Distribute_Data_test" )
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
-            auto written = distributeData::readFile( writeDir + piecename );
-            auto expected = distributeData::readFile( expectedDir + "raw/" + piecename );
+            auto written = testhelper::readFile( writeDir + piecename );
+            auto expected = testhelper::readFile( expectedDir + "raw/" + piecename );
 
             CHECK( written == expected );
         }
 
         // Check the .pvtu file
-        auto written = distributeData::readFile( writeDir + basename + ".pvtu" );
-        auto expected = distributeData::readFile( expectedDir + "raw/" + basename + ".pvtu" );
+        auto written = testhelper::readFile( writeDir + basename + ".pvtu" );
+        auto expected = testhelper::readFile( expectedDir + "raw/" + basename + ".pvtu" );
 
         CHECK( written == expected );
     }

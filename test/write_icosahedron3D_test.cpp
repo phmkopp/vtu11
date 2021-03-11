@@ -83,35 +83,14 @@ TEST_CASE("write_test_icosahedron")
     DataSet { std::string( "Cell_Height_2" ), 1, cellHeight2 }
   };
 
-  auto readFile = []( const std::string& filename )
-  {
-    std::ifstream file( filename );
-
-    if ( !file.is_open() ) {
-        std::stringstream err_msg;
-        err_msg << filename << " could not be opened!";
-        throw std::runtime_error( err_msg.str() );
-    }
-
-    std::string contents, str;
-
-    while( std::getline( file, str ) )
-    {
-	  contents += str + "\n";
-    }
-
-    file.close();
-
-    return contents;
-  };
   std::string filename = "testfiles/icosahedron_3D/test.vtu";
   // The files assume that, we need to add a big endian version
   REQUIRE(endianness() == "LittleEndian");
   SECTION( "ascii_3D" )
   {
     REQUIRE_NOTHROW(write(filename, mesh, pointData, cellData ));
-    auto written = readFile(filename);
-    auto expected = readFile("testfiles/icosahedron_3D/ascii.vtu");
+    auto written = testhelper::readFile(filename);
+    auto expected = testhelper::readFile("testfiles/icosahedron_3D/ascii.vtu");
 
     CHECK(written == expected);
   }
@@ -120,8 +99,8 @@ TEST_CASE("write_test_icosahedron")
     Base64BinaryWriter writer;
 
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/icosahedron_3D/base64.vtu" );
+    auto written = testhelper::readFile( filename );
+    auto expected = testhelper::readFile( "testfiles/icosahedron_3D/base64.vtu" );
 
     CHECK( written == expected );
   }
@@ -130,8 +109,8 @@ TEST_CASE("write_test_icosahedron")
     Base64BinaryAppendedWriter writer;
 
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/icosahedron_3D/base64appended.vtu" );
+    auto written = testhelper::readFile( filename );
+    auto expected = testhelper::readFile( "testfiles/icosahedron_3D/base64appended.vtu" );
 
     CHECK( written == expected );
   }
@@ -140,8 +119,8 @@ TEST_CASE("write_test_icosahedron")
     RawBinaryAppendedWriter writer;
 
     REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/icosahedron_3D/raw.vtu" );
+    auto written = testhelper::readFile( filename );
+    auto expected = testhelper::readFile( "testfiles/icosahedron_3D/raw.vtu" );
 
     CHECK( written == expected );
   }
