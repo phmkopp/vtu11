@@ -176,8 +176,8 @@ TEST_CASE( "write_test_icosahedron" )
 
         REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-        auto written = readFile( filename );
-        auto expected = readFile( expectedpath + "raw_compressed.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );
 
         CHECK( written == expected );
     }

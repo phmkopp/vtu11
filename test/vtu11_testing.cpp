@@ -34,6 +34,6 @@ std::string readFile( const std::string& filename )
     file.close( );
 
     return contents;
-};
+}
 
 } // namespace vtu11testing

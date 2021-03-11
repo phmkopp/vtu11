@@ -88,7 +88,7 @@ std::array<std::vector<DataSet>, 2> getCurrentCellPointData( const std::vector<D
 
         for( VtkIndexType pointId : globalTranslation )
         {
-            data.push_back( std::get<2>( pointSet )[pointId] );
+            data.push_back( std::get<2>( pointSet )[static_cast<size_t>( pointId )] );
         }
 
         pointData.push_back( DataSet { std::get<0>( pointSet ),std::get<1>( pointSet ),data } );
@@ -158,19 +158,20 @@ Vtu11AllData getCurrentDataSet( MeshGenerator& mesh,
 
         if( currentCell == 0 )
         {
-            numberOfCellPoints = mesh.offsets( )[currentCell];
+            numberOfCellPoints = static_cast<size_t>( mesh.offsets( )[currentCell] );
         }
         else
         {
-            numberOfCellPoints = mesh.offsets( )[currentCell] - mesh.offsets( )[currentCell - 1];
+            numberOfCellPoints = static_cast<size_t>( mesh.offsets( )[currentCell] - mesh.offsets( )[currentCell - 1] );
         }
 
         // Loop over each point of each cell in that piece to get the connectivity
         for( size_t cellPoint = numberOfCellPoints; cellPoint > 0; --cellPoint )
         {
-            size_t actualPointIndex = mesh.connectivity( )[mesh.offsets( )[currentCell] - cellPoint];
+            size_t index = static_cast<size_t>( mesh.offsets( )[currentCell] ) - cellPoint;
+            size_t actualPointIndex = static_cast<size_t>( mesh.connectivity( )[index] );
 
-            relevantConnectivity.push_back( actualPointIndex );
+            relevantConnectivity.push_back( static_cast<VtkIndexType>( actualPointIndex ) );
         }
 
     } // Loop over all cells
@@ -201,7 +202,7 @@ Vtu11AllData getCurrentDataSet( MeshGenerator& mesh,
             // Loop over x-, y- and z-coordinate points and store all points in the piece order in piece internal points
             for( size_t coordinate = 0; coordinate < 3; ++coordinate )
             {
-                points.push_back( mesh.points( )[connection * 3 + coordinate] );
+                points.push_back( mesh.points( )[static_cast<size_t>( connection * 3 ) + coordinate] );
             }
 
             counter++;
