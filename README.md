@@ -34,8 +34,8 @@ int main( )
     std::vector<double> cellData { 3.2, 4.3, 5.4, 6.5, 7.6, 8.7 };
 
     // Create tuples with (name, number of components, data)
-    vtu11::DataSet pointDataSet { std::string( "Temperature" ), 1, pointData };
-    vtu11::DataSet cellDataSet { std::string( "Conductivity" ), 1, cellData };
+    vtu11::DataSet pointDataSet { "Temperature", 1, pointData };
+    vtu11::DataSet cellDataSet { "Conductivity", 1, cellData };
 
     // Create small proxy mesh type 
     vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
@@ -44,4 +44,4 @@ int main( )
     vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, vtu11::RawBinaryAppendedWriter { } );
 }
 ```
-Other writers are `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
+Other writers available are: `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
