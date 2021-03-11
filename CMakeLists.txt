@@ -27,7 +27,7 @@ if( VTU11_STRICT_COMPILER )
     # If compiler is g++: Enable further  warnings and treat all warnings as errors
     if( CMAKE_COMPILER_IS_GNUCXX )
 
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold      \
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
             -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
             -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict -Wpadded           \
             -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override    \
@@ -69,7 +69,6 @@ if( VTU11_ENABLE_TESTS )
     message( STATUS "Enabling vtu11 tests" )
     
     file( GLOB TEST_FILES test/*.cpp)
-
     file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
 
     add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} )
