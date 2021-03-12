@@ -2,7 +2,7 @@
 
 Vtu11 is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which vtu11 is used.
 
-## Small example
+## Serial example
 
 ```cpp
 #include "vtu11.hpp"
@@ -46,3 +46,7 @@ int main( )
 }
 ```
 Other writers available are: `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
+
+## Parallel example
+
+Dodo.
