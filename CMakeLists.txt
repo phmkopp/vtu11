@@ -26,14 +26,17 @@ if( VTU11_STRICT_COMPILER )
 
     # If compiler is g++: Enable further  warnings and treat all warnings as errors
     if( CMAKE_COMPILER_IS_GNUCXX )
-
+        
+        # Removed because of filesystem header:
+        # -Wpadded -Wswitch-default
+  
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
             -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
-            -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict -Wpadded           \
-            -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override    \
+            -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict                    \
+            -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override             \
             -Wsuggest-final-types -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs       \
             -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo     \
-            -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror" )
+            -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Werror" )
 
     endif( CMAKE_COMPILER_IS_GNUCXX )
 
@@ -72,7 +75,7 @@ if( VTU11_ENABLE_TESTS )
 
     file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
 
-    add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} )
+    add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} test/vtu11_testing.hpp )
 
     target_link_libraries( vtu11_testrunner ${VTU11_ZLIB_LIBRARIES} )
 
