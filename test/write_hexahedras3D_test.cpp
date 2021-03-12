@@ -10,129 +10,122 @@
 #include "vtu11_testing.hpp"
 #include "vtu11.hpp"
 
-#include <sstream>
-#include <fstream>
-#include <iostream> // remove
-
 namespace vtu11
 {
-TEST_CASE("hexahedras_test")
+
+TEST_CASE( "hexahedras_test" )
 {
 
-  std::vector<double> points
-  {
-      0.0, 0.0, 0.0,    5.0, 0.0, 0.0,    0.0, 5.0, 0.0,    5.0, 5.0, 0.0, //0, 1, 2, 3
-      0.0, 0.0, 5.0,    5.0, 0.0, 5.0,    0.0, 5.0, 5.0,    5.0, 5.0, 5.0, //4, 5, 6, 7
-      2.0, 2.0, 5.0,    7.0, 2.0, 5.0,    2.0, 7.0, 5.0,    7.0, 7.0, 5.0, //8, 9, 10, 11
-      2.0, 2.0, 10.0,   7.0, 2.0, 10.0,   2.0, 7.0, 10.0,   7.0, 7.0, 10.0 //12, 13, 14, 15
-  };
-
-  std::vector<VtkIndexType> connectivity
-  {
-     0, 1, 2, 3, 4, 5, 6, 7, //0
-     8, 9, 10, 11, 12, 13, 14, 15 //1, hexahedra - cubes
- };
-
-  std::vector<VtkIndexType> offsets{ 8, 16 };
-  std::vector<VtkCellType> types{ 11, 11 };
-
-  Vtu11UnstructuredMesh mesh{ points, connectivity, offsets, types };
-
-  std::vector<double> pointData1{ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 5.0, 5.0, 5.0 };
-  std::vector<double> pointData2{ 41.0, 13.0, 16.0, 81.0, 51.0, 31.0, 18.0, 12.0, 19.0, 21.0, 11.0, 19.0, 16.0, 45.0, 35.0, 58.0 };
-  std::vector<double> cell_1{ 1.0, 2.0 };
-  std::vector<double> cell_2{ 10.0, 20.0 };
-
-  std::vector<DataSet> pointData
-  {
-    DataSet {std::string("Point_Data_1"), 1, pointData1},
-    DataSet {std::string("Point_Data_2"), 1, pointData2}
-  };
-
-  std::vector<DataSet> cellData
-  {
-    DataSet {std::string("Cell_1"), 1, cell_1},
-    DataSet {std::string("Cell_2"), 1, cell_2}
-  };
-
-  auto readFile = []( const std::string& filename )
-  {
-    std::ifstream file( filename );
-
-	if ( !file.is_open() ){
-		std::stringstream err_msg;
-		err_msg << filename << " could not be opened!";
-		throw std::runtime_error( err_msg.str() );
-	}
-
-	std::string contents, str;
-
-    while ( std::getline(file, str) )
+    std::vector<double> points
     {
-      contents += str + "\n";
+        0.0, 0.0, 0.0,    5.0, 0.0, 0.0,    0.0, 5.0, 0.0,    5.0, 5.0, 0.0, //0, 1, 2, 3
+        0.0, 0.0, 5.0,    5.0, 0.0, 5.0,    0.0, 5.0, 5.0,    5.0, 5.0, 5.0, //4, 5, 6, 7
+        2.0, 2.0, 5.0,    7.0, 2.0, 5.0,    2.0, 7.0, 5.0,    7.0, 7.0, 5.0, //8, 9, 10, 11
+        2.0, 2.0, 10.0,   7.0, 2.0, 10.0,   2.0, 7.0, 10.0,   7.0, 7.0, 10.0 //12, 13, 14, 15
+    };
+
+    std::vector<VtkIndexType> connectivity
+    {
+       0, 1, 2,  3,  4,  5,  6,  7, // 0
+       8, 9, 10, 11, 12, 13, 14, 15 // 1, hexahedra - cubes
+    };
+
+    std::vector<VtkIndexType> offsets { 8, 16 };
+    std::vector<VtkCellType> types { 11, 11 };
+
+    Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
+
+    std::vector<double> pointData1
+    {
+        1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0, 1.0, 1.0, 5.0, 5.0, 5.0
+    };
+
+    std::vector<double> pointData2
+    {
+        41.0, 13.0, 16.0, 81.0, 51.0, 31.0, 18.0, 12.0,
+        19.0, 21.0, 11.0, 19.0, 16.0, 45.0, 35.0, 58.0
+    };
+
+    std::vector<double> cell_1 { 1.0, 2.0 };
+    std::vector<double> cell_2 { 10.0, 20.0 };
+
+    std::vector<DataSet> pointData
+    {
+      DataSet { std::string( "Point_Data_1" ), 1, pointData1 },
+      DataSet { std::string( "Point_Data_2" ), 1, pointData2 }
+    };
+
+    std::vector<DataSet> cellData
+    {
+      DataSet { std::string( "Cell_1" ), 1, cell_1 },
+      DataSet { std::string( "Cell_2" ), 1, cell_2 }
+    };
+
+    std::string filename = "testfiles/hexas_3D/test.vtu";
+    std::string expectedpath = "testfiles/hexas_3D/";
+
+    SECTION( "ascii_3D" )
+    {
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
+
+        CHECK( written == expected );
     }
 
-    file.close();
+    // The files assume that, we need to add a big endian version
+    REQUIRE( endianness( ) == "LittleEndian" );
 
-    return contents;
-  };
-  std::string filename = "testfiles/hexas_3D/test.vtu";
+    SECTION( "base64_3D" )
+    {
+        Base64BinaryWriter writer;
 
-  SECTION( "ascii_3D" )
-  {
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/hexas_3D/ascii.vtu" );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
 
-    CHECK( written == expected );
-  }
-
-  // The files assume that, we need to add a big endian version
-  REQUIRE( endianness() == "LittleEndian" );
-  SECTION( "base64_3D" )
-  {
-    Base64BinaryWriter writer;
-
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/hexas_3D/base64.vtu" );
-
-    CHECK( written == expected );
+        CHECK( written == expected );
     }
-  SECTION( "base64appended_3D" )
-  {
-    Base64BinaryAppendedWriter writer;
+    SECTION( "base64appended_3D" )
+    {
+        Base64BinaryAppendedWriter writer;
 
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/hexas_3D/base64appended.vtu" );
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    CHECK( written == expected );
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
+
+        CHECK( written == expected );
     }
-  SECTION( "raw_3D" )
-  {
-    RawBinaryAppendedWriter writer;
+    SECTION( "raw_3D" )
+    {
+        RawBinaryAppendedWriter writer;
 
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/hexas_3D/raw.vtu" );
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-    CHECK( written == expected );
-  }
-#ifdef VTU11_ENABLE_ZLIB
-  SECTION( "raw_compressed" )
-  {
-    CompressedRawBinaryAppendedWriter writer;
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
 
-    REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        CHECK( written == expected );
+    }
 
-    auto written = readFile( filename );
-    auto expected = readFile( "testfiles/hexas_3D/raw_compressed.vtu" );
+    #ifdef VTU11_ENABLE_ZLIB
+    SECTION( "raw_compressed" )
+    {
+        CompressedRawBinaryAppendedWriter writer;
 
-    CHECK( written == expected );
-  }
-#endif
+        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
 
-}
-}
+        auto written = vtu11testing::readFile( filename );
+        auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );
+
+        CHECK( written == expected );
+    }
+    #endif
+
+} // hexahedras_test
+
+} // namespace vtu11

@@ -1,30 +1,48 @@
-~~~
-         __        ____ ____
-___  ___/  |_ __ _/_   /_   |
-\  \/ /\   __\  |  \   ||   |
- \   /  |  | |  |  /   ||   |
-  \_/   |__| |____/|___||___|
+# Vtu11
 
-~~~
+Vtu11 is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which vtu11 is used.
 
-vtu11
-Small lib to read/write vtu files
+## Small example
 
+```cpp
+#include "vtu11.hpp"
 
+int main( )
+{
+    // Create data for 3x2 quad mesh
+    std::vector<double> points
+    {
+        0.0, 0.0, 0.5,    0.0, 0.3, 0.5,    0.0, 0.7, 0.5,    0.0, 1.0, 0.5, // 0,  1,  2,  3
+        0.5, 0.0, 0.5,    0.5, 0.3, 0.5,    0.5, 0.7, 0.5,    0.5, 1.0, 0.5, // 4,  5,  6,  7
+        1.0, 0.0, 0.5,    1.0, 0.3, 0.5,    1.0, 0.7, 0.5,    1.0, 1.0, 0.5  // 8,  9, 10, 11
+    };
 
-# Decoding base64 data with python
+    std::vector<vtu11::VtkIndexType> connectivity
+    {
+        0,  4,  5,  1, // 0
+        1,  5,  6,  2, // 1
+        2,  6,  7,  3, // 2
+        4,  8,  9,  5, // 3
+        5,  9, 10,  6, // 4
+        6, 10, 11,  7  // 5
+    };
 
+    std::vector<vtu11::VtkIndexType> offsets { 4, 8, 12, 16, 20, 24 };
+    std::vector<vtu11::VtkCellType> types { 9, 9, 9, 9, 9, 9 };
 
-~~~py
-import numpy
-import base64
+    std::vector<double> pointData { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
+    std::vector<double> cellData { 3.2, 4.3, 5.4, 6.5, 7.6, 8.7 };
 
-# Decode base64 encoded data back to raw binary
-raw = base64.b64decode('YAAAAAAAAAA=')
+    // Create tuples with (name, number of components, data)
+    vtu11::DataSet pointDataSet { "Temperature", 1, pointData };
+    vtu11::DataSet cellDataSet { "Conductivity", 1, cellData };
 
-# Interpret binary data as unsigned 32 bit integers
-data = numpy.frombuffer(raw, dtype=numpy.uint64)
+    // Create small proxy mesh type 
+    vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
-# Prints: [96]
-print(data)
-~~~
+    // Write data to .vtu file using raw binary appended format
+    vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, 
+                  vtu11::RawBinaryAppendedWriter { } );
+}
+```
+Other writers available are: `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.

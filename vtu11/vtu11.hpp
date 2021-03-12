@@ -32,13 +32,12 @@ struct Vtu11UnstructuredMesh
   size_t numberOfCells( ){ return types_.size( ); }
 };
 
-
 template<typename MeshGenerator, typename Writer = AsciiWriter>
 void write( const std::string& filename,
             MeshGenerator& mesh,
             const std::vector<DataSet>& pointData,
             const std::vector<DataSet>& cellData,
-            Writer writer = Writer() );
+            Writer writer = Writer( ) );
 	
 //The declaration of the parallelWrite function
 template<typename MeshGenerator, typename Writer = AsciiWriter>
@@ -49,7 +48,7 @@ void parallelWrite( const std::string& path,
                     const std::vector<DataSet>& cellData,
                     const size_t fileId,
                     const size_t numberOfFiles,
-                    Writer writer = Writer());
+                    Writer writer = Writer( ) );
 
 } // namespace vtu11
 

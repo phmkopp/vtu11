@@ -35,6 +35,7 @@ inline std::string dataTypeString( )
 
   return base + std::to_string( sizeof( DataType ) * 8 );
 }
+
 } // namespace vtu11
 
 inline std::string vtu11::endianness( )

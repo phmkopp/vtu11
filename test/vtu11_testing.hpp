@@ -8,3 +8,12 @@
 //
 
 #include "catch2/catch.hpp"
+
+#include <string>
+
+namespace vtu11testing
+{
+
+std::string readFile( const std::string& filename );
+
+} // namespace vtu11testing
