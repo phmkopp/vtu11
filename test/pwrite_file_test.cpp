@@ -13,7 +13,7 @@
 namespace vtu11
 {
 
-// Tests, if parallelWrite is running without error. Successful 
+// Tests, if parallelWrite is running without error. Successful
 // and correct creation of .vtu files is not tested here
 TEST_CASE( "write_parallel_file_test" )
 {
@@ -61,13 +61,13 @@ TEST_CASE( "write_parallel_file_test" )
 
     std::string filename = "parallel_write_test.pvtu";
     std::string basename = "parallel_write_test";
-    
+
     fs::path path = "testfiles/parallel_write/pwrite_tester/";
     fs::create_directory( path );
 
     SECTION( "parallel_writing_successful" )
     {
-        REQUIRE_NOTHROW( parallelWrite( path, basename, mesh, pointData, cellData, 0, 2 ) );
+        REQUIRE_NOTHROW( parallelWrite( path.string(), basename, mesh, pointData, cellData, 0, 2 ) );
     }
 
     REQUIRE( endianness( ) == "LittleEndian" );
