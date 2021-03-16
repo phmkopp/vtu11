@@ -10,7 +10,7 @@ _Vtu11_ is a small C++ header-only library to write unstructured grids using the
 int main( )
 {
     // Create data for 3x2 quad mesh
-    
+
     // (x, y, z) coordinates of mesh vertices
     std::vector<double> points
     {
@@ -18,7 +18,7 @@ int main( )
         0.5, 0.0, 0.5,    0.5, 0.3, 0.5,    0.5, 0.7, 0.5,    0.5, 1.0, 0.5, // 4,  5,  6,  7
         1.0, 0.0, 0.5,    1.0, 0.3, 0.5,    1.0, 0.7, 0.5,    1.0, 1.0, 0.5  // 8,  9, 10, 11
     };
-    
+
     // Vertex indices of all cells
     std::vector<vtu11::VtkIndexType> connectivity
     {
@@ -32,29 +32,29 @@ int main( )
 
     // Separate cells in connectivity array
     std::vector<vtu11::VtkIndexType> offsets { 4, 8, 12, 16, 20, 24 };
-    
+
     // Cell types of each cell, see [1]
     std::vector<vtu11::VtkCellType> types { 9, 9, 9, 9, 9, 9 };
 
     // Create small proxy mesh type
     vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
-    
+
     // Create some data associated to points and cells
     std::vector<double> pointData { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
     std::vector<double> cellData { 3.2, 4.3, 5.4, 6.5, 7.6, 8.7 };
-  
+
     // Create tuples with (name, association, number of components) for each data set
-    vtu11::DataSetInfo dataSetInfo
+    std::vector<vtu11::DataSetInfo> dataSetInfo
     {
         { "Temperature", vtu11::DataSetType::PointData, 1 },
         { "Conductivity", vtu11::DataSetType::CellData, 1 },
     };
-    
-    // Wrap data into std::vector
-    vtu11::DataSetData dataSetData { pointData, cellData };
+
+    // Create writer
+    vtu11::RawBinaryAppendedWriter writer;
 
     // Write data to .vtu file using raw binary appended format
-    vtu11::write( "test.vtu", mesh, dataSetInfo, dataSetData, vtu11::RawBinaryAppendedWriter { } );
+    vtu11::writeVtu( "test.vtu", mesh, dataSetInfo, { pointData, cellData }, writer );
 }
 ```
 Available writers are:
