@@ -173,8 +173,6 @@ test.pvtu
 test
   |-- test_0.vtu
   |-- test_1.vtu
-  |-- test_2.vtu
-  |-- test_3.vtu
 ```
 
 ## Resources
