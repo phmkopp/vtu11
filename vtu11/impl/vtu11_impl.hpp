@@ -251,7 +251,7 @@ void parallelWrite( const std::string& path,
 
   directory /= fs::path(baseName + "_" + std::to_string(fileId) + ".vtu");
 
-  write( directory, mesh, pointData, cellData, writer );
+  write( directory.string(), mesh, pointData, cellData, writer );
 
 } // parallelWrite
 } // namespace vtu11
