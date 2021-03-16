@@ -231,7 +231,7 @@ void parallelWrite( const std::string& path,
   fs::path directory( path );
 
   // create base directory for all files if not existing
-  if( !fs::exists( directory ) && fileId == 0 )
+  if( fileId == 0 && !path.empty( ) && !fs::exists( directory ) )
   {
     fs::create_directories( directory );
   }
