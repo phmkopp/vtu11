@@ -21,7 +21,6 @@ namespace detail
 
 template<typename DataType, typename Writer>
 StringStringMap writeDataSetHeader( Writer&& writer,
-                                    std::ostream& output,
                                     const std::string& name,
                                     size_t ncomponents )
 {
@@ -49,7 +48,7 @@ inline void writeDataSet( Writer& writer,
                           size_t ncomponents,
                           const std::vector<DataType>& data )
 {
-    auto attributes = writeDataSetHeader<DataType>( writer, output, name, ncomponents );
+    auto attributes = writeDataSetHeader<DataType>( writer, name, ncomponents );
 
     if( attributes["format"] != "appended" )
     {
@@ -93,7 +92,7 @@ void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
         if( std::get<1>( metadata ) == type )
         {
             auto attributes = detail::writeDataSetHeader<double>( writer, 
-               output, std::get<0>( metadata ), std::get<2>( metadata ) );
+               std::get<0>( metadata ), std::get<2>( metadata ) );
 
             writeEmptyTag( output, "PDataArray", attributes );
         }

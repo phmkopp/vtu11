@@ -13,7 +13,7 @@
 namespace vtu11
 {
 
-TEST_CASE( "write_Pyramids3D_Test" )
+TEST_CASE( "write_pyramids3D_Test" )
 {
     std::vector<double> points 
     {
@@ -106,7 +106,7 @@ TEST_CASE( "write_Pyramids3D_Test" )
     {
         CompressedRawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );

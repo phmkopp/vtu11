@@ -190,7 +190,9 @@ TEST_CASE( "pyramids3D_test" )
         {
             std::tie( meshData, dataSetData ) = partitioneddata::partition( fileId );
 
-            writePartition( writeDir, basename, meshData.mesh( ), dataSetInfo, dataSetData, fileId );
+            auto mesh = meshData.mesh( );
+
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
@@ -217,8 +219,9 @@ TEST_CASE( "pyramids3D_test" )
         {
             std::tie( meshData, dataSetData ) = partitioneddata::partition( fileId );
 
-            writePartition( writeDir, basename, meshData.mesh( ), 
-                            dataSetInfo, dataSetData, fileId, writer );
+            auto mesh = meshData.mesh( );
+
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, writer );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
@@ -245,8 +248,9 @@ TEST_CASE( "pyramids3D_test" )
         {
             std::tie( meshData, dataSetData ) = partitioneddata::partition( fileId );
 
-            writePartition( writeDir, basename, meshData.mesh( ),
-                            dataSetInfo, dataSetData, fileId, writer );
+            auto mesh = meshData.mesh( );
+
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, writer );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
@@ -272,9 +276,10 @@ TEST_CASE( "pyramids3D_test" )
         for( size_t fileId = 0; fileId < numberOfFiles; fileId++ )
         {
             std::tie( meshData, dataSetData ) = partitioneddata::partition( fileId );
+            
+            auto mesh = meshData.mesh( );
 
-            writePartition( writeDir, basename, meshData.mesh( ),
-                            dataSetInfo, dataSetData, fileId, writer );
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, writer );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
