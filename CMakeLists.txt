@@ -15,8 +15,7 @@ project( vtu11 CXX )
 set( CMAKE_CXX_STANDARD 11 )
 
 # Directories to include header files from
-include_directories( vtu11 )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR}/config )
+set( VTU11_ALL_INCLUDE_DIRS vtu11 ${CMAKE_CURRENT_BINARY_DIR}/config )
 
 # ---------------------------------------------------------------------
 
@@ -53,7 +52,7 @@ if( ZLIB_FOUND )
     set( VTU11_ENABLE_ZLIB ON )
     set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} )
 
-    include_directories( ${ZLIB_INCLUDE_DIRS} )
+    set( VTU11_ALL_INCLUDE_DIRS ${VTU11_ALL_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} )
 
 else( ZLIB_FOUND )
 
@@ -77,7 +76,8 @@ if( VTU11_ENABLE_TESTS )
 
     add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} test/vtu11_testing.hpp )
 
-    target_link_libraries( vtu11_testrunner ${VTU11_ZLIB_LIBRARIES} )
+    target_link_libraries( vtu11_testrunner PRIVATE ${VTU11_ZLIB_LIBRARIES} )
+    target_include_directories( vtu11_testrunner PRIVATE ${VTU11_ALL_INCLUDE_DIRS} )
 
     file(COPY test/testfiles DESTINATION . )
 
@@ -87,18 +87,15 @@ endif( VTU11_ENABLE_TESTS )
 
 get_directory_property( hasParent PARENT_DIRECTORY )
 
-if(hasParent)
-
-    # Write all include directories into ALL_INCLUDES variable
-    get_property( ALL_INCLUDES DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
+if( hasParent )
 
     # Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
-    set( VTU11_INCLUDE_DIRECTORIES ${ALL_INCLUDES} PARENT_SCOPE )
+    set( VTU11_INCLUDE_DIRECTORIES ${VTU11_ALL_INCLUDE_DIRS} PARENT_SCOPE )
 
     # If zlib libraries are found,
     set( VTU11_ZLIB_LIBRARIES ${VTU11_ZLIB_LIBRARIES} PARENT_SCOPE )
 
-endif()
+endif( )
 
 # ---------------------- Copy / install ----------------------------
 
