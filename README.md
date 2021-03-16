@@ -19,6 +19,7 @@ add_executable( example example.cpp )
 # Include path is set into parent scope by vtu11
 target_include_directories( example PRIVATE ${VTU11_INCLUDE_DIRECTORIES} )
 ```
+If you also enable the tests then remember to run the testrunner from the vtu11 directory, otherwise the test files will not be found.
 
 ## Serial example
 
