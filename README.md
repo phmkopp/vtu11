@@ -19,6 +19,8 @@ add_executable( example example.cpp )
 # Include path is set into parent scope by vtu11
 target_include_directories( example PRIVATE ${VTU11_INCLUDE_DIRECTORIES} )
 ```
+The variable `VTU11_INCLUDE_DIRECTORIES` contains the vtu11/vtu11 folder in the vtu11 _source_ directory (where `vtu11.hpp` is located) and the config folder in the vtu11 _build_ directory (with `inc/vtu11_config.hpp`).
+
 If you also enable the tests then remember to run the testrunner from the vtu11 directory, otherwise the test files will not be found.
 
 ## Serial example
