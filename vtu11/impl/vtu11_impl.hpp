@@ -69,17 +69,17 @@ void writePVTUfile(const std::string& path,
 {
   std::string parallelName = path + baseName + ".pvtu";
   std::ofstream output( parallelName, std::ios::binary );
-  
+
   size_t ghostLevel = 0; //Hardcoded to be 0
-  
+
   VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
-  
+
   output << "<?xml version=\"1.0\"?>\n";
 
   StringStringMap headerAttributes{ { "byte_order",  endianness()       },
                                     { "type"      ,  "PUnstructuredGrid" },
                                     { "version"   ,  "0.1"              } };
-  
+
   writer.addHeaderAttributes( headerAttributes );
   {
     ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
@@ -88,7 +88,7 @@ void writePVTUfile(const std::string& path,
 
       {
         ScopedXmlTag pPointDataTag( output, "PPointData", { } );
-      
+
         for( const auto& dataSet : pointData )
         {
           addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
@@ -98,7 +98,7 @@ void writePVTUfile(const std::string& path,
 
       {
         ScopedXmlTag pCellDataTag( output, "PCellData", { } );
-      
+
         for (const auto& dataSet : cellData)
         {
           addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
@@ -108,11 +108,11 @@ void writePVTUfile(const std::string& path,
 
       {
         ScopedXmlTag pPointsTag( output, "PPoints", { } );
-        
+
         StringStringMap attributes = { { "type", dataTypeString<double>() }, { "NumberOfComponents", std::to_string(3) } };
 
         writer.addDataAttributes( attributes );
-        
+
         writeEmptyTag( output, "PDataArray", attributes );
 
       } // PPoints
@@ -126,7 +126,7 @@ void writePVTUfile(const std::string& path,
       } // Pieces
     } // PUnstructuredGrid
   } // PVTUFile
-  
+
   output.close();
 
 } // writePVTUfile
@@ -246,10 +246,10 @@ void parallelWrite( const std::string& path,
   {
     detail::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
   }
-  
-  directory /= baseName + "_" + std::to_string(fileId) + ".vtu";
 
-  write( directory, mesh, pointData, cellData, writer );
+  directory /= fs::path(baseName + "_" + std::to_string(fileId) + ".vtu");
+
+  write( directory.string(), mesh, pointData, cellData, writer );
 
 } // parallelWrite
 } // namespace vtu11
