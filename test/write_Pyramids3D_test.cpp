@@ -37,18 +37,23 @@ TEST_CASE( "write_Pyramids3D_Test" )
     
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
+    std::vector<DataSetInfo> dataSetInfo
+    {
+        { "Flash Strength Points", DataSetType::PointData, 1 },
+        { "cell Colour", DataSetType::CellData, 1 }
+    };
+
     std::vector<double> flashStrengthPoints { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
     std::vector<double> cellColour { 1.0, 2.0, 3.0, 4.0, 0.0 };
 
-    std::vector<DataSet> pointData { DataSet { std::string( "Flash Strength Points" ), 1, flashStrengthPoints } };
-    std::vector<DataSet> cellData { DataSet { std::string( "cell Colour" ), 1, cellColour } };
+    std::vector<DataSetData> dataSetData { flashStrengthPoints, cellColour };
 
     std::string filename = "testfiles/pyramids_3D/test.vtu";
     std::string expectedpath = "testfiles/pyramids_3D/";
 
     SECTION( "ascii_3D" )
     {
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
@@ -63,7 +68,7 @@ TEST_CASE( "write_Pyramids3D_Test" )
     {
         Base64BinaryWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
@@ -76,7 +81,7 @@ TEST_CASE( "write_Pyramids3D_Test" )
     {
         Base64BinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
@@ -88,7 +93,7 @@ TEST_CASE( "write_Pyramids3D_Test" )
     {
         RawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
@@ -101,7 +106,7 @@ TEST_CASE( "write_Pyramids3D_Test" )
     {
         CompressedRawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( write( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );

@@ -32,23 +32,31 @@ struct Vtu11UnstructuredMesh
   size_t numberOfCells( ){ return types_.size( ); }
 };
 
+//! Writes single file
 template<typename MeshGenerator, typename Writer = AsciiWriter>
-void write( const std::string& filename,
-            MeshGenerator& mesh,
-            const std::vector<DataSet>& pointData,
-            const std::vector<DataSet>& cellData,
-            Writer writer = Writer( ) );
+void writeVtu( const std::string& filename,
+               MeshGenerator& mesh,
+               const std::vector<DataSetInfo>& dataSetInfo,
+               const std::vector<DataSetData>& dataSetData,
+               Writer writer = Writer { } );
+
+//! Creates path/baseName.pvtu and path/baseName directory
+template<typename Writer = AsciiWriter>
+void writePVtu( const std::string& path,
+                const std::string& baseName,
+                const std::vector<DataSetInfo>& dataSetInfo,
+                size_t numberOfFiles,
+                Writer writer = Writer { } );
 	
-//The declaration of the parallelWrite function
+//! Forwards path/baseName.vtu to the writeVtu function
 template<typename MeshGenerator, typename Writer = AsciiWriter>
-void parallelWrite( const std::string& path,
-                    const std::string& baseName,
-                    MeshGenerator& mesh,
-                    const std::vector<DataSet>& pointData,
-                    const std::vector<DataSet>& cellData,
-                    const size_t fileId,
-                    const size_t numberOfFiles,
-                    Writer writer = Writer( ) );
+void writePartition( const std::string& path,
+                     const std::string& baseName,
+                     MeshGenerator& mesh,
+                     const std::vector<DataSetInfo>& dataSetInfo,
+                     const std::vector<DataSetData>& dataSetData,
+                     size_t fileId,
+                     Writer writer = Writer { } );
 
 } // namespace vtu11
 

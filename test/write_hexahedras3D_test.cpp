@@ -35,6 +35,14 @@ TEST_CASE( "hexahedras_test" )
 
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
+    std::vector<DataSetInfo> dataSetInfo
+    {
+        { "Point_Data_1", DataSetType::PointData, 1 },
+        { "Point_Data_2", DataSetType::PointData, 1 },
+        { "Cell_1", DataSetType::CellData, 1 },
+        { "Cell_2", DataSetType::CellData, 1 }
+    };
+
     std::vector<double> pointData1
     {
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -47,27 +55,17 @@ TEST_CASE( "hexahedras_test" )
         19.0, 21.0, 11.0, 19.0, 16.0, 45.0, 35.0, 58.0
     };
 
-    std::vector<double> cell_1 { 1.0, 2.0 };
-    std::vector<double> cell_2 { 10.0, 20.0 };
+    std::vector<double> cellData1 { 1.0, 2.0 };
+    std::vector<double> cellData2 { 10.0, 20.0 };
 
-    std::vector<DataSet> pointData
-    {
-      DataSet { std::string( "Point_Data_1" ), 1, pointData1 },
-      DataSet { std::string( "Point_Data_2" ), 1, pointData2 }
-    };
-
-    std::vector<DataSet> cellData
-    {
-      DataSet { std::string( "Cell_1" ), 1, cell_1 },
-      DataSet { std::string( "Cell_2" ), 1, cell_2 }
-    };
+    std::vector<DataSetData> dataSetData { pointData1, pointData2, cellData1, cellData2 };
 
     std::string filename = "testfiles/hexas_3D/test.vtu";
     std::string expectedpath = "testfiles/hexas_3D/";
 
     SECTION( "ascii_3D" )
     {
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
@@ -82,29 +80,31 @@ TEST_CASE( "hexahedras_test" )
     {
         Base64BinaryWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
 
         CHECK( written == expected );
     }
+
     SECTION( "base64appended_3D" )
     {
         Base64BinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
 
         CHECK( written == expected );
     }
+
     SECTION( "raw_3D" )
     {
         RawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
@@ -117,7 +117,7 @@ TEST_CASE( "hexahedras_test" )
     {
         CompressedRawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );
