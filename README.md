@@ -9,9 +9,7 @@ _Vtu11_ is a small C++ header-only library to write unstructured grids using the
 
 int main( )
 {
-    // Create data for 3x2 quad mesh
-
-    // (x, y, z) coordinates of mesh vertices
+    // Create data for 3x2 quad mesh: (x, y, z) coordinates of mesh vertices
     std::vector<double> points
     {
         0.0, 0.0, 0.5,    0.0, 0.3, 0.5,    0.0, 0.7, 0.5,    0.0, 1.0, 0.5, // 0,  1,  2,  3
@@ -73,24 +71,81 @@ The pvtu format is used in combination with the vtu format. The mesh needs to be
 
 int main( )
 {
-    // create the mesh, pointDataSet and cellDataSet as above
-    // for the local part of the partitioned mesh
+    // Split the 3x2 cells from serial examle in two 3x1 partitions
 
-    // ...
+    // Row 0 and 1
+    std::vector<double> points0
+    {
+        0.0, 0.0, 0.5,    0.0, 0.3, 0.5,    0.0, 0.7, 0.5,    0.0, 1.0, 0.5, // 0,  1,  2,  3
+        0.5, 0.0, 0.5,    0.5, 0.3, 0.5,    0.5, 0.7, 0.5,    0.5, 1.0, 0.5, // 4,  5,  6,  7
+    };
 
-    // Write data to .vtu file using raw binary appended format
-    vtu11::parallelWrite(
-        "path/to/results",
-        "test",
-        mesh,
-        { pointDataSet },
-        { cellDataSet },
-        0, // local process Id (e.g. "omp_get_thread_num" for OpenMP of "MPI_Comm_rank" in MPI)
-        4, // number of processes (e.g. "omp_get_max_threads" for OpenMP of "MPI_Comm_size" in MPI)
-        vtu11::RawBinaryAppendedWriter { }
-    );
+    // Row 1 and 2
+    std::vector<double> points1
+    {                                                                        // Original indices:
+        0.5, 0.0, 0.5,    0.5, 0.3, 0.5,    0.5, 0.7, 0.5,    0.5, 1.0, 0.5, // 4,  5,  6,  7
+        1.0, 0.0, 0.5,    1.0, 0.3, 0.5,    1.0, 0.7, 0.5,    1.0, 1.0, 0.5  // 8,  9, 10, 11
+    };
+
+    // Original cells 0, 1 and 2
+    std::vector<vtu11::VtkIndexType> connectivity0
+    {
+        0,  4,  5,  1, // 0
+        1,  5,  6,  2, // 1
+        2,  6,  7,  3, // 2
+    };
+
+    // Original cells 3, 4, and 5 (now using local vertex indices)
+    std::vector<vtu11::VtkIndexType> connectivity1
+    {
+        0,  4,  5,  1, // 3
+        1,  5,  6,  2, // 4
+        2,  6,  7,  3, // 5
+    };
+
+    std::vector<vtu11::VtkIndexType> offsets0 { 4, 8, 12 };
+    std::vector<vtu11::VtkIndexType> offsets1 { 4, 8, 12 };
+
+    std::vector<vtu11::VtkCellType> types0 { 9, 9, 9 };
+    std::vector<vtu11::VtkCellType> types1 { 9, 9, 9 };
+
+    // Create one proxy for each partition
+    vtu11::Vtu11UnstructuredMesh meshPartition0 { points0, connectivity0, offsets0, types0 };
+    vtu11::Vtu11UnstructuredMesh meshPartition1 { points1, connectivity1, offsets1, types1 };
+
+    // Because vertices are duplicated also point data is duplicated
+    std::vector<double> pointData0 { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 };
+    std::vector<double> pointData1 { 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
+
+    std::vector<double> cellData0 { 3.2, 4.3, 5.4 };
+    std::vector<double> cellData1 { 6.5, 7.6, 8.7 };
+
+    // These hold for all partitions
+    std::vector<vtu11::DataSetInfo> dataSetInfo
+    {
+        { "Temperature", vtu11::DataSetType::PointData, 1 },
+        { "Conductivity", vtu11::DataSetType::CellData, 1 },
+    };
+
+    std::vector<vtu11::DataSetData> dataSetData0 { pointData0, cellData0 };
+    std::vector<vtu11::DataSetData> dataSetData1 { pointData1, cellData1 };
+
+    // Create writer
+    vtu11::RawBinaryAppendedWriter writer;
+
+    size_t numberOfFiles = 2;
+
+    std::string path = ".";
+    std::string basename = "test";
+
+    // First write .pvtu file and create folder for .vtu partitions. This must be 
+    // done only once (e.g. on MPI rank 0 or before an omp parallel section)
+    vtu11::writePVtu( path, basename, dataSetInfo, numberOfFiles, writer );
+
+    // Write two .vtu partitions. This can happen in parallel as there are no dependencies.
+    vtu11::writePartition( path, basename, meshPartition0, dataSetInfo, dataSetData0, 0, writer );
+    vtu11::writePartition( path, basename, meshPartition1, dataSetInfo, dataSetData1, 1, writer );
 }
-
 ```
 
 The folder structure for the example above would look like this (in folder `path/to/results`):
