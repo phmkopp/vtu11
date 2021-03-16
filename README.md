@@ -1,6 +1,6 @@
 # Vtu11
 
-Vtu11 is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which vtu11 is used.
+_Vtu11_ is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which _vtu11_ is used.
 
 ## Serial example
 
@@ -37,16 +37,67 @@ int main( )
     vtu11::DataSet pointDataSet { "Temperature", 1, pointData };
     vtu11::DataSet cellDataSet { "Conductivity", 1, cellData };
 
-    // Create small proxy mesh type 
-    vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
+    // Create small proxy mesh type
+    vtu11::Vtu11UnstructuredMesh mesh
+    {
+        points,       // coordinates of the points
+        connectivity, // connectivities of the cells
+        offsets,      // offsets between the cell points
+        types         // types of the cells, see "https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf"
+    };
 
     // Write data to .vtu file using raw binary appended format
-    vtu11::write( "test.vtu", mesh, { pointDataSet }, { cellDataSet }, 
-                  vtu11::RawBinaryAppendedWriter { } );
+    vtu11::write(
+        "test.vtu",
+        mesh,
+        { pointDataSet },
+        { cellDataSet },
+        vtu11::RawBinaryAppendedWriter { }
+    );
 }
 ```
-Other writers available are: `AsciiWriter`, `Base64BinaryWriter`, `Base64BinaryAppendedWriter`, `RawBinaryAppendedWriter` and if zlib is available also `CompressedRawBinaryAppendedWriter`.
+Available writers are:
+- `AsciiWriter`
+- `Base64BinaryWriter`
+- `Base64BinaryAppendedWriter`
+- `RawBinaryAppendedWriter`
+- `CompressedRawBinaryAppendedWriter` (if [zlib](https://zlib.net/) is available)
 
 ## Parallel example
 
-Dodo.
+The pvtu format is used in combination with the vtu format. The mesh needs to be partitioned before it is given to _vtu11_. Each part of the mesh is written to a vtu file, and the pvtu file contains the references to those files. Overlapping entities like ghost nodes or cells can be added too if needed for e.g. other cells.
+
+```cpp
+#include "vtu11.hpp"
+
+int main( )
+{
+    // create the mesh, pointDataSet and cellDataSet as above
+    // for the local part of the partitioned mesh
+
+    // ...
+
+    // Write data to .vtu file using raw binary appended format
+    vtu11::parallelWrite(
+        "path/to/results",
+        "test",
+        mesh,
+        { pointDataSet },
+        { cellDataSet },
+        0, // local process Id (e.g. "omp_get_thread_num" for OpenMP of "MPI_Comm_rank" in MPI)
+        4, // number of processes (e.g. "omp_get_max_threads" for OpenMP of "MPI_Comm_size" in MPI)
+        vtu11::RawBinaryAppendedWriter { }
+    );
+}
+
+```
+
+The folder structure for the example above would look like this (in folder `path/to/results`):
+```
+test.pvtu
+test
+  |-- test_0.vtu
+  |-- test_1.vtu
+  |-- test_2.vtu
+  |-- test_3.vtu
+```
