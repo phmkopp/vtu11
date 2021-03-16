@@ -15,7 +15,7 @@ project( vtu11 CXX )
 set( CMAKE_CXX_STANDARD 11 )
 
 # Directories to include header files from
-set( VTU11_ALL_INCLUDE_DIRS vtu11 ${CMAKE_CURRENT_BINARY_DIR}/config )
+set( VTU11_ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/vtu11 ${CMAKE_CURRENT_BINARY_DIR}/config )
 
 # ---------------------------------------------------------------------
 
