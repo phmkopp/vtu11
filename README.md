@@ -92,7 +92,7 @@ The pvtu format is used in combination with the vtu format. The mesh needs to be
 
 int main( )
 {
-    // Split the 3x2 cells from serial examle in two 3x1 partitions
+    // Split the 3x2 cells from serial example in two 3x1 partitions
 
     // Row 0 and 1
     std::vector<double> points0
@@ -160,7 +160,7 @@ int main( )
     std::string basename = "test";
 
     // First write .pvtu file and create folder for .vtu partitions. This must be 
-    // done only once (e.g. on MPI rank 0 or before an omp parallel section)
+    // done only once (e.g. on MPI rank 0 or before an omp parallel section).
     vtu11::writePVtu( path, basename, dataSetInfo, numberOfFiles, writer );
 
     // Write two .vtu partitions. This can happen in parallel as there are no dependencies.
