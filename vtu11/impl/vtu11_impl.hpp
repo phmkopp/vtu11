@@ -249,7 +249,7 @@ void parallelWrite( const std::string& path,
     detail::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
   }
 
-  directory /= fs::Path(baseName + "_" + std::to_string(fileId) + ".vtu");
+  directory /= fs::path(baseName + "_" + std::to_string(fileId) + ".vtu");
 
   write( directory, mesh, pointData, cellData, writer );
 
