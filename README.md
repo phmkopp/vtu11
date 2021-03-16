@@ -2,6 +2,24 @@
 
 _Vtu11_ is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which _vtu11_ is used.
 
+## How to include in your project
+
+We include _Vtu11_ as subfolder or git submodule in our projects using add_subdirectory. The following CMakeLists.txt shows a minimal version for compiling an `example` executable (like the ones below) using vtu11:
+```cmake
+# Not sure what version is the actual minimum
+cmake_minimum_required( VERSION 3.4.3 )
+
+project( example CXX )
+
+set( CMAKE_CXX_STANDARD 11 )
+
+add_subdirectory( vtu11 )
+add_executable( example example.cpp )
+
+# Include path is set into parent scope by vtu11
+target_include_directories( example PRIVATE ${VTU11_INCLUDE_DIRECTORIES} )
+```
+
 ## Serial example
 
 ```cpp
