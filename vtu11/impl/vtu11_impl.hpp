@@ -109,6 +109,11 @@ void writeVTUFile( const std::string& filename,
 
     VTU11_CHECK( output.is_open( ), "Failed to open file \"" + filename + "\"" );
 
+    // Set buffer size to 32K
+    std::vector<char> buffer( 32 * 1024 );
+
+    output.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
+
     output << "<?xml version=\"1.0\"?>\n";
 
     StringStringMap headerAttributes { { "byte_order",  endianness( ) },
