@@ -8,16 +8,43 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  build:
+  build-and-test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang, icpc]
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update && sudo apt-get install valgrind clang
+
+    - name: Building
+      run: |
+        export CXX=${{ matrix.compiler }}
+        cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
+        cmake --build "build"
+
+    - name: Run tests
+      shell: bash
+      run: |
+        cd build
+        ctest -T memcheck
+
+  build-and-test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [windows-latest, macOS-latest]
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Building
       run: |
@@ -25,12 +52,7 @@ jobs:
         cmake --build "build"
 
     - name: Run tests
+      shell: bash
       run: |
         cd build
-        if [ -f "vtu11_testrunner" ]; then
-            ./vtu11_testrunner
-        fi
-        if [ -f "Debug/vtu11_testrunner.exe" ]; then
-            Debug/vtu11_testrunner.exe
-        fi
-      shell: bash
+        ctest
