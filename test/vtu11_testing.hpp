@@ -7,7 +7,8 @@
 //  License: BSD License ; see LICENSE
 //
 
-#pragma once
+#ifndef VTU11_TESTING
+#define VTU11_TESTING
 
 #include "catch2/catch.hpp"
 
@@ -19,3 +20,5 @@ namespace vtu11testing
 std::string readFile( const std::string& filename );
 
 } // namespace vtu11testing
+
+#endif // VTU11_TESTING
