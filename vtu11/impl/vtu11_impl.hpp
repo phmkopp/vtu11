@@ -112,7 +112,7 @@ void writeVTUFile( const std::string& filename,
     // Set buffer size to 32K
     std::vector<char> buffer( 32 * 1024 );
 
-    output.rdbuf( )->pubsetbuf( buffer.data( ), buffer.size( ) );
+    output.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
 
     output << "<?xml version=\"1.0\"?>\n";
 

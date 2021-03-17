@@ -19,19 +19,19 @@ namespace vtu11
 namespace detail
 {
 
-template<typename T> constexpr const char* format( ) { static_assert( false, "Type not available." ); };
+template<typename T> constexpr const char* formatStr( );
 
-template<> constexpr const char* format<double>( ) { return "%g"; }
-template<> constexpr const char* format<long long int>( ) { return "%lld"; }
-template<> constexpr const char* format<long int     >( ) { return "%ld"; }
-template<> constexpr const char* format<int          >( ) { return "%d"; }
-template<> constexpr const char* format<short        >( ) { return "%hd"; }
-template<> constexpr const char* format<char         >( ) { return "%hhd"; }
-template<> constexpr const char* format<unsigned long long int>( ) { return "%llu"; }
-template<> constexpr const char* format<unsigned long int     >( ) { return "%ld"; }
-template<> constexpr const char* format<unsigned int          >( ) { return "%d"; }
-template<> constexpr const char* format<unsigned short        >( ) { return "%hd"; }
-template<> constexpr const char* format<unsigned char         >( ) { return "%hhd"; }
+template<> constexpr const char* formatStr<double>( ) { return "%g"; }
+template<> constexpr const char* formatStr<long long int>( ) { return "%lld"; }
+template<> constexpr const char* formatStr<long int     >( ) { return "%ld"; }
+template<> constexpr const char* formatStr<int          >( ) { return "%d"; }
+template<> constexpr const char* formatStr<short        >( ) { return "%hd"; }
+template<> constexpr const char* formatStr<char         >( ) { return "%hhd"; }
+template<> constexpr const char* formatStr<unsigned long long int>( ) { return "%llu"; }
+template<> constexpr const char* formatStr<unsigned long int     >( ) { return "%ld"; }
+template<> constexpr const char* formatStr<unsigned int          >( ) { return "%d"; }
+template<> constexpr const char* formatStr<unsigned short        >( ) { return "%hd"; }
+template<> constexpr const char* formatStr<unsigned char         >( ) { return "%hhd"; }
 
 } // namespace detail
 
@@ -43,7 +43,7 @@ inline void AsciiWriter::writeData( std::ostream& output,
 
     for( auto value : data )
     {
-        std::snprintf( buffer, sizeof( buffer ), detail::format<T>( ), value );
+        std::snprintf( buffer, sizeof( buffer ), detail::formatStr<T>( ), value );
 
         output << buffer << " ";
     }
