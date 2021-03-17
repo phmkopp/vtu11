@@ -43,6 +43,9 @@ jobs:
 
     - name: Building
       run: |
+        if [ ${{ matrix.compiler }} = icpc ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
         export CXX=${{ matrix.compiler }}
         cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
         cmake --build "build" -j2
