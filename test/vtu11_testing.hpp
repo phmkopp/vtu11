@@ -7,6 +7,8 @@
 //  License: BSD License ; see LICENSE
 //
 
+#pragma once
+
 #include "catch2/catch.hpp"
 
 #include <string>
