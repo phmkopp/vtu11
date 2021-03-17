@@ -12,10 +12,13 @@
 
 #include "inc/alias.hpp"
 
+#include <functional>
+
 namespace vtu11
 {
 
-#define VTU11_CHECK( expr, message ) if( !( expr ) ) throw std::runtime_error( message )
+#define VTU11_THROW( message ) throw std::runtime_error( message )
+#define VTU11_CHECK( expr, message ) if( !( expr ) ) VTU11_THROW ( message )
 
 template<typename DataType>
 std::string dataTypeString( );

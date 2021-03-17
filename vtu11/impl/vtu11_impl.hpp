@@ -19,7 +19,7 @@ namespace vtu11
 namespace detail
 {
 
-template<typename DataType, typename Writer>
+template<typename DataType, typename Writer> inline
 StringStringMap writeDataSetHeader( Writer&& writer,
                                     const std::string& name,
                                     size_t ncomponents )
@@ -41,12 +41,12 @@ StringStringMap writeDataSetHeader( Writer&& writer,
     return attributes;
 }
 
-template<typename Writer, typename DataType>
-inline void writeDataSet( Writer& writer,
-                          std::ostream& output,
-                          const std::string& name,
-                          size_t ncomponents,
-                          const std::vector<DataType>& data )
+template<typename Writer, typename DataType> inline
+void writeDataSet( Writer& writer,
+                   std::ostream& output,
+                   const std::string& name,
+                   size_t ncomponents,
+                   const std::vector<DataType>& data )
 {
     auto attributes = writeDataSetHeader<DataType>( writer, name, ncomponents );
 
@@ -64,7 +64,7 @@ inline void writeDataSet( Writer& writer,
     }
 }
 
-template<typename Writer>
+template<typename Writer> inline
 void writeDataSets( const std::vector<DataSetInfo>& dataSetInfo,
                     const std::vector<DataSetData>& dataSetData,
                     std::ostream& output, Writer& writer, DataSetType type )
@@ -81,7 +81,7 @@ void writeDataSets( const std::vector<DataSetInfo>& dataSetInfo,
     }
 }
 
-template<typename Writer>
+template<typename Writer> inline
 void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
                               std::ostream& output, Writer& writer, DataSetType type )
 {
@@ -99,7 +99,7 @@ void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
     }
 }
 
-template<typename Writer, typename Content>
+template<typename Writer, typename Content> inline
 void writeVTUFile( const std::string& filename,
                    const char* type,
                    Writer&& writer, 
@@ -132,14 +132,12 @@ void writeVTUFile( const std::string& filename,
     output.close( );
 }
 
-} // namespace detail
-
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator, typename Writer> inline
 void writeVtu( const std::string& filename,
                MeshGenerator& mesh,
                const std::vector<DataSetInfo>& dataSetInfo,
                const std::vector<DataSetData>& dataSetData,
-               Writer writer )
+               Writer&& writer )
 {
     detail::writeVTUFile( filename, "UnstructuredGrid", writer, [&]( std::ostream& output )
     {
@@ -204,12 +202,66 @@ void writeVtu( const std::string& filename,
     
 } // writeVtu
 
-template<typename Writer>
-void writePVtu( const std::string& path,
-                const std::string& baseName,
-                const std::vector<DataSetInfo>& dataSetInfo,
-                const size_t numberOfFiles,
-                Writer writer )
+} // namespace detail
+
+template<typename MeshGenerator> inline
+void writeVtu( const std::string& filename,
+               MeshGenerator& mesh,
+               const std::vector<DataSetInfo>& dataSetInfo,
+               const std::vector<DataSetData>& dataSetData,
+               const std::string& writeMode )
+{
+    auto mode = writeMode;
+
+    std::transform( mode.begin( ), mode.end ( ), mode.begin( ),
+        []( unsigned char c ){ return std::tolower( c ); } );
+
+    if( mode == "ascii" )
+    {
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, AsciiWriter { } );
+    }
+    else if( mode == "base64inline" )
+    {
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryWriter { } );
+    }
+    else if( mode == "base64appended" )
+    {
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryAppendedWriter { } );
+    }
+    else if( mode == "rawbinary" )
+    {
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { } );
+    }
+    else if( mode == "rawbinarycompressed" )
+    {
+        #ifdef VTU11_ENABLE_ZLIB
+            detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, CompressedRawBinaryAppendedWriter { } );
+        #else
+            detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { } );
+        #endif
+    }
+    else
+    {
+        VTU11_THROW( "Invalid write mode: \"" + writeMode + "\"." );
+    }
+
+} // writeVtu
+
+namespace detail
+{
+
+struct PVtuDummyWriter
+{
+    void addHeaderAttributes( StringStringMap& ) { }
+    void addDataAttributes( StringStringMap& ) { }
+};
+
+} // detail
+
+inline void writePVtu( const std::string& path,
+                       const std::string& baseName,
+                       const std::vector<DataSetInfo>& dataSetInfo,
+                       const size_t numberOfFiles )
 {
     auto directory = vtu11fs::path { path } / baseName;
     auto pvtufile = vtu11fs::path { path } / ( baseName + ".pvtu" );
@@ -220,7 +272,9 @@ void writePVtu( const std::string& path,
         vtu11fs::create_directories( directory );
     }
 
-    detail::writeVTUFile( pvtufile.string( ), "PUnstructuredGrid", writer, 
+    detail::PVtuDummyWriter writer;
+
+    detail::writeVTUFile( pvtufile.string( ), "PUnstructuredGrid", writer,
                           [&]( std::ostream& output )
     {
         std::string ghostLevel = "0"; // Hardcoded to be 0
@@ -264,14 +318,14 @@ void writePVtu( const std::string& path,
 
 } // writePVtu
 
-template<typename MeshGenerator, typename Writer>
+template<typename MeshGenerator> inline
 void writePartition( const std::string& path,
                      const std::string& baseName,
                      MeshGenerator& mesh,
                      const std::vector<DataSetInfo>& dataSetInfo,
                      const std::vector<DataSetData>& dataSetData,
                      size_t fileId,
-                     Writer writer )
+                     const std::string& writeMode )
 {
     auto vtuname = baseName + "_" + std::to_string( fileId ) + ".vtu";
 
@@ -279,7 +333,7 @@ void writePartition( const std::string& path,
                     vtu11fs::path { baseName } / 
                     vtu11fs::path { vtuname };
 
-    writeVtu( fullname.string( ), mesh, dataSetInfo, dataSetData, writer );
+    writeVtu( fullname.string( ), mesh, dataSetInfo, dataSetData, writeMode );
 
 } // writePartition
 
