@@ -38,7 +38,7 @@ struct CompressedRawBinaryAppendedWriter
 
 } // namespace vtu11
 
-#include "external/zlib/inc/zlibWriter_impl.hpp"
+#include "impl/zlibWriter_impl.hpp"
 
 #endif // VTU11_ENABLE_ZLIB
 
