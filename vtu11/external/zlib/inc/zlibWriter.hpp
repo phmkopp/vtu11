@@ -10,7 +10,6 @@
 #ifndef VTU11_ZLIBWRITER_HPP
 #define VTU11_ZLIBWRITER_HPP
 
-#include "inc/vtu11_config.hpp"
 #include "inc/alias.hpp"
 
 #ifdef VTU11_ENABLE_ZLIB
