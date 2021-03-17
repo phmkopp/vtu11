@@ -3,15 +3,15 @@
 Path="source/vtu11"
 Single="vtu11.hpp"
 
-declare -a InclusionOrder=("external/filesystem/filesystem.hpp"
+declare -a InclusionOrder=("inc/filesystem.hpp"
                            "inc/alias.hpp" 
                            "inc/writer.hpp"
                            "inc/utilities.hpp"
-                           "external/zlib/inc/zlibWriter.hpp"
+                           "inc/zlibWriter.hpp"
                            "vtu11.hpp"
                            "impl/utilities_impl.hpp"
                            "impl/writer_impl.hpp"
-#                           "external/zlib/inc/zlibWriter_impl.hpp"
+                           "inc/zlibWriter_impl.hpp"
                            "impl/vtu11_impl.hpp")
 
 echo "//          __        ____ ____        " > ${Single}
