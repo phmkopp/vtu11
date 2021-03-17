@@ -2,27 +2,6 @@
 
 _Vtu11_ is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which _vtu11_ is used.
 
-## How to include in your project
-
-We include _Vtu11_ as subfolder or git submodule in our projects using add_subdirectory. The following `CMakeLists.txt` shows a minimal version for compiling an `example` executable (like the ones below) using _vtu11_:
-```cmake
-# Not sure what version is the actual minimum
-cmake_minimum_required( VERSION 3.4.3 )
-
-project( example CXX )
-
-set( CMAKE_CXX_STANDARD 11 )
-
-add_subdirectory( vtu11 )
-add_executable( example example.cpp )
-
-# Include path is set into parent scope by vtu11
-target_include_directories( example PRIVATE ${VTU11_INCLUDE_DIRECTORIES} )
-```
-The variable `VTU11_INCLUDE_DIRECTORIES` contains the vtu11/vtu11 folder in the vtu11 _source_ directory (where `vtu11.hpp` is located).
-
-If you also enable the tests then remember to run the testrunner from the vtu11 directory, otherwise the test files will not be found.
-
 ## Serial example
 
 ```cpp
@@ -69,19 +48,58 @@ int main( )
         { "Conductivity", vtu11::DataSetType::CellData, 1 },
     };
 
-    // Create writer
-    vtu11::RawBinaryAppendedWriter writer;
-
-    // Write data to .vtu file using raw binary appended format
-    vtu11::writeVtu( "test.vtu", mesh, dataSetInfo, { pointData, cellData }, writer );
+    // Write data to .vtu file using Ascii format
+    vtu11::writeVtu( "test.vtu", mesh, dataSetInfo, { pointData, cellData }, "Ascii" );
 }
 ```
-Available writers are:
-- `AsciiWriter`
-- `Base64BinaryWriter`
-- `Base64BinaryAppendedWriter`
-- `RawBinaryAppendedWriter`
-- `CompressedRawBinaryAppendedWriter` (if [zlib](https://zlib.net/) is available)
+Available writers are (not case sensitive):
+- `"Ascii"`
+- `"Base64Inline"`
+- `"Base64Appended"`
+- `"RawBinary"`
+- `"RawBinaryCompressed"`
+
+Comments:
+- RawCompressedBinary requires [zlib](https://zlib.net/) to be enabled by defining the VTU11_ENABLE_ZLIB proprocessor symbol. Otherwise the uncompressed version is used instead. Compiled executables also have to be linked to zlib.
+- Compressing data takes more time than writing more data uncompressed
+- Ascii produces surprisingly small files, is nice to debug, but is rather slow to read in Paraview. Archiving ascii .vtu files using a standard zip tool (for example) produces decently small file sizes.
+- Writing raw binary data breakes the xml standard. To still produce valid xml files you can use base64 encoding, at the cost of having about 30% times larger files.  
+- Both raw binary modes use appended format 
+
+## How to include in your project
+
+Being a header-only library the only thing really necessary is to make the vtu11/ folder available in your code and compile using (at least) the C++ 11 standard. Let's say you are working in a Linux environment where you clone the _vtu11_ project and create an `example.cpp` next to it. You using g++ you can compile using
+```
+g++ -Ivtu11/vtu11 --std=c++11 -o example example.cpp
+```
+If you want to use compressed vtu output, then you can add the `VTU11_ENABLE_ZLIB` definition and link to zlib:
+```
+g++ -Ivtu11/vtu11 -DVTU11_ENABLE_ZLIB -lz --std=c++11 -o example example.cpp
+```
+To be a bit more platform independent and handle the zlib part automatically we can use CMake by adding the following `CMakeLists.txt`:
+```cmake
+# Not sure what version is the actual minimum
+cmake_minimum_required( VERSION 3.4.3 )
+
+project( example CXX )
+
+set( CMAKE_CXX_STANDARD 11 )
+
+add_executable( example example.cpp )
+
+target_include_directories( example PRIVATE vtu11/vtu11 )
+
+find_package( ZLIB )
+
+if( ZLIB_FOUND )
+    message( STATUS "Compiling with zlib" )
+ 
+    target_include_directories( example PRIVATE ${ZLIB_INCLUDE_DIRS} )
+    target_compile_definitions( example PRIVATE VTU11_ENABLE_ZLIB )
+    target_link_libraries( example PRIVATE ${ZLIB_LIBRARIES} )    
+endif( ZLIB_FOUND )
+```
+Now you can create a build directory, compile the project and run the example.
 
 ## Parallel example
 
@@ -151,9 +169,6 @@ int main( )
     std::vector<vtu11::DataSetData> dataSetData0 { pointData0, cellData0 };
     std::vector<vtu11::DataSetData> dataSetData1 { pointData1, cellData1 };
 
-    // Create writer
-    vtu11::RawBinaryAppendedWriter writer;
-
     size_t numberOfFiles = 2;
 
     std::string path = ".";
@@ -161,12 +176,12 @@ int main( )
 
     // First write .pvtu file and create folder for .vtu partitions. This must be
     // done only once (e.g. on MPI rank 0 or before an omp parallel section).
-    vtu11::writePVtu( path, basename, dataSetInfo, numberOfFiles, writer );
+    vtu11::writePVtu( path, basename, dataSetInfo, numberOfFiles );
 
     // Write two .vtu partitions. This can happen in parallel as there are no dependencies.
     // Note that the `writePVtu` must have completed before calling this function
-    vtu11::writePartition( path, basename, meshPartition0, dataSetInfo, dataSetData0, 0, writer );
-    vtu11::writePartition( path, basename, meshPartition1, dataSetInfo, dataSetData1, 1, writer );
+    vtu11::writePartition( path, basename, meshPartition0, dataSetInfo, dataSetData0, 0, "RawBinary" );
+    vtu11::writePartition( path, basename, meshPartition1, dataSetInfo, dataSetData1, 1, "RawBinary" );
 }
 ```
 
