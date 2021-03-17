@@ -25,12 +25,7 @@ jobs:
         cmake --build "build"
 
     - name: Run tests
+      shell: bash
       run: |
         cd build
-        if [ -f "vtu11_testrunner" ]; then
-            ./vtu11_testrunner
-        fi
-        if [ -f "Debug/vtu11_testrunner.exe" ]; then
-            Debug/vtu11_testrunner.exe
-        fi
-      shell: bash
+        ctest
