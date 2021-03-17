@@ -64,6 +64,8 @@ endif( ZLIB_FOUND )
 
 # -------------------- Set up testrunner --------------------------
 
+include(CTest)
+
 OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." OFF )
 
 if( VTU11_ENABLE_TESTS )
@@ -78,6 +80,9 @@ if( VTU11_ENABLE_TESTS )
 
     target_link_libraries( vtu11_testrunner PRIVATE ${VTU11_ZLIB_LIBRARIES} )
     target_include_directories( vtu11_testrunner PRIVATE ${VTU11_ALL_INCLUDE_DIRS} )
+
+    include("${CMAKE_CURRENT_SOURCE_DIR}/test/catch2/Catch.cmake")
+    catch_discover_tests(vtu11_testrunner)
 
     file(COPY test/testfiles DESTINATION . )
 
