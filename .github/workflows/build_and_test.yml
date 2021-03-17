@@ -47,9 +47,7 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
         fi
         export CXX=${{ matrix.compiler }}
-        cmake -H"." -B"build" \
-          -DVTU11_ENABLE_TESTS=ON \
-          -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -std=c++11"
+        cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
         cmake --build "build" -j2
 
     - name: Run tests
