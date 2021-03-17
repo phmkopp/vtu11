@@ -32,10 +32,12 @@ jobs:
     - name: Install intel compiler
       if: ${{ matrix.compiler == 'icpc' }}
       run: |
-        sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB -P/tmp
-        sudo apt-key add /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo rm /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo echo deb https://apt.repos.intel.com/oneapi all main > /etc/apt/sources.list.d/oneAPI.list
+        # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
+        cd /tmp
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
         sudo apt-get update
         sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
