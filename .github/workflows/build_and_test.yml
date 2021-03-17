@@ -27,7 +27,7 @@ jobs:
       run: |
         export CXX=${{ matrix.compiler }}
         cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
-        cmake --build "build"
+        cmake --build "build" -j2
 
     - name: Run tests
       shell: bash
