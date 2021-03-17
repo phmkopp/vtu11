@@ -164,6 +164,7 @@ int main( )
     vtu11::writePVtu( path, basename, dataSetInfo, numberOfFiles, writer );
 
     // Write two .vtu partitions. This can happen in parallel as there are no dependencies.
+    // Note that the `writePVtu` must have completed before calling this function
     vtu11::writePartition( path, basename, meshPartition0, dataSetInfo, dataSetData0, 0, writer );
     vtu11::writePartition( path, basename, meshPartition1, dataSetInfo, dataSetData1, 1, writer );
 }
