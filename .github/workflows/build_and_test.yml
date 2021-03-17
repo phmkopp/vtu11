@@ -19,14 +19,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Install valgrind
+      run: |
+        sudo apt-get update
+        sudo apt-get install valgrind
+
+    - name: Install clang
+      if: ${{ matrix.compiler == 'clang' }}
+      run: |
+        sudo apt-get install clang
+
+    - name: Install intel compiler
+      if: ${{ matrix.compiler == 'icpc' }}
       run: |
         sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB -P/tmp
         sudo apt-key add /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo rm /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo echo deb https://apt.repos.intel.com/oneapi all main > /etc/apt/sources.list.d/oneAPI.list
         sudo apt-get update
-        sudo apt-get install valgrind clang intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
     - name: Building
       run: |
