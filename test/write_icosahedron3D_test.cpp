@@ -123,7 +123,7 @@ TEST_CASE( "write_test_icosahedron" )
 
     SECTION( "ascii_3D" )
     {
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "Ascii" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
@@ -133,9 +133,7 @@ TEST_CASE( "write_test_icosahedron" )
 
     SECTION( "base64_3D" )
     {
-        Base64BinaryWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "Base64Inline" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
@@ -145,9 +143,7 @@ TEST_CASE( "write_test_icosahedron" )
 
     SECTION( "base64appended_3D" )
     {
-        Base64BinaryAppendedWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "Base64Appended" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
@@ -157,9 +153,7 @@ TEST_CASE( "write_test_icosahedron" )
 
     SECTION( "raw_3D" )
     {
-        RawBinaryAppendedWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "RawBinary" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
@@ -170,9 +164,7 @@ TEST_CASE( "write_test_icosahedron" )
     #ifdef VTU11_ENABLE_ZLIB
     SECTION( "raw_compressed" )
     {
-        CompressedRawBinaryAppendedWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "RawBinaryCompressed" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );

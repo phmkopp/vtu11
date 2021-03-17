@@ -14,90 +14,49 @@ project( vtu11 CXX )
 
 set( CMAKE_CXX_STANDARD 11 )
 
-# Directories to include header files from
-set( VTU11_ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/vtu11 )
-
-# ---------------------------------------------------------------------
+include(CTest)
 
 OPTION ( VTU11_STRICT_COMPILER "Enable more warnings as errors." OFF )
 
-if( VTU11_STRICT_COMPILER )
+# If compiler is g++: Enable further  warnings and treat all warnings as errors
+if( VTU11_STRICT_COMPILER AND CMAKE_COMPILER_IS_GNUCXX )
 
-    # If compiler is g++: Enable further  warnings and treat all warnings as errors
-    if( CMAKE_COMPILER_IS_GNUCXX )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
+        -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
+        -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict                    \
+        -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override             \
+        -Wsuggest-final-types -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs       \
+        -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo     \
+        -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Werror" )
 
-        # Removed because of filesystem header:
-        # -Wpadded -Wswitch-default
+endif( VTU11_STRICT_COMPILER AND CMAKE_COMPILER_IS_GNUCXX )
 
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
-            -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
-            -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict                    \
-            -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override             \
-            -Wsuggest-final-types -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs       \
-            -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo     \
-            -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Werror" )
+file( GLOB TEST_FILES test/*.cpp)
+file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
 
-    endif( CMAKE_COMPILER_IS_GNUCXX )
+add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} test/vtu11_testing.hpp )
 
-endif( VTU11_STRICT_COMPILER )
-
-# -------------------- zlib dependency ---------------------------
+target_include_directories( vtu11_testrunner PRIVATE vtu11 )
 
 find_package( ZLIB )
 
 if( ZLIB_FOUND )
 
-    message( STATUS "Enabling vtu11 with zlib compression" )
+    message( STATUS "Enabling vtu11 tests with zlib compression" )
 
-    add_definitions( -DVTU11_ENABLE_ZLIB )
-    set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} )
-
-    set( VTU11_ALL_INCLUDE_DIRS ${VTU11_ALL_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} )
+    target_link_libraries( vtu11_testrunner PRIVATE ${ZLIB_LIBRARIES} )
+    target_include_directories( vtu11_testrunner PRIVATE ${ZLIB_INCLUDE_DIRS} )
+    target_compile_definitions( vtu11_testrunner PRIVATE VTU11_ENABLE_ZLIB )
 
 else( ZLIB_FOUND )
 
-    message( STATUS "Enabling vtu11 without zlib compression" )
-
-    set( VTU11_ZLIB_LIBRARIES )
+    message( STATUS "Enabling vtu11 tests without zlib compression" )
 
 endif( ZLIB_FOUND )
 
-# -------------------- Set up testrunner --------------------------
+include("${CMAKE_CURRENT_SOURCE_DIR}/test/catch2/Catch.cmake")
 
-include(CTest)
+catch_discover_tests( vtu11_testrunner )
 
-OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." OFF )
+file( COPY test/testfiles DESTINATION . )
 
-if( VTU11_ENABLE_TESTS )
-
-    message( STATUS "Enabling vtu11 tests" )
-
-    file( GLOB TEST_FILES test/*.cpp)
-
-    file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
-
-    add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} test/vtu11_testing.hpp )
-
-    target_link_libraries( vtu11_testrunner PRIVATE ${VTU11_ZLIB_LIBRARIES} )
-    target_include_directories( vtu11_testrunner PRIVATE ${VTU11_ALL_INCLUDE_DIRS} )
-
-    include("${CMAKE_CURRENT_SOURCE_DIR}/test/catch2/Catch.cmake")
-    catch_discover_tests(vtu11_testrunner)
-
-    file(COPY test/testfiles DESTINATION . )
-
-endif( VTU11_ENABLE_TESTS )
-
-# ---------------- propagate to parent scope ----------------------
-
-get_directory_property( hasParent PARENT_DIRECTORY )
-
-if( hasParent )
-
-    # Set new variable VTU11_INCLUDE_DIRECTORIES also in parent scope
-    set( VTU11_INCLUDE_DIRECTORIES ${VTU11_ALL_INCLUDE_DIRS} PARENT_SCOPE )
-
-    # If zlib libraries are found,
-    set( VTU11_ZLIB_LIBRARIES ${VTU11_ZLIB_LIBRARIES} PARENT_SCOPE )
-
-endif( )

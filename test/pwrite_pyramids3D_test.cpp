@@ -192,7 +192,7 @@ TEST_CASE( "pyramids3D_test" )
 
             auto mesh = meshData.mesh( );
 
-            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId );
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, "Ascii" );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
@@ -211,9 +211,7 @@ TEST_CASE( "pyramids3D_test" )
 
     SECTION( "base64" )
     {
-        Base64BinaryWriter writer;
-
-        writePVtu( writeDir, basename, dataSetInfo, numberOfFiles, writer );
+        writePVtu( writeDir, basename, dataSetInfo, numberOfFiles );
 
         for( size_t fileId = 0; fileId < numberOfFiles; fileId++ )
         {
@@ -221,7 +219,7 @@ TEST_CASE( "pyramids3D_test" )
 
             auto mesh = meshData.mesh( );
 
-            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, writer );
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, "Base64Inline" );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
@@ -240,9 +238,7 @@ TEST_CASE( "pyramids3D_test" )
 
     SECTION( "base64appended" )
     {
-        Base64BinaryAppendedWriter writer;
-
-        writePVtu( writeDir, basename, dataSetInfo, numberOfFiles, writer );
+        writePVtu( writeDir, basename, dataSetInfo, numberOfFiles );
 
         for( size_t fileId = 0; fileId < numberOfFiles; fileId++ )
         {
@@ -250,7 +246,7 @@ TEST_CASE( "pyramids3D_test" )
 
             auto mesh = meshData.mesh( );
 
-            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, writer );
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, "Base64Appended" );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
@@ -269,9 +265,7 @@ TEST_CASE( "pyramids3D_test" )
 
     SECTION( "raw" )
     {
-        RawBinaryAppendedWriter writer;
-
-        writePVtu( writeDir, basename, dataSetInfo, numberOfFiles, writer );
+        writePVtu( writeDir, basename, dataSetInfo, numberOfFiles );
 
         for( size_t fileId = 0; fileId < numberOfFiles; fileId++ )
         {
@@ -279,7 +273,7 @@ TEST_CASE( "pyramids3D_test" )
             
             auto mesh = meshData.mesh( );
 
-            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, writer );
+            writePartition( writeDir, basename, mesh, dataSetInfo, dataSetData, fileId, "RawBinary" );
 
             std::string piecename = piecebase + std::to_string( fileId ) + ".vtu";
 
