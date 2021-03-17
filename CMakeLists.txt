@@ -15,7 +15,7 @@ project( vtu11 CXX )
 set( CMAKE_CXX_STANDARD 11 )
 
 # Directories to include header files from
-set( VTU11_ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/vtu11 ${CMAKE_CURRENT_BINARY_DIR}/config )
+set( VTU11_ALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/vtu11 )
 
 # ---------------------------------------------------------------------
 
@@ -25,10 +25,10 @@ if( VTU11_STRICT_COMPILER )
 
     # If compiler is g++: Enable further  warnings and treat all warnings as errors
     if( CMAKE_COMPILER_IS_GNUCXX )
-        
+
         # Removed because of filesystem header:
         # -Wpadded -Wswitch-default
-  
+
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
             -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
             -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict                    \
@@ -49,7 +49,7 @@ if( ZLIB_FOUND )
 
     message( STATUS "Enabling vtu11 with zlib compression" )
 
-    set( VTU11_ENABLE_ZLIB ON )
+    add_definitions( -DVTU11_ENABLE_ZLIB )
     set( VTU11_ZLIB_LIBRARIES ${ZLIB_LIBRARIES} )
 
     set( VTU11_ALL_INCLUDE_DIRS ${VTU11_ALL_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} )
@@ -69,7 +69,7 @@ OPTION ( VTU11_ENABLE_TESTS "Enable unit tests." OFF )
 if( VTU11_ENABLE_TESTS )
 
     message( STATUS "Enabling vtu11 tests" )
-    
+
     file( GLOB TEST_FILES test/*.cpp)
 
     file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
@@ -96,7 +96,3 @@ if( hasParent )
     set( VTU11_ZLIB_LIBRARIES ${VTU11_ZLIB_LIBRARIES} PARENT_SCOPE )
 
 endif( )
-
-# ---------------------- Copy / install ----------------------------
-
-CONFIGURE_FILE ( vtu11_config.hpp.in config/inc/vtu11_config.hpp )
