@@ -21,11 +21,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB -P/tmp && \
-        sudo apt-key add /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-        sudo rm /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+        sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB -P/tmp
+        sudo apt-key add /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo rm /tmp/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo echo deb https://apt.repos.intel.com/oneapi all main > /etc/apt/sources.list.d/oneAPI.list
-        sudo apt-get update && sudo apt-get install valgrind clang intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        sudo apt-get update
+        sudo apt-get install valgrind clang intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
 
     - name: Building
       run: |
