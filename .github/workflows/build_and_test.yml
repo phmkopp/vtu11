@@ -8,16 +8,64 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  build:
+  build-and-test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++, icpc]
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install valgrind
+      run: |
+        sudo apt-get update
+        sudo apt-get install valgrind
+
+    - name: Install clang
+      if: ${{ matrix.compiler == 'clang++' }}
+      run: |
+        sudo apt-get install clang
+
+    - name: Install intel compiler
+      if: ${{ matrix.compiler == 'icpc' }}
+      run: |
+        # see https://software.intel.com/content/www/us/en/develop/articles/installing-intel-oneapi-toolkits-via-apt.html#pkgtable
+        cd /tmp
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+        sudo apt-get update
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+
+    - name: Building
+      run: |
+        if [ ${{ matrix.compiler }} = icpc ]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
+        export CXX=${{ matrix.compiler }}
+        cmake -H"." -DVTU11_ENABLE_TESTS=ON -B"build"
+        cmake --build "build" -j2
+
+    - name: Run tests
+      shell: bash
+      run: |
+        cd build
+        ctest -T memcheck
+
+  build-and-test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [windows-latest, macOS-latest]
     timeout-minutes: 15
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Building
       run: |
@@ -25,12 +73,7 @@ jobs:
         cmake --build "build"
 
     - name: Run tests
+      shell: bash
       run: |
         cd build
-        if [ -f "vtu11_testrunner" ]; then
-            ./vtu11_testrunner
-        fi
-        if [ -f "Debug/vtu11_testrunner.exe" ]; then
-            Debug/vtu11_testrunner.exe
-        fi
-      shell: bash
+        ctest
