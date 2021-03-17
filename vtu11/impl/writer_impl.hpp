@@ -16,17 +16,39 @@
 
 namespace vtu11
 {
+namespace detail
+{
+
+template<typename T> constexpr const char* format( ) { static_assert( false, "Type not available." ); };
+
+template<> constexpr const char* format<double>( ) { return "%g"; }
+template<> constexpr const char* format<long long int>( ) { return "%lld"; }
+template<> constexpr const char* format<long int     >( ) { return "%ld"; }
+template<> constexpr const char* format<int          >( ) { return "%d"; }
+template<> constexpr const char* format<short        >( ) { return "%hd"; }
+template<> constexpr const char* format<char         >( ) { return "%hhd"; }
+template<> constexpr const char* format<unsigned long long int>( ) { return "%llu"; }
+template<> constexpr const char* format<unsigned long int     >( ) { return "%ld"; }
+template<> constexpr const char* format<unsigned int          >( ) { return "%d"; }
+template<> constexpr const char* format<unsigned short        >( ) { return "%hd"; }
+template<> constexpr const char* format<unsigned char         >( ) { return "%hhd"; }
+
+} // namespace detail
 
 template<typename T>
 inline void AsciiWriter::writeData( std::ostream& output,
                                     const std::vector<T>& data )
 {
-  for( auto value : data )
-  {
-      output << value << " ";
-  }
+    char buffer[64];
 
-  output << "\n";
+    for( auto value : data )
+    {
+        std::snprintf( buffer, sizeof( buffer ), detail::format<T>( ), value );
+
+        output << buffer << " ";
+    }
+
+    output << "\n";
 }
 
 template<>
