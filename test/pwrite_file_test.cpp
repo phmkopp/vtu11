@@ -15,9 +15,8 @@ namespace vtu11
 
 // Tests, if parallelWrite is running without error. Successful
 // and correct creation of .vtu files is not tested here
-TEST_CASE( "write_parallel_file_test" )
+TEST_CASE( "pvtu_simple_test" )
 {
-
     std::vector<double> points
     {
         0.0, 0.0, 0.5,    0.0, 0.3, 0.5,    0.0, 0.7, 0.5,    0.0, 1.0, 0.5, // 0,  1,  2,  3
@@ -46,29 +45,28 @@ TEST_CASE( "write_parallel_file_test" )
     std::vector<double> cellData2 { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0 };
     std::vector<double> cellData3 = cellData1;
 
-    std::vector<DataSet> pointData
+    std::vector<DataSetInfo> dataSetInfo
     {
-        DataSet { std::string( "pointData1" ), 1, pointData1 },
-        DataSet { std::string( "pointData2" ), 1, pointData2 },
+         { "pointData1", DataSetType::PointData, 1 },
+         { "pointData2", DataSetType::PointData, 1 },
+         { "cellData1",  DataSetType::CellData, 1 },
+         { "cellData2",  DataSetType::CellData, 1 },
+         { "cellData3",  DataSetType::CellData, 1 }
     };
 
-    std::vector<DataSet> cellData
-    {
-        DataSet { std::string( "cellData1" ), 1, cellData1 },
-        DataSet { std::string( "cellData2" ), 1, cellData2 },
-        DataSet { std::string( "cellData3" ), 1, cellData3 }
+    std::vector<DataSetData> dataSetData 
+    { 
+        pointData1, pointData2, cellData1, cellData2, cellData3 
     };
 
     std::string filename = "parallel_write_test.pvtu";
     std::string basename = "parallel_write_test";
 
-    fs::path path = "testfiles/parallel_write/pwrite_tester/";
-    fs::create_directory( path );
+    vtu11fs::path path = "testfiles/parallel_write/pwrite_tester/";
+    vtu11fs::create_directory( path );
 
-    SECTION( "parallel_writing_successful" )
-    {
-        REQUIRE_NOTHROW( parallelWrite( path.string(), basename, mesh, pointData, cellData, 0, 2 ) );
-    }
+    REQUIRE_NOTHROW( writePVtu( path.string( ), basename, dataSetInfo, 2 ) );
+    REQUIRE_NOTHROW( writePartition( path.string( ), basename, mesh, dataSetInfo, dataSetData, 0 ) );
 
     REQUIRE( endianness( ) == "LittleEndian" );
 

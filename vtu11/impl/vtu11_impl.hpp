@@ -10,7 +10,6 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-#include "inc/xml.hpp"
 #include "inc/utilities.hpp"
 
 #include <limits>
@@ -20,240 +19,270 @@ namespace vtu11
 namespace detail
 {
 
-template<typename Writer, typename DataType>
-inline void addDataSet( Writer& writer,
-                        std::ostream& output,
-                        const std::vector<DataType>& data,
-                        size_t numberOfComponents = 1,
-                        const std::string& name = "" ,
-                        bool writePvtuCalls = false)
+template<typename DataType, typename Writer>
+StringStringMap writeDataSetHeader( Writer&& writer,
+                                    const std::string& name,
+                                    size_t ncomponents )
 {
-  StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
+    StringStringMap attributes = { { "type", dataTypeString<DataType>( ) } };
 
-  if( numberOfComponents > 1 )
-  {
-    attributes["NumberOfComponents"] = std::to_string( numberOfComponents );
-  }
-
-  if( name != "" )
-  {
-    attributes["Name"] = name;
-  }
-
-  writer.addDataAttributes( attributes );
-
-  if( writePvtuCalls )
-  {
-    writeEmptyTag( output, "PDataArray", attributes );
-  }
-  else if( attributes["format"] != "appended" )
-  {
-    ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
-
-    writer.writeData( output, data );
-  }
-  else
-  {
-    writeEmptyTag( output, "DataArray", attributes );
-
-    writer.writeData( output, data );
-  }
-}
-template<typename Writer>
-void writePVTUfile(const std::string& path,
-                   const std::string& baseName,
-                   const std::vector<DataSet>& pointData,
-                   const std::vector<DataSet>& cellData,
-                   size_t numberOfFiles,
-                   Writer writer)
-{
-  std::string parallelName = path + baseName + ".pvtu";
-  std::ofstream output( parallelName, std::ios::binary );
-
-  size_t ghostLevel = 0; //Hardcoded to be 0
-
-  VTU11_CHECK( output.is_open( ), "Failed to open file \"" + baseName + "\"" );
-
-  output << "<?xml version=\"1.0\"?>\n";
-
-  StringStringMap headerAttributes{ { "byte_order",  endianness()       },
-                                    { "type"      ,  "PUnstructuredGrid" },
-                                    { "version"   ,  "0.1"              } };
-
-  writer.addHeaderAttributes( headerAttributes );
-  {
-    ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
+    if( name != "" )
     {
-      ScopedXmlTag pUnstructuredGridFileTag(output, "PUnstructuredGrid", { { "GhostLevel", std::to_string(ghostLevel) } });
+        attributes["Name"] = name;
+    }
 
-      {
-        ScopedXmlTag pPointDataTag( output, "PPointData", { } );
+    if( ncomponents > 1 )
+    {
+        attributes["NumberOfComponents"] = std::to_string( ncomponents );
+    }
 
-        for( const auto& dataSet : pointData )
+    writer.addDataAttributes( attributes );
+
+    return attributes;
+}
+
+template<typename Writer, typename DataType>
+inline void writeDataSet( Writer& writer,
+                          std::ostream& output,
+                          const std::string& name,
+                          size_t ncomponents,
+                          const std::vector<DataType>& data )
+{
+    auto attributes = writeDataSetHeader<DataType>( writer, name, ncomponents );
+
+    if( attributes["format"] != "appended" )
+    {
+        ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
+
+        writer.writeData( output, data );
+    }
+    else
+    {
+        writeEmptyTag( output, "DataArray", attributes );
+
+        writer.writeData( output, data );
+    }
+}
+
+template<typename Writer>
+void writeDataSets( const std::vector<DataSetInfo>& dataSetInfo,
+                    const std::vector<DataSetData>& dataSetData,
+                    std::ostream& output, Writer& writer, DataSetType type )
+{
+    for( size_t iDataset = 0; iDataset < dataSetInfo.size( ); ++iDataset )
+    {
+        const auto& metadata = dataSetInfo[iDataset];
+
+        if( std::get<1>( metadata ) == type )
         {
-          addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
+            detail::writeDataSet( writer, output, std::get<0>( metadata ), 
+                std::get<2>( metadata ), dataSetData[iDataset] );
         }
+    }
+}
 
-      } // PPointData
+template<typename Writer>
+void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
+                              std::ostream& output, Writer& writer, DataSetType type )
+{
+    for( size_t iDataset = 0; iDataset < dataSetInfo.size( ); ++iDataset )
+    {
+        const auto& metadata = dataSetInfo[iDataset];
 
-      {
-        ScopedXmlTag pCellDataTag( output, "PCellData", { } );
-
-        for (const auto& dataSet : cellData)
+        if( std::get<1>( metadata ) == type )
         {
-          addDataSet(writer, output, std::get<2>(dataSet), std::get<1>(dataSet), std::get<0>(dataSet), true);
+            auto attributes = detail::writeDataSetHeader<double>( writer, 
+               std::get<0>( metadata ), std::get<2>( metadata ) );
+
+            writeEmptyTag( output, "PDataArray", attributes );
         }
+    }
+}
 
-      } // PCellData
+template<typename Writer, typename Content>
+void writeVTUFile( const std::string& filename,
+                   const char* type,
+                   Writer&& writer, 
+                   Content&& writeContent )
+{
+    std::ofstream output( filename, std::ios::binary );
 
-      {
-        ScopedXmlTag pPointsTag( output, "PPoints", { } );
+    VTU11_CHECK( output.is_open( ), "Failed to open file \"" + filename + "\"" );
 
-        StringStringMap attributes = { { "type", dataTypeString<double>() }, { "NumberOfComponents", std::to_string(3) } };
+    // Set buffer size to 32K
+    std::vector<char> buffer( 32 * 1024 );
 
-        writer.addDataAttributes( attributes );
+    output.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
 
-        writeEmptyTag( output, "PDataArray", attributes );
+    output << "<?xml version=\"1.0\"?>\n";
 
-      } // PPoints
+    StringStringMap headerAttributes { { "byte_order",  endianness( ) },
+                                       { "type"      ,  type          },
+                                       { "version"   ,  "0.1"         } };
 
-      for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
-      {
-        std::string pieceName = baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";
+    writer.addHeaderAttributes( headerAttributes );
 
-        writeEmptyTag(output, "Piece", { { "Source", pieceName } } );
+    {
+        ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
+        
+        writeContent( output );
 
-      } // Pieces
-    } // PUnstructuredGrid
-  } // PVTUFile
+    } // VTKFile
 
-  output.close();
-
-} // writePVTUfile
+    output.close( );
+}
 
 } // namespace detail
 
+template<typename MeshGenerator, typename Writer>
+void writeVtu( const std::string& filename,
+               MeshGenerator& mesh,
+               const std::vector<DataSetInfo>& dataSetInfo,
+               const std::vector<DataSetData>& dataSetData,
+               Writer writer )
+{
+    detail::writeVTUFile( filename, "UnstructuredGrid", writer, [&]( std::ostream& output )
+    {
+        {
+            ScopedXmlTag unstructuredGridFileTag( output, "UnstructuredGrid", { } );
+            {
+                ScopedXmlTag pieceTag( output, "Piece", 
+                { 
+                    { "NumberOfPoints", std::to_string( mesh.numberOfPoints( ) ) },
+                    { "NumberOfCells" , std::to_string( mesh.numberOfCells( )  ) } 
+
+                } );
+
+                {
+                    ScopedXmlTag pointDataTag( output, "PointData", { } );
+
+                    detail::writeDataSets( dataSetInfo, dataSetData, 
+                        output, writer, DataSetType::PointData );
+
+                } // PointData
+
+                {
+                    ScopedXmlTag cellDataTag( output, "CellData", { } );
+
+                    detail::writeDataSets( dataSetInfo, dataSetData, 
+                        output, writer, DataSetType::CellData );
+
+                } // CellData
+
+                {
+                    ScopedXmlTag pointsTag( output, "Points", { } );
+
+                    detail::writeDataSet( writer, output, "", 3, mesh.points( ) );
+
+                } // Points
+
+                {
+                    ScopedXmlTag pointsTag( output, "Cells", { } );
+
+                    detail::writeDataSet( writer, output, "connectivity", 1, mesh.connectivity( ) );
+                    detail::writeDataSet( writer, output, "offsets", 1, mesh.offsets( ) );
+                    detail::writeDataSet( writer, output, "types", 1, mesh.types( ) );
+
+                } // Cells
+
+            } // Piece
+        } // UnstructuredGrid
+
+        auto appendedAttributes = writer.appendedAttributes( );
+
+        if( !appendedAttributes.empty( ) )
+        {
+            ScopedXmlTag appendedDataTag( output, "AppendedData", appendedAttributes );
+
+            output << "_";
+
+            writer.writeAppended( output );
+
+        } // AppendedData     
+
+    } ); // writeVTUFile
+    
+} // writeVtu
+
+template<typename Writer>
+void writePVtu( const std::string& path,
+                const std::string& baseName,
+                const std::vector<DataSetInfo>& dataSetInfo,
+                const size_t numberOfFiles,
+                Writer writer )
+{
+    auto directory = vtu11fs::path { path } / baseName;
+    auto pvtufile = vtu11fs::path { path } / ( baseName + ".pvtu" );
+
+    // create directory for vtu files if not existing
+    if( !vtu11fs::exists( directory ) )
+    {
+        vtu11fs::create_directories( directory );
+    }
+
+    detail::writeVTUFile( pvtufile.string( ), "PUnstructuredGrid", writer, 
+                          [&]( std::ostream& output )
+    {
+        std::string ghostLevel = "0"; // Hardcoded to be 0
+            
+        ScopedXmlTag pUnstructuredGridFileTag( output, 
+            "PUnstructuredGrid", { { "GhostLevel", ghostLevel } } );
+
+        {
+            ScopedXmlTag pPointDataTag( output, "PPointData", { } );
+
+            detail::writeDataSetPVtuHeaders( dataSetInfo, output, writer, DataSetType::PointData );
+
+        } // PPointData
+
+        {
+            ScopedXmlTag pCellDataTag( output, "PCellData", { } );
+
+            detail::writeDataSetPVtuHeaders( dataSetInfo, output, writer, DataSetType::CellData );
+
+        } // PCellData
+
+        {
+            ScopedXmlTag pPointsTag( output, "PPoints", { } );
+            StringStringMap attributes = { { "type", dataTypeString<double>( ) }, { "NumberOfComponents", "3" } };
+
+            writer.addDataAttributes( attributes );
+
+            writeEmptyTag( output, "PDataArray", attributes );
+
+        } // PPoints
+
+        for( size_t nFiles = 0; nFiles < numberOfFiles; ++nFiles )
+        {
+            std::string pieceName = baseName + "/" + baseName + "_" + std::to_string( nFiles ) + ".vtu";
+
+            writeEmptyTag( output, "Piece", { { "Source", pieceName } } );
+
+        } // Pieces
+
+    } ); // writeVTUFile
+
+} // writePVtu
 
 template<typename MeshGenerator, typename Writer>
-void write( const std::string& filename,
-            MeshGenerator& mesh,
-            const std::vector<DataSet>& pointData,
-            const std::vector<DataSet>& cellData,
-            Writer writer)
+void writePartition( const std::string& path,
+                     const std::string& baseName,
+                     MeshGenerator& mesh,
+                     const std::vector<DataSetInfo>& dataSetInfo,
+                     const std::vector<DataSetData>& dataSetData,
+                     size_t fileId,
+                     Writer writer )
 {
-  std::ofstream output(filename, std::ios::binary);
+    auto vtuname = baseName + "_" + std::to_string( fileId ) + ".vtu";
 
-  VTU11_CHECK( output.is_open( ), "Failed to open file \"" + filename + "\"" );
+    auto fullname = vtu11fs::path { path } / 
+                    vtu11fs::path { baseName } / 
+                    vtu11fs::path { vtuname };
 
-  output << "<?xml version=\"1.0\"?>\n";
+    writeVtu( fullname.string( ), mesh, dataSetInfo, dataSetData, writer );
 
-  StringStringMap headerAttributes { { "byte_order",  endianness( )      },
-                                     { "type"      ,  "UnstructuredGrid" },
-                                     { "version"   ,  "0.1"              } };
+} // writePartition
 
-  writer.addHeaderAttributes( headerAttributes );
-
-  {
-    ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
-    {
-      ScopedXmlTag unstructuredGridFileTag( output, "UnstructuredGrid", { } );
-      {
-        ScopedXmlTag pieceTag( output, "Piece", { { "NumberOfPoints", std::to_string( mesh.numberOfPoints( ) ) },
-                                                  { "NumberOfCells" , std::to_string( mesh.numberOfCells( ) )    } } );
-
-        {
-          ScopedXmlTag pointDataTag( output, "PointData", { } );
-
-          for( const auto& dataSet : pointData )
-          {
-            detail::addDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
-          }
-
-        } // PointData
-
-        {
-          ScopedXmlTag cellDataTag( output, "CellData", { } );
-
-          for( const auto& dataSet : cellData )
-          {
-            detail::addDataSet( writer, output, std::get<2>( dataSet ), std::get<1>( dataSet ), std::get<0>( dataSet ) );
-          }
-
-        } // CellData
-
-        {
-          ScopedXmlTag pointsTag( output, "Points", { } );
-
-          detail::addDataSet( writer, output, mesh.points( ), 3 );
-
-        } // Points
-
-        {
-          ScopedXmlTag pointsTag( output, "Cells", { } );
-
-          detail::addDataSet( writer, output, mesh.connectivity( ), 1, "connectivity" );
-          detail::addDataSet( writer, output, mesh.offsets( ), 1, "offsets" );
-          detail::addDataSet( writer, output, mesh.types( ), 1, "types" );
-
-        } // Cells
-
-      } // Piece
-    } // UnstructuredGrid
-
-    auto appendedAttributes = writer.appendedAttributes( );
-
-    if( !appendedAttributes.empty( ) )
-    {
-      ScopedXmlTag appendedDataTag( output, "AppendedData", appendedAttributes );
-
-      output << "_";
-
-      writer.writeAppended( output );
-
-    } // AppendedData
-  } // VTKFile
-
-  output.close( );
-}
-
-//ParallelWrite generates a pvtu file and accordingly the vtu pieces in a subfolder
-//Each piece consists of a set of points and cells
-template<typename MeshGenerator, typename Writer>
-void parallelWrite( const std::string& path,
-                    const std::string& baseName,
-                    MeshGenerator& mesh,
-                    const std::vector<DataSet>& pointData,
-                    const std::vector<DataSet>& cellData,
-                    const size_t fileId,
-                    const size_t numberOfFiles,
-                    Writer writer)
-{
-  fs::path directory( path );
-
-  // create base directory for all files if not existing
-  if( !fs::exists( directory ) && fileId == 0 )
-  {
-    fs::create_directories( directory );
-  }
-
-  directory /= baseName;
-
-  // create directory for vtu files if not existing
-  if( !fs::exists( directory ) && fileId == 0 )
-  {
-    fs::create_directories( directory );
-  }
-
-  if( fileId == 0 )
-  {
-    detail::writePVTUfile( path, baseName, pointData, cellData, numberOfFiles, writer );
-  }
-
-  directory /= fs::path(baseName + "_" + std::to_string(fileId) + ".vtu");
-
-  write( directory.string(), mesh, pointData, cellData, writer );
-
-} // parallelWrite
 } // namespace vtu11
 
 #endif // VTU11_VTU11_IMPL_HPP

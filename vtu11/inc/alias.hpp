@@ -20,15 +20,19 @@ namespace vtu11
 
 using StringStringMap = std::map<std::string, std::string>;
 
-using DataSet = std::tuple<std::string, size_t, std::vector<double>>;
+enum class DataSetType : int
+{
+    PointData = 0, CellData = 1
+};
+
+using DataSetInfo = std::tuple<std::string, DataSetType, size_t>;
+using DataSetData = std::vector<double>;
 
 using VtkCellType = std::int8_t;
+using VtkIndexType = std::int64_t;
 
 using HeaderType = size_t;
-
 using Byte = unsigned char;
-
-using VtkIndexType = std::int64_t;
 
 } // namespace vtu11
 
@@ -36,17 +40,17 @@ using VtkIndexType = std::int64_t;
 #if defined(__cplusplus) && __cplusplus >= 201703L
     #if __has_include(<filesystem>) // has_include is C++17
         #include <filesystem>
-        namespace fs = std::filesystem;
+        namespace vtu11fs = std::filesystem;
     #elif __has_include(<experimental/filesystem>)
         #include <experimental/filesystem>
-        namespace fs = std::experimental::filesystem;
+        namespace vtu11fs = std::experimental::filesystem;
     #else
         #include "external/filesystem/filesystem.hpp"
-        namespace fs = ghc::filesystem;
+        namespace vtu11fs = ghc::filesystem;
     #endif
 #else
     #include "external/filesystem/filesystem.hpp"
-    namespace fs = ghc::filesystem;
+    namespace vtu11fs = ghc::filesystem;
 #endif
 
 #endif // VTU11_ALIAS_HPP

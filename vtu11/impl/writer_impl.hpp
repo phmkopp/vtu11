@@ -11,23 +11,44 @@
 #define VTU11_WRITER_IMPL_HPP
 
 #include "inc/utilities.hpp"
-#include "inc/base64.hpp"
 
 #include <fstream>
 
 namespace vtu11
 {
+namespace detail
+{
+
+template<typename T> constexpr const char* formatStr( );
+
+template<> constexpr const char* formatStr<double>( ) { return "%g"; }
+template<> constexpr const char* formatStr<long long int>( ) { return "%lld"; }
+template<> constexpr const char* formatStr<long int     >( ) { return "%ld"; }
+template<> constexpr const char* formatStr<int          >( ) { return "%d"; }
+template<> constexpr const char* formatStr<short        >( ) { return "%hd"; }
+template<> constexpr const char* formatStr<char         >( ) { return "%hhd"; }
+template<> constexpr const char* formatStr<unsigned long long int>( ) { return "%llu"; }
+template<> constexpr const char* formatStr<unsigned long int     >( ) { return "%ld"; }
+template<> constexpr const char* formatStr<unsigned int          >( ) { return "%d"; }
+template<> constexpr const char* formatStr<unsigned short        >( ) { return "%hd"; }
+template<> constexpr const char* formatStr<unsigned char         >( ) { return "%hhd"; }
+
+} // namespace detail
 
 template<typename T>
 inline void AsciiWriter::writeData( std::ostream& output,
                                     const std::vector<T>& data )
 {
-  for( auto value : data )
-  {
-      output << value << " ";
-  }
+    char buffer[64];
 
-  output << "\n";
+    for( auto value : data )
+    {
+        std::snprintf( buffer, sizeof( buffer ), detail::formatStr<T>( ), value );
+
+        output << buffer << " ";
+    }
+
+    output << "\n";
 }
 
 template<>
