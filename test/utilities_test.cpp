@@ -8,10 +8,35 @@
 //
 
 #include "vtu11_testing.hpp"
-#include "inc/base64.hpp"
+#include "inc/utilities.hpp"
+
+#include <sstream>
 
 namespace vtu11
 {
+
+TEST_CASE( "ScopedXmlTag_test" )
+{
+    std::ostringstream output;
+
+    {
+        ScopedXmlTag tag1( output, "Test1", { { "attr1", "7" }, { "attr2", "nice" } } );
+        {
+            ScopedXmlTag tag2( output, "Test2", { { "attr3", "43.32" }, { "attr4", "[2, 3]" } } );
+
+            output << "dadatata" << "\n";
+        }
+    }
+
+    std::string expectedString =
+        "<Test1 attr1=\"7\" attr2=\"nice\">\n"
+        "<Test2 attr3=\"43.32\" attr4=\"[2, 3]\">\n"
+        "dadatata\n"
+        "</Test2>\n"
+        "</Test1>\n";
+
+    CHECK( output.str( ) == expectedString );
+}
 
 TEST_CASE( "base64encode_test" )
 {
@@ -19,14 +44,14 @@ TEST_CASE( "base64encode_test" )
     std::string test2 = "hello";
     std::string test3 = "hello1";
     std::string test4 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
-                        "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua";
+        "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua";
 
     CHECK( base64Encode( test1.begin( ), test1.end( ) ) == "aGVsbA==" );
     CHECK( base64Encode( test2.begin( ), test2.end( ) ) == "aGVsbG8=" );
     CHECK( base64Encode( test3.begin( ), test3.end( ) ) == "aGVsbG8x" );
 
     std::string expected4 = "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIG"
-                            "RvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWE=";
+        "RvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWE=";
 
     CHECK( base64Encode( test4.begin( ), test4.end( ) ) == expected4 );
 

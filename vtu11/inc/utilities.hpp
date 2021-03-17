@@ -10,15 +10,39 @@
 #ifndef VTU11_UTILITIES_HPP
 #define VTU11_UTILITIES_HPP
 
+#include "inc/alias.hpp"
+
 namespace vtu11
 {
 
-template<typename DataType>
-inline std::string dataTypeString( );
-
-inline std::string endianness( );
-
 #define VTU11_CHECK( expr, message ) if( !( expr ) ) throw std::runtime_error( message )
+
+template<typename DataType>
+std::string dataTypeString( );
+
+std::string endianness( );
+
+template<typename Iterator>
+std::string base64Encode( Iterator begin, Iterator end );
+
+size_t encodedNumberOfBytes( size_t rawNumberOfBytes );
+
+class ScopedXmlTag final
+{
+public:
+    ScopedXmlTag( std::ostream& output,
+                  const std::string& name,
+                  const StringStringMap& attributes );
+
+    ~ScopedXmlTag( );
+
+private:
+    std::function<void( )> closeTag;
+};
+
+void writeEmptyTag( std::ostream& output,
+                    const std::string& name,
+                    const StringStringMap& attributes );
 
 } // namespace vtu11
 

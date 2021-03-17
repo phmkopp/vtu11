@@ -38,31 +38,29 @@ TEST_CASE( "square2D_test" )
 
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
+    std::vector<DataSetInfo> dataSetInfo
+    {
+        { "pointData1", DataSetType::PointData, 1 },
+        { "pointData2", DataSetType::PointData, 1 },
+        { "cellData1", DataSetType::CellData, 1 },
+        { "cellData2", DataSetType::CellData, 1 },
+        { "cellData3", DataSetType::CellData, 1 }
+    };
+
     std::vector<double> pointData1 { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 };
     std::vector<double> pointData2 { 0.1, -0.2, 0.3, -0.4, 0.5, 0.6, -0.7, 0.8, 0.9, 1.0, 1.1, -1.2 };
     std::vector<double> cellData1 { 3.2, 4.3, 5.4, 6.5, 7.6, 8.7 };
     std::vector<double> cellData2 { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0 };
     std::vector<double> cellData3 = cellData1;
 
-    std::vector<DataSet> pointData
-    {
-      DataSet { std::string( "pointData1" ), 1, pointData1 },
-      DataSet { std::string( "pointData2" ), 1, pointData2 },
-    };
-
-    std::vector<DataSet> cellData
-    {
-      DataSet { std::string( "cellData1" ), 1, cellData1 },
-      DataSet { std::string( "cellData2" ), 1, cellData2 },
-      DataSet { std::string( "cellData3" ), 1, cellData3 }
-    };
+    std::vector<DataSetData> dataSetData { pointData1, pointData2, cellData1, cellData2, cellData3 };
 
     std::string filename = "testfiles/square_2D/test.vtu";
     std::string expectedpath = "testfiles/square_2D/";
 
     SECTION( "ascii" )
     {
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
@@ -77,7 +75,7 @@ TEST_CASE( "square2D_test" )
     {
         Base64BinaryWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
@@ -89,7 +87,7 @@ TEST_CASE( "square2D_test" )
     {
         Base64BinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
@@ -101,7 +99,7 @@ TEST_CASE( "square2D_test" )
     {
         RawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
@@ -114,7 +112,7 @@ TEST_CASE( "square2D_test" )
     {
         CompressedRawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );

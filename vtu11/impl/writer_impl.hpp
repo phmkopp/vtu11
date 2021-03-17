@@ -11,7 +11,6 @@
 #define VTU11_WRITER_IMPL_HPP
 
 #include "inc/utilities.hpp"
-#include "inc/base64.hpp"
 
 #include <fstream>
 

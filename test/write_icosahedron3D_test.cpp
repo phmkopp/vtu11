@@ -81,6 +81,14 @@ TEST_CASE( "write_test_icosahedron" )
 
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
+    std::vector<DataSetInfo> dataSetInfo
+    {
+        { "Point_Data_1", DataSetType::PointData, 1 },
+        { "Point_Data_2", DataSetType::PointData, 1 },
+        { "Cell_Height_1", DataSetType::CellData, 1 },
+        { "Cell_Height_2", DataSetType::CellData, 1 }
+    };
+
     std::vector<double> pointData1
     {
         100.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, -100.0, -100.0,
@@ -105,17 +113,7 @@ TEST_CASE( "write_test_icosahedron" )
         13, 14, 15, 16, 17, 18, 19, 20, 0
     };
 
-    std::vector<DataSet> pointData
-    {
-      DataSet { std::string( "Point_Data_1" ), 1, pointData1 },
-      DataSet { std::string( "Point_Data_2" ), 1, pointData2 }
-    };
-
-    std::vector<DataSet> cellData
-    {
-      DataSet { std::string( "Cell_Height_1" ), 1, cellHeight1 },
-      DataSet { std::string( "Cell_Height_2" ), 1, cellHeight2 }
-    };
+    std::vector<DataSetData> dataSetData { pointData1, pointData2, cellHeight1, cellHeight2 };
 
     std::string filename = "testfiles/icosahedron_3D/test.vtu";
     std::string expectedpath = "testfiles/icosahedron_3D/";
@@ -125,7 +123,7 @@ TEST_CASE( "write_test_icosahedron" )
 
     SECTION( "ascii_3D" )
     {
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
@@ -137,7 +135,7 @@ TEST_CASE( "write_test_icosahedron" )
     {
         Base64BinaryWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
@@ -149,7 +147,7 @@ TEST_CASE( "write_test_icosahedron" )
     {
         Base64BinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
@@ -161,7 +159,7 @@ TEST_CASE( "write_test_icosahedron" )
     {
         RawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
@@ -174,7 +172,7 @@ TEST_CASE( "write_test_icosahedron" )
     {
         CompressedRawBinaryAppendedWriter writer;
 
-        REQUIRE_NOTHROW( write( filename, mesh, pointData, cellData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );
