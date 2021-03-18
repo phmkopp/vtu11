@@ -47,7 +47,7 @@ jobs:
           source /opt/intel/oneapi/setvars.sh
         fi
         export CXX=${{ matrix.compiler }}
-        cmake -H"." -DVTU11_ENABLE_TESTS=ON -DVTU11_STRICT_COMPILER=ON -B"build"
+        cmake -H"." -DVTU11_STRICT_COMPILER=ON -B"build"
         cmake --build "build" -j2
 
     - name: Run tests
@@ -69,7 +69,7 @@ jobs:
 
     - name: Building
       run: |
-        cmake -H"." -DVTU11_ENABLE_TESTS=ON -DVTU11_STRICT_COMPILER=ON -B"build"
+        cmake -H"." -DVTU11_STRICT_COMPILER=ON -B"build"
         cmake --build "build"
 
     - name: Run tests
