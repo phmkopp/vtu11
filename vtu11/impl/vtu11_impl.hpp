@@ -213,8 +213,8 @@ void writeVtu( const std::string& filename,
 {
     auto mode = writeMode;
 
-    std::transform( mode.begin( ), mode.end ( ), mode.begin( ),
-        []( unsigned char c ){ return std::tolower( c ); } );
+    std::transform( mode.begin( ), mode.end ( ), mode.begin( ), []( unsigned char c )
+                    { return static_cast<unsigned char>( std::tolower( c ) ); } );
 
     if( mode == "ascii" )
     {
