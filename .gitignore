@@ -1,6 +1,6 @@
 build/*
 
-# header only version os not tracked
+# header only version is not tracked
 scripts/vtu11.hpp
 
 .vscode/*
