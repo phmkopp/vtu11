@@ -60,7 +60,7 @@ TEST_CASE( "square2D_test" )
 
     SECTION( "ascii" )
     {
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "ascii" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "ascii.vtu" );
@@ -73,9 +73,7 @@ TEST_CASE( "square2D_test" )
 
     SECTION( "base64" )
     {
-        Base64BinaryWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "base64inline" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64.vtu" );
@@ -85,9 +83,7 @@ TEST_CASE( "square2D_test" )
 
     SECTION( "base64appended" )
     {
-        Base64BinaryAppendedWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "base64appended" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "base64appended.vtu" );
@@ -97,9 +93,7 @@ TEST_CASE( "square2D_test" )
 
     SECTION( "raw" )
     {
-        RawBinaryAppendedWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "rawbinary" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw.vtu" );
@@ -110,9 +104,7 @@ TEST_CASE( "square2D_test" )
     #ifdef VTU11_ENABLE_ZLIB
     SECTION( "raw_compressed" )
     {
-        CompressedRawBinaryAppendedWriter writer;
-
-        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, writer ) );
+        REQUIRE_NOTHROW( writeVtu( filename, mesh, dataSetInfo, dataSetData, "rawbinarycompressed" ) );
 
         auto written = vtu11testing::readFile( filename );
         auto expected = vtu11testing::readFile( expectedpath + "raw_compressed.vtu" );
@@ -120,6 +112,17 @@ TEST_CASE( "square2D_test" )
         CHECK( written == expected );
     }
     #endif
+
+    SECTION( "pvtu" )
+    {
+        std::string basename = "parallel_write_test";
+
+        vtu11fs::path path = "testfiles/parallel_write/pwrite_tester/";
+        vtu11fs::create_directory( path );
+
+        REQUIRE_NOTHROW( writePVtu( path.string( ), basename, dataSetInfo, 1 ) );
+        REQUIRE_NOTHROW( writePartition( path.string( ), basename, mesh, dataSetInfo, dataSetData, 0 ) );
+    }
 
 } // square2D_test
 

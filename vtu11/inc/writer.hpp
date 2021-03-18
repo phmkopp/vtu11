@@ -11,7 +11,7 @@
 #define VTU11_WRITER_HPP
 
 #include "inc/alias.hpp"
-#include "external/zlib/inc/zlibWriter.hpp"
+#include "inc/zlibWriter.hpp"
 
 namespace vtu11
 {

@@ -45,11 +45,11 @@ using Byte = unsigned char;
         #include <experimental/filesystem>
         namespace vtu11fs = std::experimental::filesystem;
     #else
-        #include "external/filesystem/filesystem.hpp"
+        #include "inc/filesystem.hpp"
         namespace vtu11fs = ghc::filesystem;
     #endif
 #else
-    #include "external/filesystem/filesystem.hpp"
+    #include "inc/filesystem.hpp"
     namespace vtu11fs = ghc::filesystem;
 #endif
 
