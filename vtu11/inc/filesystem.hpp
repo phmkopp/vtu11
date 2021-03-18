@@ -45,6 +45,12 @@
 #ifndef GHC_FILESYSTEM_H
 #define GHC_FILESYSTEM_H
 
+#ifdef __clang__
+#    pragma clang system_header
+#elif defined __GNUC__
+#    pragma GCC system_header
+#endif
+
 // #define BSD manifest constant only in
 // sys/param.h
 #ifndef _WIN32
