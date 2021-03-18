@@ -10,7 +10,7 @@
 #ifndef VTU11_ZLIBWRITER_HPP
 #define VTU11_ZLIBWRITER_HPP
 
-#include "inc/alias.hpp"
+#include "vtu11/inc/alias.hpp"
 
 #ifdef VTU11_ENABLE_ZLIB
 
@@ -38,7 +38,7 @@ struct CompressedRawBinaryAppendedWriter
 
 } // namespace vtu11
 
-#include "impl/zlibWriter_impl.hpp"
+#include "vtu11/impl/zlibWriter_impl.hpp"
 
 #endif // VTU11_ENABLE_ZLIB
 

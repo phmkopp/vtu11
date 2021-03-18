@@ -7,8 +7,8 @@
 //  License: BSD License ; see LICENSE
 //
 
+#include "vtu11/inc/utilities.hpp"
 #include "vtu11_testing.hpp"
-#include "inc/utilities.hpp"
 
 #include <sstream>
 

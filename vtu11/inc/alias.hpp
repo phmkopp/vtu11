@@ -53,7 +53,7 @@ using Byte = unsigned char;
         namespace vtu11fs = ghc::filesystem;
     #endif
 #else
-    #include "inc/filesystem.hpp"
+    #include "vtu11/inc/filesystem.hpp"
     namespace vtu11fs = ghc::filesystem;
 #endif
 

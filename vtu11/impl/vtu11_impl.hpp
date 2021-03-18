@@ -10,7 +10,7 @@
 #ifndef VTU11_VTU11_IMPL_HPP
 #define VTU11_VTU11_IMPL_HPP
 
-#include "inc/utilities.hpp"
+#include "vtu11/inc/utilities.hpp"
 
 #include <limits>
 

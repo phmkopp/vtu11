@@ -46,7 +46,7 @@ file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
 
 add_executable( vtu11_testrunner ${TEST_FILES} ${INCLUDE_FILES} test/vtu11_testing.hpp )
 
-target_include_directories( vtu11_testrunner PRIVATE vtu11 )
+target_include_directories( vtu11_testrunner PRIVATE . )
 
 find_package( ZLIB )
 

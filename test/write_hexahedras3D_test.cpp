@@ -7,8 +7,8 @@
 //  License: BSD License ; see LICENSE
 //
 
+#include "vtu11/vtu11.hpp"
 #include "vtu11_testing.hpp"
-#include "vtu11.hpp"
 
 namespace vtu11
 {

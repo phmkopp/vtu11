@@ -10,8 +10,8 @@
 #ifndef VTU11_VTU11_HPP
 #define VTU11_VTU11_HPP
 
-#include "inc/alias.hpp"
-#include "inc/writer.hpp"
+#include "vtu11/inc/alias.hpp"
+#include "vtu11/inc/writer.hpp"
 
 namespace vtu11
 {
@@ -79,6 +79,6 @@ void writePartition( const std::string& path,
 
 } // namespace vtu11
 
-#include "impl/vtu11_impl.hpp"
+#include "vtu11/impl/vtu11_impl.hpp"
 
 #endif // VTU11_VTU11_HPP

@@ -10,7 +10,7 @@
 #ifndef VTU11_UTILITIES_HPP
 #define VTU11_UTILITIES_HPP
 
-#include "inc/alias.hpp"
+#include "vtu11/inc/alias.hpp"
 
 #include <functional>
 
@@ -49,6 +49,6 @@ void writeEmptyTag( std::ostream& output,
 
 } // namespace vtu11
 
-#include "impl/utilities_impl.hpp"
+#include "vtu11/impl/utilities_impl.hpp"
 
 #endif // VTU11_UTILITIES_HPP
