@@ -19,17 +19,24 @@ include(CTest)
 OPTION ( VTU11_STRICT_COMPILER "Enable more warnings as errors." OFF )
 
 # If compiler is g++: Enable further  warnings and treat all warnings as errors
-if( VTU11_STRICT_COMPILER AND CMAKE_COMPILER_IS_GNUCXX )
+if( VTU11_STRICT_COMPILER )
+    if ( CMAKE_COMPILER_IS_GNUCXX )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
+            -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
+            -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict                    \
+            -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override             \
+            -Wsuggest-final-types -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs       \
+            -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo     \
+            -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Werror" )
 
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pedantic -Wall -Wextra -Wcast-align -Wsuggest-attribute=cold       \
-        -Wsuggest-attribute=pure -Wimport -Wsuggest-final-methods -Wsuggest-attribute=const -Wsuggest-attribute=format \
-        -Wsuggest-attribute=malloc -Wsuggest-attribute=noreturn -Wformat-y2k -Wpacked -Wno-restrict                    \
-        -Wswitch-enum -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override             \
-        -Wsuggest-final-types -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs       \
-        -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo     \
-        -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Werror" )
+    elseif( MSVC )
+        # required such that "__cplusplus" is set to the correct value
+        # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+        # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc" )
 
-endif( VTU11_STRICT_COMPILER AND CMAKE_COMPILER_IS_GNUCXX )
+    endif ( CMAKE_COMPILER_IS_GNUCXX )
+endif( VTU11_STRICT_COMPILER )
 
 file( GLOB TEST_FILES test/*.cpp)
 file( GLOB_RECURSE INCLUDE_FILES vtu11/*.hpp)
