@@ -10,8 +10,8 @@
 #ifndef VTU11_WRITER_HPP
 #define VTU11_WRITER_HPP
 
-#include "inc/alias.hpp"
-#include "inc/zlibWriter.hpp"
+#include "vtu11/inc/alias.hpp"
+#include "vtu11/inc/zlibWriter.hpp"
 
 namespace vtu11
 {
@@ -82,6 +82,6 @@ struct RawBinaryAppendedWriter
 
 } // namespace vtu11
 
-#include "impl/writer_impl.hpp"
+#include "vtu11/impl/writer_impl.hpp"
 
 #endif // VTU11_WRITER_HPP

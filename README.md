@@ -5,7 +5,7 @@ _Vtu11_ is a small C++ header-only library to write unstructured grids using the
 ## Serial example
 
 ```cpp
-#include "vtu11.hpp"
+#include "vtu11/vtu11.hpp"
 
 int main( )
 {
@@ -68,13 +68,13 @@ Comments:
 
 ## How to include in your project
 
-Being a header-only library the only thing really necessary is to make the vtu11/ folder available in your code and compile using (at least) the C++ 11 standard. Let's say you are working in a Linux environment where you clone the _vtu11_ project and create an `example.cpp` next to it. Using for example `g++` you compile as follows:
+Being a header-only library the only thing really necessary is to make the project folder available in your code and compile using (at least) the C++ 11 standard. Let's say you are working in a Linux environment where you clone the _vtu11_ project and create an `example.cpp` next to it. Using for example `g++` you compile as follows:
 ```
-g++ -Ivtu11/vtu11 --std=c++11 -o example example.cpp
+g++ -Ivtu11 --std=c++11 -o example example.cpp
 ```
 If you want to use compressed vtu output, then you can add the `VTU11_ENABLE_ZLIB` definition and link to zlib:
 ```
-g++ -Ivtu11/vtu11 -DVTU11_ENABLE_ZLIB -lz --std=c++11 -o example example.cpp
+g++ -Ivtu11 -DVTU11_ENABLE_ZLIB -lz --std=c++11 -o example example.cpp
 ```
 To be a bit more platform independent and handle the zlib part automatically we can use CMake by adding the following `CMakeLists.txt`:
 ```cmake
@@ -87,7 +87,7 @@ set( CMAKE_CXX_STANDARD 11 )
 
 add_executable( example example.cpp )
 
-target_include_directories( example PRIVATE vtu11/vtu11 )
+target_include_directories( example PRIVATE vtu11 )
 
 find_package( ZLIB )
 
@@ -106,7 +106,7 @@ Now you can create a build directory, compile the project and run the example.
 The pvtu format is used in combination with the vtu format. The mesh needs to be partitioned before it is given to _vtu11_. Each part of the mesh is written to a vtu file, and the pvtu file contains the references to those files. Overlapping entities like ghost nodes or cells can be added too if needed for e.g. other cells.
 
 ```cpp
-#include "vtu11.hpp"
+#include "vtu11/vtu11.hpp"
 
 int main( )
 {
