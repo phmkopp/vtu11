@@ -36,7 +36,7 @@ if( VTU11_STRICT_COMPILER )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc /WX" )
 
     else( CMAKE_COMPILER_IS_GNUCXX )
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
 
     endif ( CMAKE_COMPILER_IS_GNUCXX )
 endif( VTU11_STRICT_COMPILER )
