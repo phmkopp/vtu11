@@ -33,7 +33,10 @@ if( VTU11_STRICT_COMPILER )
         # required such that "__cplusplus" is set to the correct value
         # see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
         # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc" )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc /WX" )
+
+    else( CMAKE_COMPILER_IS_GNUCXX )
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror")
 
     endif ( CMAKE_COMPILER_IS_GNUCXX )
 endif( VTU11_STRICT_COMPILER )
