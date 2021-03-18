@@ -19,19 +19,30 @@ namespace vtu11
 namespace detail
 {
 
-template<typename T> constexpr const char* formatStr( );
+template<typename T> inline
+void writeNumber( char (&buffer)[64], T value )
+{
+    VTU11_THROW( "Invalid data type." );
+}
 
-template<> constexpr const char* formatStr<double>( ) { return "%g"; }
-template<> constexpr const char* formatStr<long long int>( ) { return "%lld"; }
-template<> constexpr const char* formatStr<long int     >( ) { return "%ld"; }
-template<> constexpr const char* formatStr<int          >( ) { return "%d"; }
-template<> constexpr const char* formatStr<short        >( ) { return "%hd"; }
-template<> constexpr const char* formatStr<char         >( ) { return "%hhd"; }
-template<> constexpr const char* formatStr<unsigned long long int>( ) { return "%llu"; }
-template<> constexpr const char* formatStr<unsigned long int     >( ) { return "%ld"; }
-template<> constexpr const char* formatStr<unsigned int          >( ) { return "%d"; }
-template<> constexpr const char* formatStr<unsigned short        >( ) { return "%hd"; }
-template<> constexpr const char* formatStr<unsigned char         >( ) { return "%hhd"; }
+#define __VTU11_WRITE_NUMBER_SPECIALIZATION( string, type )    \
+template<> inline                                             \
+void writeNumber<type>( char (&buffer)[64], type value )         \
+{                                                             \
+    std::snprintf( buffer, sizeof( buffer ), string, value ); \
+}
+
+__VTU11_WRITE_NUMBER_SPECIALIZATION( VTU11_ASCII_FLOATING_POINT_FORMAT, double )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%lld", long long int )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%ld" , long int )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%d"  , int )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hd" , short )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", char )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%llu", unsigned long long int )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%ld" , unsigned long int )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%d"  , unsigned int )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hd" , unsigned short )
+__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", unsigned char )
 
 } // namespace detail
 
@@ -43,7 +54,7 @@ inline void AsciiWriter::writeData( std::ostream& output,
 
     for( auto value : data )
     {
-        std::snprintf( buffer, sizeof( buffer ), detail::formatStr<T>( ), value );
+        detail::writeNumber( buffer, value );
 
         output << buffer << " ";
     }

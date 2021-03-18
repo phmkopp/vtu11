@@ -36,6 +36,10 @@ using Byte = unsigned char;
 
 } // namespace vtu11
 
+#ifndef VTU11_ASCII_FLOATING_POINT_FORMAT
+    #define VTU11_ASCII_FLOATING_POINT_FORMAT "%.6g"
+#endif
+
 // To dynamically select std::filesystem where available, you could use:
 #if defined(__cplusplus) && __cplusplus >= 201703L
     #if __has_include(<filesystem>) // has_include is C++17
