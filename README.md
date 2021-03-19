@@ -68,7 +68,7 @@ Comments:
 
 ## How to include in your project
 
-Being a header-only library the only thing really necessary is to make the project folder available in your code and compile using (at least) the C++ 11 standard. Let's say you are working in a Linux environment where you clone the _vtu11_ project and create an `example.cpp` next to it. Using for example `g++` you compile as follows:
+The lazy way of using _vtu11_ is to use the single header version provided with the latest release. If you want to use the project as it is, then you need to add it to the directories that the compiler searches for include files and compile using (at least) the C++ 11 standard. Let's say you are working in a Linux environment where you clone the _vtu11_ project and create an `example.cpp` next to it. Using for example `g++` you compile as follows:
 ```
 g++ -Ivtu11 --std=c++11 -o example example.cpp
 ```
