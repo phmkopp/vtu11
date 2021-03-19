@@ -2,17 +2,34 @@
 
 Path="../vtu11"
 Single="vtu11.hpp"
+cppversion=$1
 
-declare -a InclusionOrder=("inc/filesystem.hpp"
-                           "inc/alias.hpp"
-                           "inc/writer.hpp"
-                           "inc/utilities.hpp"
-                           "inc/zlibWriter.hpp"
-                           "vtu11.hpp"
-                           "impl/utilities_impl.hpp"
-                           "impl/writer_impl.hpp"
-                           "impl/zlibWriter_impl.hpp"
-                           "impl/vtu11_impl.hpp")
+
+InclusionOrder=()
+
+case ${cppversion} in
+    c++11) 
+        echo Generating C++ 11 single header.
+        InclusionOrder+="inc/filesystem.hpp"
+        ;;
+    c++17) 
+        echo Generating C++ 17 single header.  
+        ;;
+    *) 
+        echo Usage: ./single_header.sh [c++11\|c++17]
+        exit
+        ;;
+esac
+
+InclusionOrder+=("inc/alias.hpp"
+                 "inc/writer.hpp"
+                 "inc/utilities.hpp"
+                 "inc/zlibWriter.hpp"
+                 "vtu11.hpp"
+                 "impl/utilities_impl.hpp"
+                 "impl/writer_impl.hpp"
+                 "impl/zlibWriter_impl.hpp"
+                 "impl/vtu11_impl.hpp")
 
 echo "//          __        ____ ____        " > ${Single}
 echo "// ___  ___/  |_ __ _/_   /_   |       " >> ${Single}
