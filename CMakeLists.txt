@@ -35,6 +35,9 @@ if( VTU11_STRICT_COMPILER )
         # Note: min value is c++14 => 201402L (c++11 does not exist, will also output 201402L)
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /W3 /EHsc /WX" )
 
+    elseif( CMAKE_CXX_COMPILER_ID MATCHES "Intel" )
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror-all")
+
     else( CMAKE_COMPILER_IS_GNUCXX )
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
 
