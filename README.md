@@ -78,26 +78,31 @@ g++ -Ivtu11 -DVTU11_ENABLE_ZLIB -lz --std=c++11 -o example example.cpp
 ```
 To be a bit more platform independent and handle the zlib part automatically we can use CMake by adding the following `CMakeLists.txt`:
 ```cmake
-# Not sure what version is the actual minimum
-cmake_minimum_required( VERSION 3.4.3 )
+# Not sure what the earliest version would be
+cmake_minimum_required( VERSION 3.12 )
 
-project( example CXX )
+project( example LANGUAGES CXX )
 
-set( CMAKE_CXX_STANDARD 11 )
+# Create interface target to hold properties
+add_library( vtu11 INTERFACE )
 
-add_executable( example example.cpp )
-
-target_include_directories( example PRIVATE vtu11 )
+target_compile_features( vtu11 INTERFACE cxx_std_11 )
+target_include_directories( vtu11 INTERFACE vtu11 )
 
 find_package( ZLIB )
 
 if( ZLIB_FOUND )
     message( STATUS "Compiling with zlib" )
- 
-    target_include_directories( example PRIVATE ${ZLIB_INCLUDE_DIRS} )
-    target_compile_definitions( example PRIVATE VTU11_ENABLE_ZLIB )
-    target_link_libraries( example PRIVATE ${ZLIB_LIBRARIES} )    
+
+    target_include_directories( vtu11 INTERFACE ${ZLIB_INCLUDE_DIRS} )
+    target_compile_definitions( vtu11 INTERFACE VTU11_ENABLE_ZLIB )
+    target_link_libraries( vtu11 INTERFACE ${ZLIB_LIBRARIES} )
 endif( ZLIB_FOUND )
+
+# Create example and import properties from vtu11
+add_executable( example example.cpp )
+
+target_link_libraries( example PRIVATE vtu11 )
 ```
 Now you can create a build directory, compile the project and run the example.
 
