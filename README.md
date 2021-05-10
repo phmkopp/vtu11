@@ -74,35 +74,19 @@ g++ -Ivtu11 --std=c++11 -o example example.cpp
 ```
 If you want to use compressed vtu output, then you can add the `VTU11_ENABLE_ZLIB` definition and link to zlib:
 ```
-g++ -Ivtu11 -DVTU11_ENABLE_ZLIB -lz --std=c++11 -o example example.cpp
+g++ -Ivtu11 -DVTU11_ENABLE_ZLIB --std=c++11 -o example example.cpp -lz 
 ```
-To be a bit more platform independent and handle the zlib part automatically we can use CMake by adding the following `CMakeLists.txt`:
+Alternatively, you can use CMake and add __vtu11__ as subdirectory. This will automatically set up the `vtu11::vtu11` interface target with the correct include path and compile flags. Your `CMakeLists.txt` could then simply look like this:
 ```cmake
-# Not sure what the earliest version would be
 cmake_minimum_required( VERSION 3.12 )
 
 project( example LANGUAGES CXX )
 
-# Create interface target to hold properties
-add_library( vtu11 INTERFACE )
+add_subdirectory( vtu11 )
 
-target_compile_features( vtu11 INTERFACE cxx_std_11 )
-target_include_directories( vtu11 INTERFACE vtu11 )
-
-find_package( ZLIB )
-
-if( ZLIB_FOUND )
-    message( STATUS "Compiling with zlib" )
-
-    target_include_directories( vtu11 INTERFACE ${ZLIB_INCLUDE_DIRS} )
-    target_compile_definitions( vtu11 INTERFACE VTU11_ENABLE_ZLIB )
-    target_link_libraries( vtu11 INTERFACE ${ZLIB_LIBRARIES} )
-endif( ZLIB_FOUND )
-
-# Create example and import properties from vtu11
 add_executable( example example.cpp )
 
-target_link_libraries( example PRIVATE vtu11 )
+target_link_libraries( example PRIVATE vtu11::vtu11 )
 ```
 Now you can create a build directory, compile the project and run the example.
 
