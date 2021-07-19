@@ -18,15 +18,15 @@ namespace vtu11
 
 struct Vtu11UnstructuredMesh
 {
-  std::vector<double>& points_;
-  std::vector<VtkIndexType>& connectivity_;
-  std::vector<VtkIndexType>& offsets_;
-  std::vector<VtkCellType>& types_;
+  const std::vector<double>& points_;
+  const std::vector<VtkIndexType>& connectivity_;
+  const std::vector<VtkIndexType>& offsets_;
+  const std::vector<VtkCellType>& types_;
 
-  std::vector<double>& points( ){ return points_; }
-  std::vector<VtkIndexType>& connectivity( ){ return connectivity_; }
-  std::vector<VtkIndexType>& offsets( ){ return offsets_; }
-  std::vector<VtkCellType>& types( ){ return types_; }
+  const std::vector<double>& points( ){ return points_; }
+  const std::vector<VtkIndexType>& connectivity( ){ return connectivity_; }
+  const std::vector<VtkIndexType>& offsets( ){ return offsets_; }
+  const std::vector<VtkCellType>& types( ){ return types_; }
 
   size_t numberOfPoints( ){ return points_.size( ) / 3; }
   size_t numberOfCells( ){ return types_.size( ); }
