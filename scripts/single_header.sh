@@ -46,9 +46,8 @@ echo "                                              " >> ${Single}
 
 for header in ${InclusionOrder[@]}
 do
-    # Append header content without vtu11 includes and comments
-    cat ${Path}/${header} | grep -v -e "^[[:space:]]*#include \"vtu11/inc/.*\.hpp"      |
-                            grep -v -e "^[[:space:]]*#include \"vtu11/impl/.*\.hpp"     |
-                            grep -v    "^[[:space:]]*//" >> ${Single}
+    # Append header content without vtu11 includes
+    cat ${Path}/${header} | grep -v -e "^[[:space:]]*#include \"vtu11/inc/.*\.hpp" |
+                            grep -v -e "^[[:space:]]*#include \"vtu11/impl/.*\.hpp" >> ${Single}
 done
 
