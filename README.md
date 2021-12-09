@@ -2,6 +2,8 @@
 
 _Vtu11_ is a small C++ header-only library to write unstructured grids using the vtu file format. It keeps the mess of dealing with file writing in different formats away from you. Currently it does not add any features for setting up the required data structure because this vastly differs based on the context in which _vtu11_ is used.
 
+You can download a single header version in the latest release.
+
 ## Serial example
 
 ```cpp

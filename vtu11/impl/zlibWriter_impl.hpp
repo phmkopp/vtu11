@@ -20,8 +20,16 @@ namespace detail
 template<typename T>
 std::vector<HeaderType> zlibCompressData( const std::vector<T>& data,
                                           std::vector<std::vector<Byte>>& targetBlocks,
-                                          size_t blocksize = 32768 ) // 2^15
+                                          size_t blockSize = 32768 ) // 2^15
 {
+  using IntType = uLong;
+
+  if( data.size( ) > std::numeric_limits<IntType>::max( ) ||
+      blockSize > std::numeric_limits<IntType>::max( ) )
+  {
+      throw std::runtime_error( "Size too large for uLong zlib type." );
+  }
+
   std::vector<HeaderType> header( 3, 0 );
 
   if( data.empty( ) )
@@ -29,19 +37,19 @@ std::vector<HeaderType> zlibCompressData( const std::vector<T>& data,
     return header;
   }
 
+  auto blocksize = static_cast<IntType>( blockSize );
+
   auto compressedBuffersize = compressBound( blocksize );
 
   Byte* buffer = new Byte[compressedBuffersize];
   Byte* currentByte = const_cast<Byte*>( reinterpret_cast<const Byte*>( &data[0] ) );
+  
+  IntType numberOfBytes = static_cast<IntType>( data.size( ) ) * sizeof( T );
+  IntType numberOfBlocks = ( numberOfBytes - 1 ) / blocksize + 1;
 
-  size_t numberOfBytes = data.size( ) * sizeof( T );
-  size_t numberOfBlocks = ( numberOfBytes - 1 ) / blocksize + 1;
-
-  using ZlibSizeType = decltype( compressedBuffersize );
-
-  auto compressBlock = [&]( ZlibSizeType numberOfBytesInBlock )
+  auto compressBlock = [&]( IntType numberOfBytesInBlock )
   {
-    ZlibSizeType compressedLength = compressedBuffersize;
+      IntType compressedLength = compressedBuffersize;
 
     int errorCode = compress( buffer, &compressedLength, currentByte, numberOfBytesInBlock );
 
@@ -58,12 +66,12 @@ std::vector<HeaderType> zlibCompressData( const std::vector<T>& data,
     currentByte += numberOfBytesInBlock;
   };
 
-  for( size_t iBlock = 0; iBlock < numberOfBlocks - 1; ++iBlock )
+  for( IntType iBlock = 0; iBlock < numberOfBlocks - 1; ++iBlock )
   {
-    compressBlock( blocksize );
+    compressBlock( static_cast<IntType>( blocksize ) );
   }
 
-  size_t remainder = numberOfBytes - ( numberOfBlocks - 1 ) * blocksize;
+  IntType remainder = numberOfBytes - ( numberOfBlocks - 1 ) * blocksize;
 
   compressBlock( remainder );
 
