@@ -20,29 +20,29 @@ namespace detail
 {
 
 template<typename T> inline
-void writeNumber( char (&buffer)[64], T value )
+void writeNumber( char (&)[64], T )
 {
     VTU11_THROW( "Invalid data type." );
 }
 
-#define __VTU11_WRITE_NUMBER_SPECIALIZATION( string, type )    \
+#define VTU11_WRITE_NUMBER_SPECIALIZATION( string, type )     \
 template<> inline                                             \
-void writeNumber<type>( char (&buffer)[64], type value )         \
+void writeNumber<type>( char (&buffer)[64], type value )      \
 {                                                             \
     std::snprintf( buffer, sizeof( buffer ), string, value ); \
 }
 
-__VTU11_WRITE_NUMBER_SPECIALIZATION( VTU11_ASCII_FLOATING_POINT_FORMAT, double )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%lld", long long int )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%ld" , long int )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%d"  , int )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hd" , short )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", char )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%llu", unsigned long long int )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%ld" , unsigned long int )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%d"  , unsigned int )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hd" , unsigned short )
-__VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", unsigned char )
+VTU11_WRITE_NUMBER_SPECIALIZATION( VTU11_ASCII_FLOATING_POINT_FORMAT, double )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%lld", long long int )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%ld" , long int )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%d"  , int )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%hd" , short )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", char )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%llu", unsigned long long int )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%ld" , unsigned long int )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%d"  , unsigned int )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%hd" , unsigned short )
+VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", unsigned char )
 
 } // namespace detail
 
