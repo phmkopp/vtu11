@@ -1,4 +1,5 @@
 build/*
+*.swp
 
 # header only version is not tracked
 scripts/vtu11.hpp
