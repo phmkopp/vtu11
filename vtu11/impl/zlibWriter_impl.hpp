@@ -24,6 +24,8 @@ std::vector<HeaderType> zlibCompressData( const std::vector<T>& data,
 {
   using IntType = uLong;
 
+  // Somewhere in vtu11/filesystem.hpp, with MSVC, max is defined as macro. This pre-
+  // vents us from using std::numeric_limits<T>::max( ), so we turn off these checks. 
   #ifndef max
   if( data.size( ) > std::numeric_limits<IntType>::max( ) ||
       blockSize > std::numeric_limits<IntType>::max( ) )
