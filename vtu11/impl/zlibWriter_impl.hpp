@@ -24,11 +24,13 @@ std::vector<HeaderType> zlibCompressData( const std::vector<T>& data,
 {
   using IntType = uLong;
 
+  #ifndef max
   if( data.size( ) > std::numeric_limits<IntType>::max( ) ||
       blockSize > std::numeric_limits<IntType>::max( ) )
   {
       throw std::runtime_error( "Size too large for uLong zlib type." );
   }
+  #endif
 
   std::vector<HeaderType> header( 3, 0 );
 
