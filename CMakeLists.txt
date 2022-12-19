@@ -49,7 +49,8 @@ if( ${VTU11_ENABLE_TESTS} )
          vtu11/impl/writer_impl.hpp 
          vtu11/impl/zlibWriter_impl.hpp )
          
-    set( VTU11_TEST_SOURCES 
+    set( VTU11_TEST_SOURCES
+         test/catch2/catch_amalgamated.cpp 
          test/main_test.cpp 
          test/pwrite_pyramids3D_test.cpp 
          test/utilities_test.cpp 

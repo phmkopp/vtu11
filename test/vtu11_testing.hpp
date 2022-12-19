@@ -10,7 +10,7 @@
 #ifndef VTU11_TESTING
 #define VTU11_TESTING
 
-#include "catch2/catch.hpp"
+#include "catch2/catch_amalgamated.hpp"
 
 #include <string>
 
