@@ -10,8 +10,6 @@
 #ifndef VTU11_UTILITIES_IMPL_HPP
 #define VTU11_UTILITIES_IMPL_HPP
 
-#include <array>
-
 namespace vtu11
 {
 namespace detail
@@ -69,6 +67,94 @@ inline std::string endianness( )
 }
 
 constexpr char base64Map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+template<typename TIteratorType>
+inline void Base64EncodedOutput::writeOutputData( std::ostream& output,
+                                                  TIteratorType begin,
+                                                  size_t n )
+{
+    constexpr size_t size = sizeof( decltype( *begin ) );
+    size_t rawBytes = n * size;
+
+    auto it = begin;
+    size_t byteIndex = 0;
+
+    auto next = [&]( )
+    {
+        char byte = *( reinterpret_cast<const char*>( &( *it ) ) + byteIndex++ );
+
+        if( byteIndex == size )
+        {
+            it++;
+            byteIndex = 0;
+        }
+
+        return byte;
+    };
+
+    // first fill the existing byteTriplet
+    size_t numberOfWrittenBytes = 0;
+    for (; byteTripletIndex < std::min(rawBytes, size_t{3}); ++byteTripletIndex)
+    {
+        byteTriplet[byteTripletIndex] = next ( );
+        ++numberOfWrittenBytes;
+    }
+
+    // check if the triplets are filled otherwise don't write, wait for the closeOutputData call
+    // to write remaining bytes in byteTriplet
+    if (byteTripletIndex == 3)
+    {
+        byteTripletIndex = 0;
+        // write the last byte triplet
+        encodeTriplet(output, byteTriplet, 0);
+
+        // in steps of 3
+        size_t numberOfTriplets = (rawBytes - numberOfWrittenBytes) / 3;
+
+        for( size_t i = 0; i < numberOfTriplets; ++i )
+        {
+            encodeTriplet(output, { next( ), next( ), next( ) }, 0 );
+        }
+
+        numberOfWrittenBytes += numberOfTriplets * 3;
+
+        // now fill the byteTriplet with the remaining bytes of the data
+        size_t remaining_bytes = rawBytes - numberOfWrittenBytes ;
+        for (; byteTripletIndex < remaining_bytes; ++byteTripletIndex)
+        {
+            byteTriplet[byteTripletIndex] = next( );
+        }
+    }
+}
+
+inline void Base64EncodedOutput::closeOutputData( std::ostream& output )
+{
+    size_t padding = 3 - byteTripletIndex;
+    if (padding != 0) {
+        for(; byteTripletIndex < 3; ++byteTripletIndex)
+        {
+            byteTriplet[byteTripletIndex] = '\0';
+        }
+
+        encodeTriplet(output, byteTriplet, padding );
+    }
+    byteTripletIndex = 0;
+}
+
+inline void Base64EncodedOutput::encodeTriplet( std::ostream& output,
+                                                const std::array<char, 3>& bytes,
+                                                size_t padding )
+{
+    char tmp[5] = { base64Map[(   bytes[0] & 0xfc ) >> 2],
+                    base64Map[( ( bytes[0] & 0x03 ) << 4 ) + ( ( bytes[1] & 0xf0 ) >> 4 )],
+                    base64Map[( ( bytes[1] & 0x0f ) << 2 ) + ( ( bytes[2] & 0xc0 ) >> 6 )],
+                    base64Map[bytes[2] & 0x3f],
+                    '\0' };
+
+    std::fill( tmp + 4 - padding, tmp + 4, '=' );
+
+    output << tmp;
+}
 
 template<typename Iterator>
 inline std::string base64Encode( Iterator begin, Iterator end )
