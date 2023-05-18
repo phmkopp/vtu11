@@ -31,6 +31,9 @@ if( ZLIB_FOUND )
 
 endif( ZLIB_FOUND )
 
+find_package(MPI REQUIRED)
+target_link_libraries( vtu11 INTERFACE MPI::MPI_CXX )
+
 # ------------------- setup vtu11 unit tests -------------------
 
 option( VTU11_ENABLE_TESTS "Build vtu11 unit tests." OFF )
@@ -58,6 +61,7 @@ if( ${VTU11_ENABLE_TESTS} )
          test/write_hexahedras3D_test.cpp
          test/write_icosahedron3D_test.cpp
          test/write_pyramids3D_test.cpp
+         test/mpi_io_testing.cpp
          test/write_square2D_test.cpp )
 
     add_executable( vtu11_testrunner ${VTU11_HEADERS} ${VTU11_TEST_SOURCES} )
