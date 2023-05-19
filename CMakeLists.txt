@@ -31,8 +31,15 @@ if( ZLIB_FOUND )
 
 endif( ZLIB_FOUND )
 
-find_package(MPI REQUIRED)
-target_link_libraries( vtu11 INTERFACE MPI::MPI_CXX )
+# ------------------- setup mpi support -------------------
+option( VTU11_ENABLE_MPI "Build MPI support." OFF )
+
+if( ${VTU11_ENABLE_MPI} )
+
+    find_package(MPI REQUIRED)
+    target_link_libraries( vtu11 INTERFACE MPI::MPI_CXX )
+
+endif( ${VTU11_ENABLE_MPI} )
 
 # ------------------- setup vtu11 unit tests -------------------
 
