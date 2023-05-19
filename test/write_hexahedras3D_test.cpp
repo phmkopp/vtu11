@@ -30,8 +30,8 @@ TEST_CASE( "hexahedras_test" )
        8, 9, 10, 11, 12, 13, 14, 15 // 1, hexahedra - cubes
     };
 
-    std::vector<VtkIndexType> offsets { 8, 16 };
     std::vector<VtkCellType> types { 11, 11 };
+    std::vector<VtkIndexType> offsets = ComputeOffsets(types);
 
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
