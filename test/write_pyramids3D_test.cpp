@@ -33,7 +33,7 @@ TEST_CASE( "write_pyramids3D_Test" )
     };
 
     std::vector<VtkCellType> types { 10, 10, 10, 10, 14 };
-    std::vector<VtkIndexType> offsets = ComputeOffsets(types);
+    std::vector<VtkIndexType> offsets = computeOffsets(types);
 
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 

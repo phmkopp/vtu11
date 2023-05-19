@@ -33,7 +33,7 @@ struct Vtu11UnstructuredMesh
 };
 
 //! Helper to compute the offsets for geometries with deterministic number of points
-std::vector<VtkIndexType> ComputeOffsets(const std::vector<VtkCellType>& Types);
+std::vector<VtkIndexType> computeOffsets(const std::vector<VtkCellType>& Types);
 
 /*! Write modes (not case sensitive):
  *

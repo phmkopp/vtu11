@@ -338,7 +338,7 @@ void writePartition( const std::string& path,
 
 } // writePartition
 
-inline std::vector<VtkIndexType> ComputeOffsets(const std::vector<VtkCellType>& Types)
+inline std::vector<VtkIndexType> computeOffsets(const std::vector<VtkCellType>& Types)
 {
     static const std::unordered_map<VtkCellType, int> types_num_points_map = {
         {1, 1}, // vertex

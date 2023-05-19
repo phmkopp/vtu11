@@ -13,12 +13,12 @@
 namespace vtu11
 {
 
-TEST_CASE( "ComputeOffsets_test" )
+TEST_CASE( "computeOffsets_test" )
 {
     std::vector<VtkCellType> types { 1, 1, 3, 10, 1, 14, 9, 12, 21 };
     std::vector<VtkIndexType> expected_offsets { 1, 2, 4, 8, 9, 14, 18, 26, 29};
 
-    std::vector<VtkIndexType> offsets = ComputeOffsets(types);
+    std::vector<VtkIndexType> offsets = computeOffsets(types);
 
     CHECK(expected_offsets.size() == offsets.size());
     CHECK(types.size() == offsets.size());
@@ -28,6 +28,6 @@ TEST_CASE( "ComputeOffsets_test" )
         CHECK(expected_offsets[i] == offsets[i]);
     }
 
-} // ComputeOffsets_test
+} // computeOffsets_test
 
 } // namespace vtu11

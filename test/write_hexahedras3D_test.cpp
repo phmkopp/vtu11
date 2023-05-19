@@ -31,7 +31,7 @@ TEST_CASE( "hexahedras_test" )
     };
 
     std::vector<VtkCellType> types { 11, 11 };
-    std::vector<VtkIndexType> offsets = ComputeOffsets(types);
+    std::vector<VtkIndexType> offsets = computeOffsets(types);
 
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
