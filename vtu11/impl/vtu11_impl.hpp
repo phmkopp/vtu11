@@ -359,10 +359,13 @@ inline std::vector<VtkIndexType> ComputeOffsets(const std::vector<VtkCellType>& 
 };
     std::vector<VtkIndexType> offsets(Types.size());
 
+    VtkIndexType current_offset = 0;
+
     for (std::size_t i=0; i<Types.size(); ++i) {
         const auto it_type = types_num_points_map.find(Types[i]);
         VTU11_CHECK(it_type != types_num_points_map.end(), "Offset can not be computed to cell type " + std::to_string(Types[i]));
-        offsets[i] = it_type->second;
+        current_offset += it_type->second;
+        offsets[i] = current_offset;
     }
 
     return offsets;
