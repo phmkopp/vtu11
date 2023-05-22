@@ -36,6 +36,8 @@ option( VTU11_ENABLE_MPI "Build MPI support." OFF )
 
 if( ${VTU11_ENABLE_MPI} )
 
+    message( STATUS "Enabling vtu11 with MPI support" )
+
     find_package(MPI REQUIRED)
     target_link_libraries( vtu11 INTERFACE MPI::MPI_CXX )
 
