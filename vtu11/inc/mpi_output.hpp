@@ -15,7 +15,7 @@
 
 namespace vtu11
 {
-class MPIOutput final
+class MPIOutput : public std::ostream
 {
 public:
     MPIOutput(const std::string& filename, MPI_Comm mpicomm) : fileName(filename), mpiComm(mpicomm)
@@ -24,18 +24,20 @@ public:
         MPI_Comm_size(mpiComm, &size);
 
         MPI_File_open(mpiComm, fileName.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fileHandle);
+
+        std::cout << "Opening Stuff" << std::endl;
     }
 
     MPIOutput& operator << (const Rank r)
     {
+        std::cout << "Setting the RANK!" << ((r==Rank::All) ? "All" : "Zero") << std::endl;
         rankConfig = r;
         return *this;
     }
 
     MPIOutput& operator << (const char* pString)
     {
-        std::cout << pString;
-        std::cout << Rank::Zero;
+        std::cout << "operator << (const char* pString)" << pString;
         return *this;
     }
 

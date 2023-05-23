@@ -67,4 +67,28 @@ TEST_CASE( "mpi_io_test_ascii" )
     MPI_Finalize();
 } // mpi_io_test_ascii
 
+TEST_CASE( "mpi_io_scoped_xml_tag" )
+{
+    int argc = 0;
+    char** argv = nullptr;
+    MPI_Init(&argc, &argv);
+
+    StringStringMap headerAttributes { { "byte_order",  endianness( ) },
+                                       { "version"   ,  "0.1"         } };
+
+    const std::string filename = "mpi_io_scoped_xml_tag.txt";
+
+    {
+        vtu11::MPIOutput output_mpi( filename, MPI_COMM_WORLD );
+
+        {
+            ScopedXmlTag vtkFileTag( output_mpi, "VTKFile", headerAttributes );
+
+
+        } // VTKFile
+    } // required to close file before finalizing MPI => needs to be improved
+
+    MPI_Finalize();
+} // mpi_io_test_ascii
+
 } // namespace vtu11
