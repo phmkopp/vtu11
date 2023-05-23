@@ -22,6 +22,8 @@ inline void writeTag( std::ostream& output,
                       const StringStringMap& attributes,
                       const std::string& tagEnd )
 {
+    ScopedRZO rzo(output);
+
     output << "<" << name;
 
     for( const auto& attribute : attributes )

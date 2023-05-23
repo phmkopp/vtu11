@@ -46,6 +46,23 @@ inline std::ostream& operator << (std::ostream& os, const Rank& r)
     return os;
 }
 
+class ScopedRZO final
+{
+public:
+    ScopedRZO(std::ostream& output) : Out(output)
+    {
+        Out << Rank::Zero;
+    }
+
+    ~ScopedRZO()
+    {
+        Out << Rank::All;
+    }
+
+private:
+    std::ostream& Out;
+};
+
 } // namespace vtu11
 
 #ifndef VTU11_ASCII_FLOATING_POINT_FORMAT
