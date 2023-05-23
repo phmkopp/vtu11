@@ -12,6 +12,11 @@
 
 #include "vtu11/inc/utilities.hpp"
 
+
+#ifdef VTU11_ENABLE_ZLIB
+#include "vtu11/inc/mpi_output.hpp"
+#endif
+
 #include <limits>
 #include <unordered_map>
 
@@ -337,6 +342,20 @@ void writePartition( const std::string& path,
     writeVtu( fullname.string( ), mesh, dataSetInfo, dataSetData, writeMode );
 
 } // writePartition
+
+#ifdef VTU11_ENABLE_ZLIB
+
+template<typename MeshGenerator> inline
+void writeVtu( const std::string& filename,
+               MeshGenerator& mesh,
+               const std::vector<DataSetInfo>& dataSetInfo,
+               const std::vector<DataSetData>& dataSetData,
+               const MPI_Comm mpiComm,
+               const std::string& writeMode )
+{
+
+}
+#endif
 
 inline std::vector<VtkIndexType> ComputeOffsets(const std::vector<VtkCellType>& Types)
 {

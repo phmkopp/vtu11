@@ -13,6 +13,10 @@
 #include "vtu11/inc/alias.hpp"
 #include "vtu11/inc/writer.hpp"
 
+#ifdef VTU11_ENABLE_ZLIB
+#include "mpi.h"
+#endif
+
 namespace vtu11
 {
 
@@ -79,6 +83,17 @@ void writePartition( const std::string& path,
                      const std::vector<DataSetData>& dataSetData,
                      size_t fileId,
                      const std::string& writeMode = "RawBinaryCompressed" );
+
+#ifdef VTU11_ENABLE_ZLIB
+//! Writes single file
+template<typename MeshGenerator>
+void writeVtu( const std::string& filename,
+               MeshGenerator& mesh,
+               const std::vector<DataSetInfo>& dataSetInfo,
+               const std::vector<DataSetData>& dataSetData,
+               const MPI_Comm MPIComm,
+               const std::string& writeMode = "RawBinaryCompressed" );
+#endif
 
 } // namespace vtu11
 
