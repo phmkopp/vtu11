@@ -34,6 +34,18 @@ using VtkIndexType = std::int64_t;
 using HeaderType = size_t;
 using Byte = unsigned char;
 
+enum class Rank
+{
+    Zero,
+    All
+};
+
+inline std::ostream& operator << (std::ostream& os, const Rank& r)
+{
+    // deliberately does nothing, only used in the MPIOutput
+    return os;
+}
+
 } // namespace vtu11
 
 #ifndef VTU11_ASCII_FLOATING_POINT_FORMAT
