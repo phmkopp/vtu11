@@ -40,6 +40,7 @@ if( ${VTU11_ENABLE_MPI} )
 
     find_package(MPI REQUIRED)
     target_link_libraries( vtu11 INTERFACE MPI::MPI_CXX )
+    target_compile_definitions( vtu11 INTERFACE VTU11_ENABLE_MPI )
 
 endif( ${VTU11_ENABLE_MPI} )
 
