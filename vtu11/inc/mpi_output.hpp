@@ -87,7 +87,11 @@ public:
         int offset;
         MPI_Scan(&my_size, &offset, 1, MPI_INT, MPI_SUM, mpiComm);
 
-        // MPI_File_write_at(fileHandle, offset-my_size, my_data.data(), my_data.size(), MPI_CHAR, MPI_STATUS_IGNORE);
+        // MPI_File_write_at_all(fileHandle, offset-my_size, my_data.data(), my_data.size(), MPI_CHAR, MPI_STATUS_IGNORE);
+
+        // probably need to save the current position, or consider it while writing by MPI_FILE_POSITION or sth like that
+
+        MPI_File_sync(fileHandle);
     }
 
     ~MPIOutput()
