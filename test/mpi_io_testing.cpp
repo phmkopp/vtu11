@@ -78,15 +78,19 @@ TEST_CASE( "mpi_io_scoped_xml_tag" )
 
     const std::string filename = "mpi_io_scoped_xml_tag.txt";
 
+    vtu11::MPIOutput output_mpi( filename, MPI_COMM_WORLD );
+
     {
-        vtu11::MPIOutput output_mpi( filename, MPI_COMM_WORLD );
+        ScopedRZO<vtu11::MPIOutput> rzo(output_mpi);
 
-        {
-            ScopedXmlTag vtkFileTag( output_mpi, "VTKFile", headerAttributes );
+        output_mpi << "This is supposed to be the file header\n";
+    }
 
+    output_mpi << "Data1\n";
+    output_mpi << "Data2\n";
+    output_mpi << "Data3\n";
 
-        } // VTKFile
-    } // required to close file before finalizing MPI => needs to be improved
+    output_mpi.close();
 
     MPI_Finalize();
 } // mpi_io_test_ascii
