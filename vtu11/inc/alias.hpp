@@ -46,10 +46,11 @@ inline std::ostream& operator << (std::ostream& os, const Rank& r)
     return os;
 }
 
+template <class TOutput>
 class ScopedRZO final
 {
 public:
-    ScopedRZO(std::ostream& output) : Out(output)
+    ScopedRZO(TOutput& output) : Out(output)
     {
         Out << Rank::Zero;
     }
@@ -60,7 +61,7 @@ public:
     }
 
 private:
-    std::ostream& Out;
+    TOutput& Out;
 };
 
 } // namespace vtu11

@@ -22,7 +22,7 @@ inline void writeTag( std::ostream& output,
                       const StringStringMap& attributes,
                       const std::string& tagEnd )
 {
-    ScopedRZO rzo(output);
+    ScopedRZO<std::ostream> rzo(output);
 
     output << "<" << name;
 
