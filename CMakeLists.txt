@@ -87,7 +87,7 @@ if( ${VTU11_ENABLE_TESTS} )
             -Wformat-nonliteral -Wformat-security -Wcast-qual -Wsuggest-override -Wsuggest-final-types
             -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wnoexcept
             -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion
-            -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Werror )
+            -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wundef -Wno-unused-parameter -Werror )
 
     elseif( MSVC )
         # required such that "__cplusplus" is set to the correct value
