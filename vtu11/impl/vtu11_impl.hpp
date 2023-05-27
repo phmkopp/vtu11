@@ -58,7 +58,7 @@ void writeDataSet( Writer& writer,
 
     if( attributes["format"] != "appended" )
     {
-        ScopedXmlTag dataArrayTag( output, "DataArray", attributes );
+        ScopedXmlTag<> dataArrayTag( output, "DataArray", attributes );
 
         writer.writeData( output, data );
     }
@@ -129,7 +129,7 @@ void writeVTUFile( const std::string& filename,
     writer.addHeaderAttributes( headerAttributes );
 
     {
-        ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
+        ScopedXmlTag<> vtkFileTag( output, "VTKFile", headerAttributes );
 
         writeContent( output );
 
@@ -148,9 +148,9 @@ void writeVtu( const std::string& filename,
     detail::writeVTUFile( filename, "UnstructuredGrid", writer, [&]( std::ostream& output )
     {
         {
-            ScopedXmlTag unstructuredGridFileTag( output, "UnstructuredGrid", { } );
+            ScopedXmlTag<> unstructuredGridFileTag( output, "UnstructuredGrid", { } );
             {
-                ScopedXmlTag pieceTag( output, "Piece",
+                ScopedXmlTag<> pieceTag( output, "Piece",
                 {
                     { "NumberOfPoints", std::to_string( mesh.numberOfPoints( ) ) },
                     { "NumberOfCells" , std::to_string( mesh.numberOfCells( )  ) }
@@ -158,7 +158,7 @@ void writeVtu( const std::string& filename,
                 } );
 
                 {
-                    ScopedXmlTag pointDataTag( output, "PointData", { } );
+                    ScopedXmlTag<> pointDataTag( output, "PointData", { } );
 
                     detail::writeDataSets( dataSetInfo, dataSetData,
                         output, writer, DataSetType::PointData );
@@ -166,7 +166,7 @@ void writeVtu( const std::string& filename,
                 } // PointData
 
                 {
-                    ScopedXmlTag cellDataTag( output, "CellData", { } );
+                    ScopedXmlTag<> cellDataTag( output, "CellData", { } );
 
                     detail::writeDataSets( dataSetInfo, dataSetData,
                         output, writer, DataSetType::CellData );
@@ -174,14 +174,14 @@ void writeVtu( const std::string& filename,
                 } // CellData
 
                 {
-                    ScopedXmlTag pointsTag( output, "Points", { } );
+                    ScopedXmlTag<> pointsTag( output, "Points", { } );
 
                     detail::writeDataSet( writer, output, "", 3, mesh.points( ) );
 
                 } // Points
 
                 {
-                    ScopedXmlTag pointsTag( output, "Cells", { } );
+                    ScopedXmlTag<> pointsTag( output, "Cells", { } );
 
                     detail::writeDataSet( writer, output, "connectivity", 1, mesh.connectivity( ) );
                     detail::writeDataSet( writer, output, "offsets", 1, mesh.offsets( ) );
@@ -196,7 +196,7 @@ void writeVtu( const std::string& filename,
 
         if( !appendedAttributes.empty( ) )
         {
-            ScopedXmlTag appendedDataTag( output, "AppendedData", appendedAttributes );
+            ScopedXmlTag<> appendedDataTag( output, "AppendedData", appendedAttributes );
 
             output << "_";
 
@@ -285,25 +285,25 @@ inline void writePVtu( const std::string& path,
     {
         std::string ghostLevel = "0"; // Hardcoded to be 0
 
-        ScopedXmlTag pUnstructuredGridFileTag( output,
+        ScopedXmlTag<> pUnstructuredGridFileTag( output,
             "PUnstructuredGrid", { { "GhostLevel", ghostLevel } } );
 
         {
-            ScopedXmlTag pPointDataTag( output, "PPointData", { } );
+            ScopedXmlTag<> pPointDataTag( output, "PPointData", { } );
 
             detail::writeDataSetPVtuHeaders( dataSetInfo, output, writer, DataSetType::PointData );
 
         } // PPointData
 
         {
-            ScopedXmlTag pCellDataTag( output, "PCellData", { } );
+            ScopedXmlTag<> pCellDataTag( output, "PCellData", { } );
 
             detail::writeDataSetPVtuHeaders( dataSetInfo, output, writer, DataSetType::CellData );
 
         } // PCellData
 
         {
-            ScopedXmlTag pPointsTag( output, "PPoints", { } );
+            ScopedXmlTag<> pPointsTag( output, "PPoints", { } );
             StringStringMap attributes = { { "type", dataTypeString<double>( ) }, { "NumberOfComponents", "3" } };
 
             writer.addDataAttributes( attributes );
