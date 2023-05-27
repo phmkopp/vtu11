@@ -12,6 +12,8 @@
 
 #include "vtu11/inc/utilities.hpp"
 
+#include "vtu11/inc/mpi_output.hpp"
+
 #include <fstream>
 
 namespace vtu11
@@ -46,8 +48,8 @@ VTU11_WRITE_NUMBER_SPECIALIZATION( "%hhd", unsigned char )
 
 } // namespace detail
 
-template<typename T>
-inline void AsciiWriter::writeData( std::ostream& output,
+template<typename T, typename Output>
+inline void AsciiWriter::writeData( Output& output,
                                     const std::vector<T>& data )
 {
     char buffer[64];
@@ -59,7 +61,7 @@ inline void AsciiWriter::writeData( std::ostream& output,
         output << buffer << " ";
     }
 
-    output << "\n";
+    // output << "\n"; // TODO do this only on the last rank
 }
 
 template<>
@@ -75,8 +77,22 @@ inline void AsciiWriter::writeData( std::ostream& output,
 
   output << "\n";
 }
+template<> // TODO find a better solution, but partial template specialization is C++14 :/
+inline void AsciiWriter::writeData( MPIOutput& output,
+                                    const std::vector<std::int8_t>& data )
+{
+  for( auto value : data )
+  {
+    // will otherwise interpret uint8 as char and output nonsense instead
+  	// changed the datatype from unsigned to int
+      output << static_cast<int>( value ) << " ";
+  }
 
-inline void AsciiWriter::writeAppended( std::ostream& )
+  // output << "\n"; // TODO do this only on the last rank
+}
+
+template<typename Output>
+inline void AsciiWriter::writeAppended( Output& )
 {
 
 }
@@ -97,8 +113,8 @@ inline StringStringMap AsciiWriter::appendedAttributes( )
 
 // ----------------------------------------------------------------
 
-template<typename T>
-inline void Base64BinaryWriter::writeData( std::ostream& output,
+template<typename T, typename Output>
+inline void Base64BinaryWriter::writeData( Output& output,
                                            const std::vector<T>& data )
 {
   HeaderType numberOfBytes = data.size( ) * sizeof( T );
@@ -106,10 +122,11 @@ inline void Base64BinaryWriter::writeData( std::ostream& output,
   output << base64Encode( &numberOfBytes, &numberOfBytes + 1 );
   output << base64Encode( data.begin( ), data.end( ) );
 
-  output << "\n";
+  // output << "\n"; // TODO do this only on the last rank
 }
 
-inline void Base64BinaryWriter::writeAppended( std::ostream& )
+template<typename Output>
+inline void Base64BinaryWriter::writeAppended( Output& )
 {
 
 }

@@ -18,11 +18,12 @@ namespace vtu11
 
 struct AsciiWriter
 {
-  template<typename T>
-  void writeData( std::ostream& output,
+  template<typename T, typename Output>
+  void writeData( Output& output,
                   const std::vector<T>& data );
 
-  void writeAppended( std::ostream& output );
+  template<typename Output>
+  void writeAppended( Output& output );
 
   void addHeaderAttributes( StringStringMap& attributes );
   void addDataAttributes( StringStringMap& attributes );
@@ -32,11 +33,12 @@ struct AsciiWriter
 
 struct Base64BinaryWriter
 {
-  template<typename T>
-  void writeData( std::ostream& output,
+  template<typename T, typename Output>
+  void writeData( Output& output,
                   const std::vector<T>& data );
 
-  void writeAppended( std::ostream& output );
+  template<typename Output>
+  void writeAppended( Output& output );
 
   void addHeaderAttributes( StringStringMap& attributes );
   void addDataAttributes( StringStringMap& attributes );
