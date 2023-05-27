@@ -14,11 +14,26 @@
 namespace vtu11
 {
 
+// a better solution would be to provide a dedicated main to catch2, like is also done in CoSimIO
+struct MPI_RAII
+{
+    MPI_RAII()
+    {
+        int argc = 0;
+        char** argv = nullptr;
+        MPI_Init(&argc, &argv);
+    }
+
+    ~MPI_RAII()
+    {
+        MPI_Finalize();
+    }
+
+};
+
 TEST_CASE( "mpi_io_test_binary" )
 {
-    int argc = 0;
-    char** argv = nullptr;
-    MPI_Init(&argc, &argv);
+    MPI_RAII mpi;
 
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -35,14 +50,11 @@ TEST_CASE( "mpi_io_test_binary" )
 
     MPI_File_close(&file_handle);
 
-    MPI_Finalize();
 } // mpi_io_test_binary
 
 TEST_CASE( "mpi_io_test_ascii" )
 {
-    int argc = 0;
-    char** argv = nullptr;
-    MPI_Init(&argc, &argv);
+    MPI_RAII mpi;
 
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -64,35 +76,75 @@ TEST_CASE( "mpi_io_test_ascii" )
 
     MPI_File_close(&file_handle);
 
-    MPI_Finalize();
 } // mpi_io_test_ascii
 
-TEST_CASE( "mpi_io_scoped_xml_tag" )
+TEST_CASE( "mpi_output" )
 {
-    int argc = 0;
-    char** argv = nullptr;
-    MPI_Init(&argc, &argv);
+    MPI_RAII mpi;
+    int rank;
+
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     StringStringMap headerAttributes { { "byte_order",  endianness( ) },
                                        { "version"   ,  "0.1"         } };
 
-    const std::string filename = "mpi_io_scoped_xml_tag.txt";
+    const std::string filename = "mpi_output.txt";
 
     vtu11::MPIOutput output_mpi( filename, MPI_COMM_WORLD );
+
+    CHECK(output_mpi.size() == 0);
 
     {
         ScopedRZO<vtu11::MPIOutput> rzo(output_mpi);
 
         output_mpi << "This is supposed to be the file header\n";
+
+        if (rank == 0) {
+            const std::string original_buffer = output_mpi.buffer();
+            CHECK(output_mpi.size() > 0);
+            CHECK(output_mpi.size() == original_buffer.size());
+            CHECK(output_mpi.buffer() == original_buffer); // make sure the size function does not modify the buffer
+            // TODO but how to check the position, is it even required to check it?
+        } else {
+            CHECK(output_mpi.size() == 0);
+            CHECK(output_mpi.buffer().empty());
+        }
     }
 
-    output_mpi << "Data1\n";
-    output_mpi << "Data2\n";
-    output_mpi << "Data3\n";
+    // setting the rank as in ScopedRZO causes a flush
+    CHECK(output_mpi.size() == 0);
+    CHECK(output_mpi.buffer().empty());
+
+    output_mpi << "Data1 r " << rank << "\n";
+    output_mpi << "Data2 r " << rank << "\n";
+    output_mpi << "Data3 r " << rank << "\n";
+
+    CHECK(output_mpi.size() > 0);
+    CHECK(!output_mpi.buffer().empty());
+
+    {
+        ScopedRZO<vtu11::MPIOutput> rzo(output_mpi);
+
+        output_mpi << "More output\n";
+        output_mpi << "Even More output\n";
+    }
+
+    output_mpi << "DataXXX4 r " << rank << "\n";
+    output_mpi << "DataXXX5 r " << rank << "\n";
+    output_mpi << "DataXXX6 r " << rank << "\n";
+
+    {
+        ScopedRZO<vtu11::MPIOutput> rzo(output_mpi);
+
+        output_mpi << "Now add some appended data\n";
+    }
+    output_mpi << "GarbageData r " << rank << "\n";
 
     output_mpi.close();
 
-    MPI_Finalize();
+    CHECK(output_mpi.size() == 0);
+    CHECK(output_mpi.buffer().empty());
+
 } // mpi_io_test_ascii
 
 } // namespace vtu11

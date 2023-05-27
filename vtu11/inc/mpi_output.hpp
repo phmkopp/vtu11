@@ -22,15 +22,15 @@ class MPIOutput
 public:
     MPIOutput(const std::string& filename, MPI_Comm mpicomm) : fileName(filename), mpiComm(mpicomm)
     {
-        MPI_Comm_rank(mpiComm, &rank);
-        MPI_Comm_size(mpiComm, &size);
+        MPI_Comm_rank(mpiComm, &mpiRank);
+        MPI_Comm_size(mpiComm, &mpiSize);
 
         MPI_File_open(mpiComm, fileName.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fileHandle);
     }
 
     MPIOutput& operator << (const Rank r)
     {
-        std::cout << "r: " << rank << " | Setting the RANK: " << ((r==Rank::All) ? "All" : "Zero") << std::endl;
+        // std::cout << "r: " << mpiRank << " | Setting the RANK: " << ((r==Rank::All) ? "All" : "Zero") << std::endl;
         rankConfig = r;
         flush(); // TODO should this flush? Probably makes sense ...
         return *this;
@@ -39,14 +39,12 @@ public:
     template <typename T>
     MPIOutput& operator << (T out)
     {
-        if (rank == 0 || rankConfig == Rank::All) {
-            myStream << out;
-            std::cout << "r: " << rank << " | Writing to stream: " << out << std::endl;
+        if (mpiRank == 0 || rankConfig == Rank::All) {
+            outputStream << out;
+            // std::cout << "r: " << mpiRank << " | Writing to stream: " << out << std::endl;
         }
 
-        std::size_t stream_size = 123654; // TODO compute this
-
-        int should_flush = stream_size > bufferSize;
+        int should_flush = size() > bufferSize;
         int global_flush;
 
         MPI_Allreduce(
@@ -70,12 +68,23 @@ public:
             flush();
             MPI_File_close(&fileHandle);
             isOpen = false;
-            std::cout << "r: " << rank << " | Closing file, content of stream: " << myStream.str() << std::endl;
+            // std::cout << "r: " << mpiRank << " | Closing file, content of stream: " << outputStream.str() << std::endl;
         }
+    }
+
+    std::size_t size()
+    {
+        return static_cast<std::size_t>(outputStream.tellp());
+    }
+
+    std::string buffer() const
+    {
+        return outputStream.str();
     }
 
     void flush()
     {
+        // std::cout << "Flushing" << std::endl;
         /*
         1. Compute own size
         2. Scan to compute offsets
@@ -83,15 +92,31 @@ public:
         4. reset stream
         */
 
-        int my_size = 963; // TODO compute this
+        int stream_size = size();
         int offset;
-        MPI_Scan(&my_size, &offset, 1, MPI_INT, MPI_SUM, mpiComm);
+        MPI_Scan(&stream_size, &offset, 1, MPI_INT, MPI_SUM, mpiComm);
 
-        // MPI_File_write_at_all(fileHandle, offset-my_size, my_data.data(), my_data.size(), MPI_CHAR, MPI_STATUS_IGNORE);
+        std::cout << "r: " << mpiRank << " | stream_size: " << stream_size << " | offset: " << offset << std::endl;
 
-        // probably need to save the current position, or consider it while writing by MPI_FILE_POSITION or sth like that
+        std::cout << "r: " << mpiRank << " | filePos: " << filePos << std::endl;
 
-        MPI_File_sync(fileHandle);
+        std::string data = outputStream.str(); // move is only possible with C++20
+        outputStream = std::ostringstream(); // reset the stream, maybe there exists a more efficient solution. How about saving the buffer and using it directly???
+
+        MPI_File_write_at_all(fileHandle, filePos+offset-stream_size, data.data(), data.size(), MPI_CHAR, MPI_STATUS_IGNORE);
+
+        // saving the current position of the file (accross all ranks)
+        // TODO maybe use MPI_File_seek(MPI_SEEK_END) instead, but didn't seem to work
+
+        filePos += offset; // only required on last rank
+        MPI_Bcast(
+            &filePos,
+            1,
+            MPI_INT,
+            mpiSize-1, // last rank knows the max size
+            mpiComm);
+
+        MPI_File_sync(fileHandle); // write to file
     }
 
     ~MPIOutput()
@@ -104,11 +129,15 @@ private:
     MPI_File fileHandle;
     bool isOpen = true; // constucting an object also opens the file
     MPI_Comm mpiComm;
-    int rank;
-    int size;
+    int mpiRank;
+    int mpiSize;
     Rank rankConfig;
-    std::stringstream myStream;
+    std::ostringstream outputStream;
     std::size_t bufferSize = 32000;
+
+    int filePos = 0;
+
+
 };
 
 } // namespace vtu11
