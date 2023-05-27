@@ -26,13 +26,14 @@ public:
         MPI_Comm_size(mpiComm, &mpiSize);
 
         MPI_File_open(mpiComm, fileName.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fileHandle);
+
+        reset_stream();
     }
 
     MPIOutput& operator << (const Rank r)
     {
-        // std::cout << "r: " << mpiRank << " | Setting the RANK: " << ((r==Rank::All) ? "All" : "Zero") << std::endl;
         rankConfig = r;
-        flush(); // TODO should this flush? Probably makes sense ...
+        flush();
         return *this;
     }
 
@@ -41,22 +42,6 @@ public:
     {
         if (mpiRank == 0 || rankConfig == Rank::All) {
             outputStream << out;
-            // std::cout << "r: " << mpiRank << " | Writing to stream: " << out << std::endl;
-        }
-
-        int should_flush = size() > bufferSize;
-        int global_flush;
-
-        MPI_Allreduce(
-            &should_flush,
-            &global_flush,
-            1,
-            MPI_INT,
-            MPI_MAX,
-            mpiComm);
-
-        if (global_flush) {
-            flush();
         }
 
         return *this;
@@ -68,7 +53,6 @@ public:
             flush();
             MPI_File_close(&fileHandle);
             isOpen = false;
-            // std::cout << "r: " << mpiRank << " | Closing file, content of stream: " << outputStream.str() << std::endl;
         }
     }
 
@@ -84,24 +68,12 @@ public:
 
     void flush()
     {
-        // std::cout << "Flushing" << std::endl;
-        /*
-        1. Compute own size
-        2. Scan to compute offsets
-        3. write_at
-        4. reset stream
-        */
-
         int stream_size = size();
         int offset;
         MPI_Scan(&stream_size, &offset, 1, MPI_INT, MPI_SUM, mpiComm);
 
-        std::cout << "r: " << mpiRank << " | stream_size: " << stream_size << " | offset: " << offset << std::endl;
-
-        std::cout << "r: " << mpiRank << " | filePos: " << filePos << std::endl;
-
         std::string data = outputStream.str(); // move is only possible with C++20
-        outputStream = std::ostringstream(); // reset the stream, maybe there exists a more efficient solution. How about saving the buffer and using it directly???
+        reset_stream();
 
         MPI_File_write_at_all(fileHandle, filePos+offset-stream_size, data.data(), data.size(), MPI_CHAR, MPI_STATUS_IGNORE);
 
@@ -127,17 +99,19 @@ public:
 private:
     std::string fileName;
     MPI_File fileHandle;
-    bool isOpen = true; // constucting an object also opens the file
+    bool isOpen = true; // constucting an object also opens the file // TODO use this in checks
     MPI_Comm mpiComm;
     int mpiRank;
     int mpiSize;
     Rank rankConfig;
     std::ostringstream outputStream;
-    std::size_t bufferSize = 32000;
 
     int filePos = 0;
 
-
+    void reset_stream()
+    {
+        outputStream = std::ostringstream(); // reset the stream, maybe there exists a more efficient solution. How about saving the (stringbuf???) and using it directly???
+    }
 };
 
 } // namespace vtu11
