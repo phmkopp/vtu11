@@ -47,9 +47,9 @@ StringStringMap writeDataSetHeader( Writer&& writer,
     return attributes;
 }
 
-template<typename Writer, typename DataType> inline
+template<typename Writer, typename DataType, typename Output> inline
 void writeDataSet( Writer& writer,
-                   std::ostream& output,
+                   Output& output,
                    const std::string& name,
                    size_t ncomponents,
                    const std::vector<DataType>& data )
@@ -58,7 +58,7 @@ void writeDataSet( Writer& writer,
 
     if( attributes["format"] != "appended" )
     {
-        ScopedXmlTag<> dataArrayTag( output, "DataArray", attributes );
+        ScopedXmlTag<Output> dataArrayTag( output, "DataArray", attributes );
 
         writer.writeData( output, data );
     }
@@ -70,10 +70,10 @@ void writeDataSet( Writer& writer,
     }
 }
 
-template<typename Writer> inline
+template<typename Writer, typename Output> inline
 void writeDataSets( const std::vector<DataSetInfo>& dataSetInfo,
                     const std::vector<DataSetData>& dataSetData,
-                    std::ostream& output, Writer& writer, DataSetType type )
+                    Output& output, Writer& writer, DataSetType type )
 {
     for( size_t iDataset = 0; iDataset < dataSetInfo.size( ); ++iDataset )
     {
@@ -105,22 +105,26 @@ void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
     }
 }
 
-template<typename Writer, typename Content> inline
+template<typename Writer, typename Content, typename Output> inline
 void writeVTUFile( const std::string& filename,
                    const char* type,
                    Writer&& writer,
+                   Output& output,
                    Content&& writeContent )
 {
-    std::ofstream output( filename, std::ios::binary );
+    // std::ofstream output( filename, std::ios::binary );
 
-    VTU11_CHECK( output.is_open( ), "Failed to open file \"" + filename + "\"" );
+    // VTU11_CHECK( output.is_open( ), "Failed to open file \"" + filename + "\"" );
 
-    // Set buffer size to 32K
-    std::vector<char> buffer( 32 * 1024 );
+    // // Set buffer size to 32K
+    // std::vector<char> buffer( 32 * 1024 );
 
-    output.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
+    // output.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
 
-    output << "<?xml version=\"1.0\"?>\n";
+    {
+        ScopedRZO<Output> rzo(output);
+        output << "<?xml version=\"1.0\"?>\n";
+    }
 
     StringStringMap headerAttributes { { "byte_order",  endianness( ) },
                                        { "type"      ,  type          },
@@ -129,7 +133,7 @@ void writeVTUFile( const std::string& filename,
     writer.addHeaderAttributes( headerAttributes );
 
     {
-        ScopedXmlTag<> vtkFileTag( output, "VTKFile", headerAttributes );
+        ScopedXmlTag<Output> vtkFileTag( output, "VTKFile", headerAttributes );
 
         writeContent( output );
 
@@ -138,19 +142,20 @@ void writeVTUFile( const std::string& filename,
     output.close( );
 }
 
-template<typename MeshGenerator, typename Writer> inline
+template<typename MeshGenerator, typename Writer, typename Output> inline
 void writeVtu( const std::string& filename,
                MeshGenerator& mesh,
                const std::vector<DataSetInfo>& dataSetInfo,
                const std::vector<DataSetData>& dataSetData,
-               Writer&& writer )
+               Writer&& writer,
+               Output& out )
 {
-    detail::writeVTUFile( filename, "UnstructuredGrid", writer, [&]( std::ostream& output )
+    detail::writeVTUFile( filename, "UnstructuredGrid", writer, out, [&]( Output& output )
     {
         {
-            ScopedXmlTag<> unstructuredGridFileTag( output, "UnstructuredGrid", { } );
+            ScopedXmlTag<Output> unstructuredGridFileTag( output, "UnstructuredGrid", { } );
             {
-                ScopedXmlTag<> pieceTag( output, "Piece",
+                ScopedXmlTag<Output> pieceTag( output, "Piece",
                 {
                     { "NumberOfPoints", std::to_string( mesh.numberOfPoints( ) ) },
                     { "NumberOfCells" , std::to_string( mesh.numberOfCells( )  ) }
@@ -158,7 +163,7 @@ void writeVtu( const std::string& filename,
                 } );
 
                 {
-                    ScopedXmlTag<> pointDataTag( output, "PointData", { } );
+                    ScopedXmlTag<Output> pointDataTag( output, "PointData", { } );
 
                     detail::writeDataSets( dataSetInfo, dataSetData,
                         output, writer, DataSetType::PointData );
@@ -166,7 +171,7 @@ void writeVtu( const std::string& filename,
                 } // PointData
 
                 {
-                    ScopedXmlTag<> cellDataTag( output, "CellData", { } );
+                    ScopedXmlTag<Output> cellDataTag( output, "CellData", { } );
 
                     detail::writeDataSets( dataSetInfo, dataSetData,
                         output, writer, DataSetType::CellData );
@@ -174,14 +179,14 @@ void writeVtu( const std::string& filename,
                 } // CellData
 
                 {
-                    ScopedXmlTag<> pointsTag( output, "Points", { } );
+                    ScopedXmlTag<Output> pointsTag( output, "Points", { } );
 
                     detail::writeDataSet( writer, output, "", 3, mesh.points( ) );
 
                 } // Points
 
                 {
-                    ScopedXmlTag<> pointsTag( output, "Cells", { } );
+                    ScopedXmlTag<Output> pointsTag( output, "Cells", { } );
 
                     detail::writeDataSet( writer, output, "connectivity", 1, mesh.connectivity( ) );
                     detail::writeDataSet( writer, output, "offsets", 1, mesh.offsets( ) );
@@ -196,7 +201,7 @@ void writeVtu( const std::string& filename,
 
         if( !appendedAttributes.empty( ) )
         {
-            ScopedXmlTag<> appendedDataTag( output, "AppendedData", appendedAttributes );
+            ScopedXmlTag<Output> appendedDataTag( output, "AppendedData", appendedAttributes );
 
             output << "_";
 
@@ -222,28 +227,38 @@ void writeVtu( const std::string& filename,
     std::transform( mode.begin( ), mode.end ( ), mode.begin( ), []( unsigned char c )
                     { return static_cast<unsigned char>( std::tolower( c ) ); } );
 
+    std::ofstream out( filename, std::ios::binary );
+
+    VTU11_CHECK( out.is_open( ), "Failed to open file \"" + filename + "\"" );
+
+    // Set buffer size to 32K
+    std::vector<char> buffer( 32 * 1024 );
+
+    out.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
+
+
     if( mode == "ascii" )
     {
-        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, AsciiWriter { } );
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, AsciiWriter { }, out );
     }
     else if( mode == "base64inline" )
     {
-        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryWriter { } );
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryWriter { }, out );
     }
     else if( mode == "base64appended" )
     {
-        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryAppendedWriter { } );
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryAppendedWriter { }, out );
     }
     else if( mode == "rawbinary" )
     {
-        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { } );
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { }, out );
     }
     else if( mode == "rawbinarycompressed" )
     {
         #ifdef VTU11_ENABLE_ZLIB
-            detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, CompressedRawBinaryAppendedWriter { } );
+            detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, CompressedRawBinaryAppendedWriter { }, out );
         #else
-            detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { } );
+            detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { }, out );
         #endif
     }
     else
@@ -280,7 +295,16 @@ inline void writePVtu( const std::string& path,
 
     detail::PVtuDummyWriter writer;
 
-    detail::writeVTUFile( pvtufile.string( ), "PUnstructuredGrid", writer,
+    std::ofstream out( pvtufile.string( ), std::ios::binary );
+
+    VTU11_CHECK( out.is_open( ), "Failed to open file \"" + pvtufile.string( ) + "\"" );
+
+    // Set buffer size to 32K
+    std::vector<char> buffer( 32 * 1024 );
+
+    out.rdbuf( )->pubsetbuf( buffer.data( ), static_cast<std::streamsize>( buffer.size( ) ) );
+
+    detail::writeVTUFile( pvtufile.string( ), "PUnstructuredGrid", writer, out,
                           [&]( std::ostream& output )
     {
         std::string ghostLevel = "0"; // Hardcoded to be 0
@@ -353,7 +377,41 @@ void writeVtu( const std::string& filename,
                const MPI_Comm mpiComm,
                const std::string& writeMode )
 {
+    vtu11::MPIOutput out( filename, mpiComm );
 
+    auto mode = writeMode;
+
+    std::transform( mode.begin( ), mode.end ( ), mode.begin( ), []( unsigned char c )
+                    { return static_cast<unsigned char>( std::tolower( c ) ); } );
+
+    if( mode == "ascii" )
+    {
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, AsciiWriter { }, out );
+    }
+    else if( mode == "base64inline" )
+    {
+        detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryWriter { }, out );
+    }
+    // else if( mode == "base64appended" )
+    // {
+    //     detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, Base64BinaryAppendedWriter { }, out );
+    // }
+    // else if( mode == "rawbinary" )
+    // {
+    //     detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { }, out );
+    // }
+    // else if( mode == "rawbinarycompressed" )
+    // {
+    //     #ifdef VTU11_ENABLE_ZLIB
+    //         detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, CompressedRawBinaryAppendedWriter { }, out );
+    //     #else
+    //         detail::writeVtu( filename, mesh, dataSetInfo, dataSetData, RawBinaryAppendedWriter { }, out );
+    //     #endif
+    // }
+    else
+    {
+        VTU11_THROW( "Invalid write mode: \"" + writeMode + "\"." );
+    }
 }
 #endif
 

@@ -119,6 +119,8 @@ inline void Base64BinaryWriter::writeData( Output& output,
 {
   HeaderType numberOfBytes = data.size( ) * sizeof( T );
 
+  // TODO doing this local for every rank does not seem to work
+  // maybe can be made work see the appended base64 writer
   output << base64Encode( &numberOfBytes, &numberOfBytes + 1 );
   output << base64Encode( data.begin( ), data.end( ) );
 

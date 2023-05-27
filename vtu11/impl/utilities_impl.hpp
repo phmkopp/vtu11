@@ -53,7 +53,8 @@ inline ScopedXmlTag<TOutput>::~ScopedXmlTag( )
   closeTag( );
 }
 
-inline void writeEmptyTag( std::ostream& output,
+template<typename Output>
+inline void writeEmptyTag( Output& output,
                            const std::string& name,
                            const StringStringMap& attributes )
 {

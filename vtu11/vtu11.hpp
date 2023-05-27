@@ -36,6 +36,42 @@ struct Vtu11UnstructuredMesh
   size_t numberOfCells( ){ return types_.size( ); }
 };
 
+struct DistributedVtu11UnstructuredMesh
+{
+  const std::vector<double>& points_;
+  const std::vector<VtkIndexType>& connectivity_;
+  const std::vector<VtkIndexType>& offsets_;
+  const std::vector<VtkCellType>& types_;
+
+  const std::vector<double>& points( ){ return points_; }
+  const std::vector<VtkIndexType>& connectivity( ){ return connectivity_; }
+  const std::vector<VtkIndexType>& offsets( ){ return offsets_; }
+  const std::vector<VtkCellType>& types( ){ return types_; }
+
+  size_t numberOfPoints( ){
+    return computeGlobal(points_.size( ) / 3);
+  }
+
+  size_t numberOfCells( ){
+    return computeGlobal(types_.size( ));
+  }
+
+  size_t computeGlobal(size_t local) {
+    int _local = local;
+    int global;
+
+    MPI_Reduce(
+      &_local,
+      &global,
+      1,
+      MPI_INT,
+      MPI_SUM,
+      0,
+      MPI_COMM_WORLD);
+    return static_cast<size_t>(global);
+  }
+};
+
 //! Helper to compute the offsets for geometries with deterministic number of points
 std::vector<VtkIndexType> CopmuteOffsets(const std::vector<VtkCellType>& Types);
 

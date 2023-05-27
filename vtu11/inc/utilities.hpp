@@ -43,7 +43,8 @@ private:
     std::function<void( )> closeTag;
 };
 
-void writeEmptyTag( std::ostream& output,
+template<typename Output>
+void writeEmptyTag( Output& output,
                     const std::string& name,
                     const StringStringMap& attributes );
 
