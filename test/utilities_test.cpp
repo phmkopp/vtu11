@@ -20,9 +20,9 @@ TEST_CASE( "ScopedXmlTag_test" )
     std::ostringstream output;
 
     {
-        ScopedXmlTag tag1( output, "Test1", { { "attr1", "7" }, { "attr2", "nice" } } );
+        ScopedXmlTag<> tag1( output, "Test1", { { "attr1", "7" }, { "attr2", "nice" } } );
         {
-            ScopedXmlTag tag2( output, "Test2", { { "attr3", "43.32" }, { "attr4", "[2, 3]" } } );
+            ScopedXmlTag<> tag2( output, "Test2", { { "attr3", "43.32" }, { "attr4", "[2, 3]" } } );
 
             output << "dadatata" << "\n";
         }
