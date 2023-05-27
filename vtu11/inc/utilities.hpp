@@ -29,10 +29,11 @@ std::string base64Encode( Iterator begin, Iterator end );
 
 size_t encodedNumberOfBytes( size_t rawNumberOfBytes );
 
+template<typename TOutput=std::ostream>
 class ScopedXmlTag final
 {
 public:
-    ScopedXmlTag( std::ostream& output,
+    ScopedXmlTag( TOutput& output,
                   const std::string& name,
                   const StringStringMap& attributes );
 
@@ -54,8 +55,8 @@ std::string appendSizeInBits( const char* str )
 
 // SFINAE if signed integer
 template<typename T> inline
-typename std::enable_if<std::numeric_limits<T>::is_integer && 
-                        std::numeric_limits<T>::is_signed, std::string>::type 
+typename std::enable_if<std::numeric_limits<T>::is_integer &&
+                        std::numeric_limits<T>::is_signed, std::string>::type
     dataTypeString( )
 {
     return appendSizeInBits<T>( "Int" );
@@ -64,7 +65,7 @@ typename std::enable_if<std::numeric_limits<T>::is_integer &&
 // SFINAE if unsigned signed integer
 template<typename T> inline
 typename std::enable_if<std::numeric_limits<T>::is_integer &&
-                       !std::numeric_limits<T>::is_signed, std::string>::type 
+                       !std::numeric_limits<T>::is_signed, std::string>::type
     dataTypeString( )
 {
     return appendSizeInBits<T>( "UInt" );
@@ -72,8 +73,8 @@ typename std::enable_if<std::numeric_limits<T>::is_integer &&
 
 // SFINAE if double or float
 template<typename T> inline
-typename std::enable_if<std::is_same<T, double>::value || 
-                        std::is_same<T, float>::value, std::string>::type 
+typename std::enable_if<std::is_same<T, double>::value ||
+                        std::is_same<T, float>::value, std::string>::type
     dataTypeString( )
 {
     return appendSizeInBits<T>( "Float" );

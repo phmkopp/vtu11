@@ -17,12 +17,13 @@ namespace vtu11
 namespace detail
 {
 
-inline void writeTag( std::ostream& output,
+template<typename TOutput>
+inline void writeTag( TOutput& output,
                       const std::string& name,
                       const StringStringMap& attributes,
                       const std::string& tagEnd )
 {
-    ScopedRZO<std::ostream> rzo(output);
+    ScopedRZO<TOutput> rzo(output);
 
     output << "<" << name;
 
@@ -36,15 +37,18 @@ inline void writeTag( std::ostream& output,
 
 } // namespace detail
 
-inline ScopedXmlTag::ScopedXmlTag( std::ostream& output,
+template<typename TOutput>
+inline ScopedXmlTag<TOutput>::ScopedXmlTag( TOutput& output,
                                    const std::string& name,
                                    const StringStringMap& attributes ) :
-   closeTag( [ &output, name ]( ){ output << "</" << name << ">\n"; } )
+   closeTag( [ &output, name ]( ){
+    ScopedRZO<TOutput> rzo(output); output << "</" << name << ">\n"; } )
 {
     detail::writeTag( output, name, attributes, ">" );
 }
 
-inline ScopedXmlTag::~ScopedXmlTag( )
+template<typename TOutput>
+inline ScopedXmlTag<TOutput>::~ScopedXmlTag( )
 {
   closeTag( );
 }
