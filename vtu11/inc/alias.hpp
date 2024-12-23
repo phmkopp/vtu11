@@ -10,6 +10,7 @@
 #ifndef VTU11_ALIAS_HPP
 #define VTU11_ALIAS_HPP
 
+#include <cstdint>
 #include <string>
 #include <map>
 #include <utility>
