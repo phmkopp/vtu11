@@ -15,7 +15,7 @@ namespace vtu11
 
 TEST_CASE( "write_pyramids3D_Test" )
 {
-    std::vector<double> points 
+    std::vector<double> points
     {
         0.0, 0.0, 0.0,    0.0, 3.0, 0.0,    1.0, 2.0, 2.0, // 0, 1, 2
         1.0, 3.0,-2.0,   -2.0, 2.0, 0.0,   -1.0, 1.0, 2.0, // 3, 4, 5
@@ -23,7 +23,7 @@ TEST_CASE( "write_pyramids3D_Test" )
        -2.0,-2.0,-2.0                                      // 9
     };
 
-    std::vector<VtkIndexType> connectivity 
+    std::vector<VtkIndexType> connectivity
     {
          5,  0,  1,  2,     // 0
          2,  0,  1,  3,     // 1
@@ -33,8 +33,8 @@ TEST_CASE( "write_pyramids3D_Test" )
     };
 
     std::vector<VtkCellType> types { 10, 10, 10, 10, 14 };
-    std::vector<VtkIndexType> offsets { 4, 8, 12, 16, 21 };
-    
+    std::vector<VtkIndexType> offsets = computeOffsets(types);
+
     Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
     std::vector<DataSetInfo> dataSetInfo

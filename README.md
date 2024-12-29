@@ -30,11 +30,14 @@ int main( )
         6, 10, 11,  7  // 5
     };
 
+    // Cell types of each cell, see [1]
+    std::vector<vtu11::VtkCellType> types { 9, 9, 9, 9, 9, 9 };
+
     // Separate cells in connectivity array
     std::vector<vtu11::VtkIndexType> offsets { 4, 8, 12, 16, 20, 24 };
 
-    // Cell types of each cell, see [1]
-    std::vector<vtu11::VtkCellType> types { 9, 9, 9, 9, 9, 9 };
+    // for geometries with deterministic number of points, computeOffsets can be used
+    std::vector<vtu11::VtkIndexType> offsets = vtu11::computeOffsets(types);
 
     // Create small proxy mesh type
     vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
@@ -65,8 +68,8 @@ Comments:
 - RawCompressedBinary requires [zlib](https://zlib.net/) to be enabled by defining the VTU11_ENABLE_ZLIB proprocessor symbol. Otherwise the uncompressed version is used instead. Compiled executables also have to be linked to zlib.
 - Compressing data takes more time than writing more data uncompressed
 - Ascii produces surprisingly small files, is nice to debug, but is rather slow to read in Paraview. Archiving ascii .vtu files using a standard zip tool (for example) produces decently small file sizes.
-- Writing raw binary data breakes the xml standard. To still produce valid xml files you can use base64 encoding, at the cost of having about 30% times larger files.  
-- Both raw binary modes use appended format 
+- Writing raw binary data breakes the xml standard. To still produce valid xml files you can use base64 encoding, at the cost of having about 30% times larger files.
+- Both raw binary modes use appended format
 
 ## How to include in your project
 
@@ -76,7 +79,7 @@ g++ -Ivtu11 --std=c++11 -o example example.cpp
 ```
 If you want to use compressed vtu output, then you can add the `VTU11_ENABLE_ZLIB` definition and link to zlib:
 ```
-g++ -Ivtu11 -DVTU11_ENABLE_ZLIB --std=c++11 -o example example.cpp -lz 
+g++ -Ivtu11 -DVTU11_ENABLE_ZLIB --std=c++11 -o example example.cpp -lz
 ```
 Alternatively, you can use CMake and add __vtu11__ as subdirectory. This will automatically set up the `vtu11::vtu11` interface target with the correct include path and compile flags. Your `CMakeLists.txt` could then simply look like this:
 ```cmake

@@ -58,7 +58,8 @@ if( ${VTU11_ENABLE_TESTS} )
          test/write_hexahedras3D_test.cpp
          test/write_icosahedron3D_test.cpp
          test/write_pyramids3D_test.cpp
-         test/write_square2D_test.cpp )
+         test/write_square2D_test.cpp
+         test/compute_offsets_test.cpp )
 
     add_executable( vtu11_testrunner ${VTU11_HEADERS} ${VTU11_TEST_SOURCES} )
 

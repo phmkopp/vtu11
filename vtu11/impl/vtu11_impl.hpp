@@ -13,6 +13,7 @@
 #include "vtu11/inc/utilities.hpp"
 
 #include <limits>
+#include <unordered_map>
 
 namespace vtu11
 {
@@ -75,7 +76,7 @@ void writeDataSets( const std::vector<DataSetInfo>& dataSetInfo,
 
         if( std::get<1>( metadata ) == type )
         {
-            detail::writeDataSet( writer, output, std::get<0>( metadata ), 
+            detail::writeDataSet( writer, output, std::get<0>( metadata ),
                 std::get<2>( metadata ), dataSetData[iDataset] );
         }
     }
@@ -91,7 +92,7 @@ void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
 
         if( std::get<1>( metadata ) == type )
         {
-            auto attributes = detail::writeDataSetHeader<double>( writer, 
+            auto attributes = detail::writeDataSetHeader<double>( writer,
                std::get<0>( metadata ), std::get<2>( metadata ) );
 
             writeEmptyTag( output, "PDataArray", attributes );
@@ -102,7 +103,7 @@ void writeDataSetPVtuHeaders( const std::vector<DataSetInfo>& dataSetInfo,
 template<typename Writer, typename Content> inline
 void writeVTUFile( const std::string& filename,
                    const char* type,
-                   Writer&& writer, 
+                   Writer&& writer,
                    Content&& writeContent )
 {
     std::ofstream output( filename, std::ios::binary );
@@ -124,7 +125,7 @@ void writeVTUFile( const std::string& filename,
 
     {
         ScopedXmlTag vtkFileTag( output, "VTKFile", headerAttributes );
-        
+
         writeContent( output );
 
     } // VTKFile
@@ -144,17 +145,17 @@ void writeVtu( const std::string& filename,
         {
             ScopedXmlTag unstructuredGridFileTag( output, "UnstructuredGrid", { } );
             {
-                ScopedXmlTag pieceTag( output, "Piece", 
-                { 
+                ScopedXmlTag pieceTag( output, "Piece",
+                {
                     { "NumberOfPoints", std::to_string( mesh.numberOfPoints( ) ) },
-                    { "NumberOfCells" , std::to_string( mesh.numberOfCells( )  ) } 
+                    { "NumberOfCells" , std::to_string( mesh.numberOfCells( )  ) }
 
                 } );
 
                 {
                     ScopedXmlTag pointDataTag( output, "PointData", { } );
 
-                    detail::writeDataSets( dataSetInfo, dataSetData, 
+                    detail::writeDataSets( dataSetInfo, dataSetData,
                         output, writer, DataSetType::PointData );
 
                 } // PointData
@@ -162,7 +163,7 @@ void writeVtu( const std::string& filename,
                 {
                     ScopedXmlTag cellDataTag( output, "CellData", { } );
 
-                    detail::writeDataSets( dataSetInfo, dataSetData, 
+                    detail::writeDataSets( dataSetInfo, dataSetData,
                         output, writer, DataSetType::CellData );
 
                 } // CellData
@@ -196,10 +197,10 @@ void writeVtu( const std::string& filename,
 
             writer.writeAppended( output );
 
-        } // AppendedData     
+        } // AppendedData
 
     } ); // writeVTUFile
-    
+
 } // writeVtu
 
 } // namespace detail
@@ -278,8 +279,8 @@ inline void writePVtu( const std::string& path,
                           [&]( std::ostream& output )
     {
         std::string ghostLevel = "0"; // Hardcoded to be 0
-            
-        ScopedXmlTag pUnstructuredGridFileTag( output, 
+
+        ScopedXmlTag pUnstructuredGridFileTag( output,
             "PUnstructuredGrid", { { "GhostLevel", ghostLevel } } );
 
         {
@@ -329,13 +330,46 @@ void writePartition( const std::string& path,
 {
     auto vtuname = baseName + "_" + std::to_string( fileId ) + ".vtu";
 
-    auto fullname = vtu11fs::path { path } / 
-                    vtu11fs::path { baseName } / 
+    auto fullname = vtu11fs::path { path } /
+                    vtu11fs::path { baseName } /
                     vtu11fs::path { vtuname };
 
     writeVtu( fullname.string( ), mesh, dataSetInfo, dataSetData, writeMode );
 
 } // writePartition
+
+inline std::vector<VtkIndexType> computeOffsets(const std::vector<VtkCellType>& Types)
+{
+    static const std::unordered_map<VtkCellType, int> types_num_points_map = {
+        {1, 1}, // vertex
+        {3, 2}, // line
+        {5, 3}, // triangle
+        {8, 4}, // pixel
+        {9, 4}, // quad
+        {10, 4}, // tetra
+        {11, 8}, // voxel
+        {12, 8}, // hexahedron
+        {13, 6}, // wedge
+        {14, 5}, // pyramid
+        {21, 3}, // quadratic edge
+        {22, 6}, // quadratic triangle
+        {23, 8}, // quadratic quad
+        {24, 10}, // quadratic tetra
+        {25, 20}, // quadratic hexahedron
+};
+    std::vector<VtkIndexType> offsets(Types.size());
+
+    VtkIndexType current_offset = 0;
+
+    for (std::size_t i=0; i<Types.size(); ++i) {
+        const auto it_type = types_num_points_map.find(Types[i]);
+        VTU11_CHECK(it_type != types_num_points_map.end(), "Offset can not be computed to cell type " + std::to_string(Types[i]));
+        current_offset += it_type->second;
+        offsets[i] = current_offset;
+    }
+
+    return offsets;
+}
 
 } // namespace vtu11
 
