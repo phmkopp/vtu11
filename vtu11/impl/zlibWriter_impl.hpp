@@ -10,6 +10,8 @@
 #ifndef VTU11_ZLIBWRITER_IMPL_HPP
 #define VTU11_ZLIBWRITER_IMPL_HPP
 
+#ifdef VTU11_ENABLE_ZLIB
+
 #include "vtu11/inc/utilities.hpp"
 #include "zlib.h"
 
@@ -153,4 +155,5 @@ inline StringStringMap CompressedRawBinaryAppendedWriter::appendedAttributes( )
 
 } // namespace vtu11
 
+#endif // VTU11_ENABLE_ZLIB
 #endif // VTU11_ZLIBWRITER_IMPL_HPP
