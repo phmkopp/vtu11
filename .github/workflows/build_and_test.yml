@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [g++, clang++, icpc, icpx]
+        compiler: [g++, clang++, icpx]
     timeout-minutes: 15
 
     steps:
