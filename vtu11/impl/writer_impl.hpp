@@ -103,8 +103,10 @@ inline void Base64BinaryWriter::writeData( std::ostream& output,
 {
   HeaderType numberOfBytes = data.size( ) * sizeof( T );
 
-  output << base64Encode( &numberOfBytes, &numberOfBytes + 1 );
-  output << base64Encode( data.begin( ), data.end( ) );
+  Base64EncodedOutput base64output;
+  base64output.writeOutputData( output, &numberOfBytes, 1 );
+  base64output.writeOutputData( output, data.begin( ), data.size( ) );
+  base64output.closeOutputData( output );
 
   output << "\n";
 }
@@ -146,14 +148,10 @@ inline void Base64BinaryAppendedWriter::writeAppended( std::ostream& output )
 {
   for( auto dataSet : appendedData )
   {
-    // looks like header and data has to be encoded at once
-    std::vector<char> data( dataSet.second + sizeof( HeaderType ) );
-
-    *reinterpret_cast<HeaderType*>( &data[0] ) = dataSet.second;
-
-    std::copy( dataSet.first, dataSet.first + dataSet.second, &data[ sizeof( HeaderType ) ] );
-
-    output << base64Encode( data.begin( ), data.end( ) );
+    Base64EncodedOutput base64output;
+    base64output.writeOutputData( output, &dataSet.second, 1 );
+    base64output.writeOutputData( output, dataSet.first, dataSet.second );
+    base64output.closeOutputData( output );
   }
 
   output << "\n";
