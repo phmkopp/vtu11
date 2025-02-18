@@ -13,6 +13,7 @@
 #include "vtu11/inc/utilities.hpp"
 
 #include <limits>
+#include <algorithm>
 
 namespace vtu11
 {
