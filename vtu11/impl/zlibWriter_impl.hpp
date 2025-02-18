@@ -8,6 +8,7 @@
 //
 
 #ifndef VTU11_ZLIBWRITER_IMPL_HPP
+#define VTU11_ZLIBWRITER_IMPL_HPP
 
 #include "vtu11/inc/utilities.hpp"
 #include "zlib.h"
